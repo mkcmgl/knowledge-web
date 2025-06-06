@@ -27,10 +27,10 @@ const RagHeader = () => {
   const tagsData = useMemo(
     () => [
       { path: '/knowledge', name: t('knowledgeBase'), icon: KnowledgeBaseIcon },
-      { path: '/chat', name: t('chat'), icon: MessageOutlined },
-      { path: '/search', name: t('search'), icon: SearchOutlined },
-      { path: '/flow', name: t('flow'), icon: GraphIcon },
-      { path: '/file', name: t('fileManager'), icon: FileIcon },
+      // { path: '/chat', name: t('chat'), icon: MessageOutlined },
+      // { path: '/search', name: t('search'), icon: SearchOutlined },
+      // { path: '/flow', name: t('flow'), icon: GraphIcon },
+      // { path: '/file', name: t('fileManager'), icon: FileIcon },
     ],
     [t],
   );
@@ -65,16 +65,14 @@ const RagHeader = () => {
         height: '72px',
       }}
     >
-      <a href={window.location.origin}>
         <Space
           size={12}
           onClick={handleLogoClick}
           className={styles.logoWrapper}
         >
-          <img src="/logo.svg" alt="" className={styles.appIcon} />
-          <span className={styles.appName}>{appConf.appName}</span>
+          {/* <img src="/logo.svg" alt="" className={styles.appIcon} /> */}
+          <span className={styles.appName}>知识库平台 </span>
         </Space>
-      </a>
       <Space size={[0, 8]} wrap>
         <Radio.Group
           defaultValue="a"

@@ -18,7 +18,7 @@ const LoginRightPanel = () => {
           level={1}
           className={classNames(styles.white, styles.loginTitle)}
         >
-          {t('title')}
+          {t('title')}-312321
         </Title>
         <Text className={classNames(styles.pink, styles.loginDescription)}>
           {t('description')}
