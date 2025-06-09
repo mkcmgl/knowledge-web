@@ -12,9 +12,6 @@ import {
 import { IDocumentInfo } from '@/interfaces/database/document';
 import {
   DownOutlined,
-  FileOutlined,
-  FileTextOutlined,
-  PlusOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
 import { Button, Dropdown, Flex, Input, MenuProps, Space } from 'antd';
@@ -26,7 +23,6 @@ import styles from './index.less';
 
 interface IProps {
   selectedRowKeys: string[];
-  showCreateModal(): void;
   showWebCrawlModal(): void;
   showDocumentUploadModal(): void;
   searchString: string;
@@ -37,8 +33,6 @@ interface IProps {
 const DocumentToolbar = ({
   searchString,
   selectedRowKeys,
-  showCreateModal,
-  showDocumentUploadModal,
   handleInputChange,
   documents,
 }: IProps) => {
@@ -48,37 +42,6 @@ const DocumentToolbar = ({
   const { runDocumentByIds } = useRunNextDocument();
   const { setDocumentStatus } = useSetNextDocumentStatus();
 
-  const actionItems: MenuProps['items'] = useMemo(() => {
-    return [
-      {
-        key: '1',
-        onClick: showDocumentUploadModal,
-        label: (
-          <div>
-            <Button type="link">
-              <Space>
-                <FileTextOutlined />
-                {t('localFiles')}
-              </Space>
-            </Button>
-          </div>
-        ),
-      },
-      { type: 'divider' },
-      {
-        key: '3',
-        onClick: showCreateModal,
-        label: (
-          <div>
-            <Button type="link">
-              <FileOutlined />
-              {t('emptyFiles')}
-            </Button>
-          </div>
-        ),
-      },
-    ];
-  }, [showDocumentUploadModal, showCreateModal, t]);
 
   const handleDelete = useCallback(() => {
     const deletedKeys = selectedRowKeys.filter(
@@ -227,11 +190,11 @@ const DocumentToolbar = ({
           prefix={<SearchOutlined />}
         />
 
-        <Dropdown menu={{ items: actionItems }} trigger={['click']}>
+        {/* <Dropdown menu={{ items: actionItems }} trigger={['click']}>
           <Button type="primary" icon={<PlusOutlined />}>
             {t('addFile')}
           </Button>
-        </Dropdown>
+        </Dropdown> */}
       </Space>
     </div>
   );

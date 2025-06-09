@@ -12,7 +12,7 @@ const LoginRightPanel = () => {
   const { t } = useTranslate('login');
   return (
     <section className={styles.rightPanel}>
-      <SvgIcon name="login-star" width={80}></SvgIcon>
+      {/* <SvgIcon name="login-star" width={80}></SvgIcon> */}
       <Flex vertical gap={40}>
         <Title
           level={1}

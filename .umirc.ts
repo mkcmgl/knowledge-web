@@ -36,6 +36,13 @@ export default defineConfig({
     { from: 'node_modules/monaco-editor/min/vs/', to: 'dist/vs/' },
   ],
   proxy: [
+    // {
+    //   context: ['/api/chat'],
+    //   target: 'http://119.84.128.68:19080/',
+    //   changeOrigin: true,
+    //   ws: true,
+    //   logger: console,
+    // },
     {
       context: ['/api', '/v1'],
       target: 'http://119.84.128.68:6580/',
@@ -44,6 +51,7 @@ export default defineConfig({
       logger: console,
       // pathRewrite: { '^/v1': '/v1' },
     },
+    
   ],
 
   chainWebpack(memo, args) {

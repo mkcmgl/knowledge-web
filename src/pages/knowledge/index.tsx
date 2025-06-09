@@ -15,8 +15,8 @@ import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useSaveKnowledge } from './hooks';
 import KnowledgeCard from './knowledge-card';
+// import ChatPage from './chat';
 import KnowledgeCreatingModal from './knowledge-creating-modal';
-
 import { useMemo } from 'react';
 import styles from './index.less';
 
@@ -52,11 +52,12 @@ const KnowledgeList = () => {
   return (
     <Flex className={styles.knowledge} vertical flex={1}>
       <div className={styles.topWrapper}>
-        <div>
+        <div >
           <span className={styles.title}>
             {t('welcome')}, {userInfo.nickname}
           </span>
           <p className={styles.description}>{t('description')}</p>
+          {/* <ChatPage /> */}
         </div>
         <Space size={'large'}>
           <Input
@@ -126,6 +127,9 @@ const KnowledgeList = () => {
         onOk={onCreateOk}
       ></KnowledgeCreatingModal>
     </Flex>
+
+               
+
   );
 };
 

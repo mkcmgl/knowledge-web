@@ -1,8 +1,8 @@
 // @import '~@/less/variable.less';
 
 .knowledge {
-  padding: 48px 0;
   overflow: auto;
+  padding: 48px 0;
 }
 
 .topWrapper {
@@ -11,13 +11,14 @@
   align-items: flex-start;
   padding: 0 60px 72px;
 
+
   .title {
+    color: var(--ant-color-info);
     font-family: Inter;
     font-size: 30px;
     font-style: normal;
     font-weight: @fontWeight600;
     line-height: 38px;
-    color: var(--ant-color-info);
   }
   .description {
     font-family: Inter;
@@ -36,14 +37,14 @@
   }
 
   .filterButton {
+    .topButton();
     display: flex;
     align-items: center;
-    .topButton();
   }
 }
 .knowledgeCardContainer {
-  padding: 0 60px;
   overflow: auto;
+  padding: 0 60px;
   .knowledgeEmpty {
     width: 100%;
   }

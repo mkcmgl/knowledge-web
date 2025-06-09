@@ -7,7 +7,23 @@ import {
 import { useSetSelectedRecord } from '@/hooks/logic-hooks';
 import { useSelectParserList } from '@/hooks/user-setting-hooks';
 import { getExtension } from '@/utils/document-util';
-import { Divider, Flex, Switch, Table, Tooltip, Typography } from 'antd';
+import {
+  FileOutlined,
+  FileTextOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
+import {
+  Button,
+  Divider,
+  Dropdown,
+  Flex,
+  MenuProps,
+  Space,
+  Switch,
+  Table,
+  Tooltip,
+  Typography,
+} from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { useTranslation } from 'react-i18next';
 import CreateFileModal from './create-file-modal';
@@ -32,6 +48,7 @@ import { RunningStatus } from '@/constants/knowledge';
 import { IDocumentInfo } from '@/interfaces/database/document';
 import { formatDate } from '@/utils/date';
 import { CircleHelp } from 'lucide-react';
+import { useMemo } from 'react';
 import styles from './index.less';
 import { SetMetaModal } from './set-meta-modal';
 
@@ -197,10 +214,53 @@ const KnowledgeFile = () => {
     className: `${styles.column}`,
   }));
 
+  const actionItems: MenuProps['items'] = useMemo(() => {
+    return [
+      {
+        key: '1',
+        onClick: showDocumentUploadModal,
+        label: (
+          <div>
+            <Button type="link">
+              <Space>
+                <FileTextOutlined />
+                {t('localFiles')}
+              </Space>
+            </Button>
+          </div>
+        ),
+      },
+      { type: 'divider' },
+      {
+        key: '3',
+        onClick: showCreateModal,
+        label: (
+          <div>
+            <Button type="link">
+              <FileOutlined />
+              {t('emptyFiles')}
+            </Button>
+          </div>
+        ),
+      },
+    ];
+  }, [showDocumentUploadModal, showCreateModal, t]);
+
   return (
     <div className={styles.datasetWrapper}>
-      <h3>{t('dataset')}</h3>
-      <p>{t('datasetDescription')}</p>
+      <div className={styles.topFex}>
+        <div>
+          <h3>{t('dataset')}</h3>
+          <p>{t('datasetDescription')}</p>
+        </div>
+
+        <Dropdown menu={{ items: actionItems }} trigger={['click']}>
+          <Button type="primary" icon={<PlusOutlined />}>
+            {t('addFile')}
+          </Button>
+        </Dropdown>
+      </div>
+
       <Divider></Divider>
       <DocumentToolbar
         selectedRowKeys={rowSelection.selectedRowKeys as string[]}
