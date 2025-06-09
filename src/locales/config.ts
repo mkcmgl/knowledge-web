@@ -17,13 +17,13 @@ import translation_zh_traditional from './zh-traditional';
 const resources = {
   [LanguageAbbreviation.En]: translation_en,
   [LanguageAbbreviation.Zh]: translation_zh,
-  [LanguageAbbreviation.ZhTraditional]: translation_zh_traditional,
-  [LanguageAbbreviation.Id]: translation_id,
-  [LanguageAbbreviation.Ja]: translation_ja,
-  [LanguageAbbreviation.Es]: translation_es,
-  [LanguageAbbreviation.Vi]: translation_vi,
-  [LanguageAbbreviation.PtBr]: translation_pt_br,
-  [LanguageAbbreviation.De]: translation_de,
+  // [LanguageAbbreviation.ZhTraditional]: translation_zh_traditional,
+  // [LanguageAbbreviation.Id]: translation_id,
+  // [LanguageAbbreviation.Ja]: translation_ja,
+  // [LanguageAbbreviation.Es]: translation_es,
+  // [LanguageAbbreviation.Vi]: translation_vi,
+  // [LanguageAbbreviation.PtBr]: translation_pt_br,
+  // [LanguageAbbreviation.De]: translation_de,
 };
 const enFlattened = flattenObject(translation_en);
 const viFlattened = flattenObject(translation_vi);

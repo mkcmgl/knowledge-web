@@ -18,13 +18,13 @@ const LoginRightPanel = () => {
           level={1}
           className={classNames(styles.white, styles.loginTitle)}
         >
-          {t('title')}-312321
+          {t('title')}
         </Title>
         <Text className={classNames(styles.pink, styles.loginDescription)}>
           {t('description')}
         </Text>
-        <Flex align="center" gap={16}>
-          <Avatars></Avatars>
+        {/* <Flex align="center" gap={16}>
+           <Avatars></Avatars>
           <Flex vertical>
             <Space>
               <Rate disabled defaultValue={5} />
@@ -38,7 +38,7 @@ const LoginRightPanel = () => {
               {t('review')}
             </span>
           </Flex>
-        </Flex>
+        </Flex> */}
       </Flex>
     </section>
   );

@@ -1,40 +1,40 @@
-@import '../../theme/vars';
+@import "../../theme/vars";
 
 .loginPage {
   display: flex;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, .1);
 
   .loginLeft {
-    // width: 610px;
-    width: 40%;
-    background-color: rgba(255, 255, 255, 0.1);
-    height: 100vh;
     display: flex;
     align-items: center;
+    // width: 610px;
+    width: 40%;
+    height: 100vh;
+    background-color: rgba(255, 255, 255, .1);
   }
 
   .leftContainer {
     width: 60%;
-    padding: 5px, 0px, 5px, 0px;
+    padding: 5px, 0, 5px, 0;
     margin: 0 auto;
   }
 
   .thirdPartyLoginButton {
     margin-top: 10px;
-    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    border-top: 1px solid rgba(0, 0, 0, .06);
     // padding-top: 0px;
 
     .ant-btn {
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       height: 40px;
+      color: rgba(0, 0, 0, .85);
       font-size: 14px;
-      border-radius: 4px;
-      border: 1px solid #d9d9d9;
       background: #fff;
-      color: rgba(0, 0, 0, 0.85);
-      transition: all 0.3s;
+      border: 1px solid #d9d9d9;
+      border-radius: 4px;
+      transition: all .3s;
 
       &:hover {
         color: #40a9ff;
@@ -42,35 +42,35 @@
       }
 
       .anticon {
-        font-size: 16px;
         margin-right: 8px;
+        font-size: 16px;
       }
     }
   }
 
   .loginRight {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
     &::before {
-      content: ' ';
+      content: " ";
       position: absolute;
       top: 0;
+      right: 0;
       bottom: 0;
       left: 0;
-      right: 0;
-      background-color: rgba(24, 73, 169, 0.6);
-      background-image: url('@/assets/svg/login-background.svg');
-      background-size: cover;
-      background-blend-mode: multiply;
-      filter: blur(3px);
-      background-position: center;
       z-index: -1;
+      background-color: rgba(24, 73, 169, .6);
+      background-position: center;
+      // background-image: url('@/assets/svg/login-background.svg');
+      background-size: cover;
+      filter: blur(3px);
+
+      background-blend-mode: multiply;
     }
-    .white {
-    }
+
     .pink {
       color: #e9d7fe;
     }
@@ -105,13 +105,13 @@
   }
 
   .loginTitle {
+    height: 80px;
+    margin-bottom: 69px;
     //styleName: Heading/1;
     font-size: 38px;
     font-weight: 600;
     line-height: 46px;
-    letter-spacing: 0em;
-    height: 80px;
-    margin-bottom: 69px;
+    letter-spacing: 0;
 
     // text-align: center;
     span {

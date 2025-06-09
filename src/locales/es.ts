@@ -82,7 +82,7 @@ export default {
       namePlaceholder: '¡Por favor ingresa un nombre!',
       doc: 'Documentos',
       datasetDescription:
-        '😉 Las preguntas solo pueden ser respondidas después de que el análisis sea exitoso.',
+        'Las preguntas solo pueden ser respondidas después de que el análisis sea exitoso.',
       addFile: 'Agregar archivo',
       searchFiles: 'Buscar tus archivos',
       localFiles: 'Archivos locales',
@@ -96,7 +96,7 @@ export default {
       action: 'Acción',
       parsingStatus: 'Estado de análisis',
       parsingStatusTip:
-        'El tiempo de procesamiento de documentos varía según varios factores. Activar funciones como Knowledge Graph, RAPTOR, extracción automática de preguntas o de palabras clave aumentará significativamente el tiempo de procesamiento. Si la barra de progreso se detiene, consulte estas dos preguntas frecuentes: https://ragflow.io/docs/dev/faq#why-does-my-document-parsing-stall-at-under-one-percent.',
+        'El tiempo de procesamiento de documentos varía según varios factores. Activar funciones como Knowledge Graph, RAPTOR, extracción automática de preguntas o de palabras clave aumentará significativamente el tiempo de procesamiento. Si la barra de progreso se detiene.',
       processBeginAt: 'Proceso iniciado en',
       processDuration: 'Duración del proceso',
       progressMsg: 'Mensaje de progreso',

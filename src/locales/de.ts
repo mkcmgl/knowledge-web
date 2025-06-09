@@ -93,7 +93,7 @@ export default {
       namePlaceholder: 'Bitte Namen eingeben!',
       doc: 'Dokumente',
       datasetDescription:
-        '😉 Bitte warten Sie, bis die Analyse Ihrer Datei abgeschlossen ist, bevor Sie einen KI-gestützten Chat starten.',
+        'Bitte warten Sie, bis die Analyse Ihrer Datei abgeschlossen ist, bevor Sie einen KI-gestützten Chat starten.',
       addFile: 'Datei hinzufügen',
       searchFiles: 'Durchsuchen Sie Ihre Dateien',
       localFiles: 'Lokale Dateien',
@@ -107,7 +107,7 @@ export default {
       action: 'Aktion',
       parsingStatus: 'Analysestatus',
       parsingStatusTip:
-        'Die Verarbeitungszeit für Dokumente variiert je nach mehreren Faktoren. Das Aktivieren von Funktionen wie Knowledge Graph, RAPTOR, automatischer Frage- oder Schlüsselwort-Extraktion verlängert die Bearbeitungszeit deutlich. Wenn der Fortschrittsbalken stehen bleibt, konsultieren Sie bitte diese beiden FAQs: https://ragflow.io/docs/dev/faq#why-does-my-document-parsing-stall-at-under-one-percent.',
+        'Die Verarbeitungszeit für Dokumente variiert je nach mehreren Faktoren. Das Aktivieren von Funktionen wie Knowledge Graph, RAPTOR, automatischer Frage- oder Schlüsselwort-Extraktion verlängert die Bearbeitungszeit deutlich. Wenn der Fortschrittsbalken stehen bleibt.',
       processBeginAt: 'Beginn',
       processDuration: 'Dauer',
       progressMsg: 'Fortschritt',

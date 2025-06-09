@@ -55,10 +55,10 @@ export default {
       nicknamePlaceholder: '请输入名称',
       register: '创建账户',
       continue: '继续',
-      title: '开始构建您的智能助手',
+      title: '知识库平台',
       description:
-        '免费注册以探索顶级 RAG 技术。 创建知识库和人工智能来增强您的业务',
-      review: '来自 500 多条评论',
+        '创建知识库和人工智能来增强您的业务',
+      review: '',
     },
     header: {
       knowledgeBase: '知识库',
@@ -92,7 +92,7 @@ export default {
       name: '名称',
       namePlaceholder: '请输入名称',
       doc: '文档',
-      datasetDescription: '😉 解析成功后才能问答哦。',
+      datasetDescription: '注意：解析成功后才能问答哦。',
       addFile: '新增文件',
       searchFiles: '搜索文件',
       localFiles: '本地文件',
@@ -106,7 +106,7 @@ export default {
       action: '动作',
       parsingStatus: '解析状态',
       parsingStatusTip:
-        '文本解析的时间取决于诸多因素。如果开启了知识图谱、RAPTOR、自动问题提取、自动关键词提取等功能，时间会更长。如果解析进度条长时间不更新，也可以参考这两条 FAQ：https://ragflow.io/docs/dev/faq#why-does-my-document-parsing-stall-at-under-one-percent。',
+        '文本解析的时间取决于诸多因素。如果开启了知识图谱、RAPTOR、自动问题提取、自动关键词提取等功能，时间会更长。',
       processBeginAt: '开始于',
       processDuration: '持续时间',
       progressMsg: '进度',

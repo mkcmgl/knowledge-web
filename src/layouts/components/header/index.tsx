@@ -71,7 +71,7 @@ const RagHeader = () => {
           className={styles.logoWrapper}
         >
           {/* <img src="/logo.svg" alt="" className={styles.appIcon} /> */}
-          <span className={styles.appName}>知识库平台 </span>
+          <span className={styles.appName}>知识库平台</span>
         </Space>
       <Space size={[0, 8]} wrap>
         <Radio.Group
