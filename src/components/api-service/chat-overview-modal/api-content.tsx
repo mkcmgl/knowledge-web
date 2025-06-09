@@ -63,7 +63,8 @@ const ApiContent = ({
           hideModal={hideEmbedModal}
         ></EmbedModal>
       )} */}
-      <LangfuseCard></LangfuseCard>
+
+      {/* <LangfuseCard></LangfuseCard> */}
     </div>
   );
 };

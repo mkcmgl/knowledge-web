@@ -116,7 +116,7 @@ const KnowledgeSidebar = () => {
     <div className={styles.sidebarWrapper}>
       <div className={styles.sidebarTop}>
         <Space size={8} direction="vertical">
-          <Avatar size={64} src={knowledgeDetails.avatar} />
+          {/* <Avatar size={64} src={knowledgeDetails.avatar} /> */}
           <div className={styles.knowledgeTitle}>{knowledgeDetails.name}</div>
         </Space>
         <p className={styles.knowledgeDescription}>

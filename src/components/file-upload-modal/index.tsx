@@ -6,7 +6,6 @@ import {
   Flex,
   Modal,
   Progress,
-  Segmented,
   Tabs,
   TabsProps,
   Upload,
@@ -160,24 +159,24 @@ const FileUploadModal = ({
         afterClose={afterClose}
       >
         <Flex gap={'large'} vertical>
-          <Segmented
+          {/* <Segmented
             options={[
               { label: t('local'), value: 'local' },
-              { label: t('s3'), value: 's3' },
+              // { label: t('s3'), value: 's3' },
             ]}
             block
             value={value}
             onChange={setValue}
-          />
+          /> */}
           {value === 'local' ? (
             <>
+              <Tabs defaultActiveKey="1" items={items} />
               <Checkbox
                 checked={parseOnCreation}
                 onChange={(e) => setParseOnCreation(e.target.checked)}
               >
                 {t('parseOnCreation')}
               </Checkbox>
-              <Tabs defaultActiveKey="1" items={items} />
             </>
           ) : (
             t('comingSoon', { keyPrefix: 'common' })

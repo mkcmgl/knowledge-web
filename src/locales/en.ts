@@ -512,7 +512,7 @@ This auto-tagging feature enhances retrieval by adding another layer of domain-s
       extensionTitle: 'Chrome Extension',
       tokenError: 'Please create API key first.',
       betaError:
-        'Please acquire a RAGFlow API key from the System Settings page first.',
+        'Please acquire a  API key from the System Settings page first.',
       searching: 'Searching...',
       parsing: 'Parsing',
       uploading: 'Uploading',

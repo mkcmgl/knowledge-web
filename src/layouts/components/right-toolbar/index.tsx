@@ -22,13 +22,13 @@ const Circle = ({ children, ...restProps }: React.PropsWithChildren) => {
   );
 };
 
-const handleGithubCLick = () => {
-  window.open('https://github.com/infiniflow/ragflow', 'target');
-};
+// const handleGithubCLick = () => {
+//   window.open('https://github.com/infiniflow/ragflow', 'target');
+// };
 
-const handleDocHelpCLick = () => {
-  window.open('https://ragflow.io/docs/dev/category/guides', 'target');
-};
+// const handleDocHelpCLick = () => {
+//   window.open('https://ragflow.io/docs/dev/category/guides', 'target');
+// };
 
 const RightToolBar = () => {
   const { t } = useTranslate('common');
