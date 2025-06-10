@@ -105,42 +105,49 @@ const ParsingActionCell = ({
           trigger={['click']}
           disabled={isRunning || record.parser_id === 'tag'}
         >
-          <Button type="text" className={styles.iconButton}>
-            <ToolOutlined size={20} />
+          <Button type="link" size='small' className={styles.iconButton}>
+            {/* <ToolOutlined size={20} /> */}
+            设置
           </Button>
         </Dropdown>
       )}
-      <Tooltip title={t('rename', { keyPrefix: 'common' })}>
+      {/* <Tooltip title={t('rename', { keyPrefix: 'common' })}> */}
         <Button
-          type="text"
+          type="link"
+          size='small'
           disabled={isRunning}
           onClick={onShowRenameModal}
           className={styles.iconButton}
         >
-          <EditOutlined size={20} />
+          {/* <EditOutlined size={20} /> */}
+          {t('rename', { keyPrefix: 'common' })}
         </Button>
-      </Tooltip>
-      <Tooltip title={t('delete', { keyPrefix: 'common' })}>
+      {/* </Tooltip> */}
+      {/* <Tooltip title={t('delete', { keyPrefix: 'common' })}> */}
         <Button
-          type="text"
+          type="link"
+          size='small'
           disabled={isRunning}
           onClick={onRmDocument}
           className={styles.iconButton}
         >
-          <DeleteOutlined size={20} />
+          {/* <DeleteOutlined size={20} /> */}
+          {t('delete', { keyPrefix: 'common' })}
         </Button>
-      </Tooltip>
+      {/* </Tooltip> */}
       {isVirtualDocument || (
-        <Tooltip title={t('download', { keyPrefix: 'common' })}>
+        // <Tooltip title={t('download', { keyPrefix: 'common' })}>
           <Button
-            type="text"
+            type="link"
+            size='small'
             disabled={isRunning}
             onClick={onDownloadDocument}
             className={styles.iconButton}
           >
-            <DownloadOutlined size={20} />
+            {/* <DownloadOutlined size={20} /> */}
+             {t('download', { keyPrefix: 'common' })}
           </Button>
-        </Tooltip>
+        // </Tooltip>
       )}
     </Space>
   );

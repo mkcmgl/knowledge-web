@@ -119,7 +119,7 @@ const KnowledgeFile = () => {
       title: t('name'),
       dataIndex: 'name',
       key: 'name',
-      fixed: 'left',
+      // fixed: 'left',
       render: (text: any, { id, thumbnail, name }) => (
         <div className={styles.toChunks} onClick={() => toChunk(id)}>
           <Flex gap={10} align="center">
@@ -143,14 +143,7 @@ const KnowledgeFile = () => {
       dataIndex: 'chunk_num',
       key: 'chunk_num',
     },
-    {
-      title: t('uploadDate'),
-      dataIndex: 'create_time',
-      key: 'create_time',
-      render(value) {
-        return formatDate(value);
-      },
-    },
+
     {
       title: t('chunkMethod'),
       dataIndex: 'parser_id',
@@ -195,8 +188,17 @@ const KnowledgeFile = () => {
       },
     },
     {
+      title: t('uploadDate'),
+      dataIndex: 'create_time',
+      key: 'create_time',
+      render(value) {
+        return formatDate(value);
+      },
+    },
+    {
       title: t('action'),
       key: 'action',
+      fixed: 'right',
       render: (_, record) => (
         <ParsingActionCell
           setCurrentRecord={setRecord}
@@ -276,7 +278,8 @@ const KnowledgeFile = () => {
         columns={finalColumns}
         dataSource={documents}
         pagination={pagination}
-        rowSelection={rowSelection}
+        // 多选框
+        // rowSelection={rowSelection}
         className={styles.documentTable}
         scroll={{ scrollToFirstRowOnChange: true, x: 1300 }}
       />

@@ -103,7 +103,7 @@ export default {
       chunkMethod: '切片方法',
       enabled: '启用',
       disabled: '禁用',
-      action: '动作',
+      action: '操作',
       parsingStatus: '解析状态',
       parsingStatusTip:
         '文本解析的时间取决于诸多因素。如果开启了知识图谱、RAPTOR、自动问题提取、自动关键词提取等功能，时间会更长。',
@@ -195,26 +195,7 @@ export default {
       autoQuestionsTip: `利用“系统模型设置”中设置的 chat model 对知识库的每个文本块提取 N 个问题以提高其排名得分。请注意，开启后将消耗额外的 token。您可以在块列表中查看、编辑结果。如果自动问题提取发生错误，不会妨碍整个分块过程，只会将空结果添加到原始文本块。`,
       redo: '是否清空已有 {{chunkNum}}个 chunk？',
       setMetaData: '设置元数据',
-      pleaseInputJson: '请输入JSON',
-      documentMetaTips: `<p>元数据为 Json 格式（不可搜索）。如果提示中包含此文档的任何块，它将被添加到 LLM 的提示中。</p>
-<p>示例：</p>
-<b>元数据为：</b><br>
-<code>
-{
-“作者”：“mengguolin”，
-“日期”：“2024-11-12”
-}
-</code><br>
-<b>提示将为：</b><br>
-<p>文档：the_name_of_document</p>
-<p>作者：mengguolin</p>
-<p>日期：2024-11-12</p>
-<p>相关片段如下：</p>
-<ul>
-<li> 这是块内容....</li>
-<li> 这是块内容....</li>
-</ul>
-`,
+
       metaData: '元数据',
       deleteDocumentConfirmContent:
         '该文档与知识图谱相关联。删除后，相关节点和关系信息将被删除，但图不会立即更新。更新图动作是在解析承载知识图谱提取任务的新文档的过程中执行的。',
