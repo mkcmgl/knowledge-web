@@ -1,5 +1,5 @@
 import { BlockButton } from '@/components/ui/button';
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { FlowNodeType } from '@/interfaces/database/flow';
 import { MinusCircleOutlined } from '@ant-design/icons';
 import { Form, Input, Select } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +8,7 @@ import { FormCollapse } from '../components/dynamic-input-variable';
 
 type DynamicInputVariableProps = {
   name?: string;
-  node?: RAGFlowNodeType;
+  node?: FlowNodeType;
 };
 
 export const DynamicInputVariable = ({

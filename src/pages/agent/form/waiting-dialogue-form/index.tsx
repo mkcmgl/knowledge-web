@@ -9,7 +9,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { RAGFlowSelect } from '@/components/ui/select';
+import { FlowSelect } from '@/components/ui/select';
 import { ProgrammingLanguage } from '@/constants/agent';
 import { ICodeForm } from '@/interfaces/database/flow';
 import { useTranslation } from 'react-i18next';
@@ -46,7 +46,7 @@ const CodeForm = ({ form, node }: INextOperatorForm) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <RAGFlowSelect {...field} options={options} />
+                        <FlowSelect {...field} options={options} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

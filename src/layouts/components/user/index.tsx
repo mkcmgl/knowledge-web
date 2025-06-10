@@ -2,7 +2,9 @@ import { useFetchUserInfo } from '@/hooks/user-setting-hooks';
 import { Avatar } from 'antd';
 import React from 'react';
 import { history } from 'umi';
-
+import {
+  UserOutlined,
+} from '@ant-design/icons';
 import styles from '../../index.less';
 
 const App: React.FC = () => {
@@ -17,10 +19,11 @@ const App: React.FC = () => {
       size={32}
       onClick={toSetting}
       className={styles.clickAvailable}
-      src={
-        userInfo.avatar ??
-        '@/assets/banner.png'
-      }
+        icon={<UserOutlined />} 
+      // src={
+      //   userInfo.avatar ??
+      //   '@/assets/banner.png'
+      // }
     />
   );
 };

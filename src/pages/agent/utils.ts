@@ -2,7 +2,7 @@ import {
   ICategorizeItem,
   ICategorizeItemResult,
 } from '@/interfaces/database/agent';
-import { DSLComponents, RAGFlowNodeType } from '@/interfaces/database/flow';
+import { DSLComponents, FlowNodeType } from '@/interfaces/database/flow';
 import { removeUselessFieldsFromValues } from '@/utils/form';
 import { Edge, Node, Position, XYPosition } from '@xyflow/react';
 import { FormInstance, FormListFieldData } from 'antd';
@@ -126,7 +126,7 @@ const buildOperatorParams = (operatorName: string) =>
 
 // construct a dsl based on the node information of the graph
 export const buildDslComponentsByGraph = (
-  nodes: RAGFlowNodeType[],
+  nodes: FlowNodeType[],
   edges: Edge[],
   oldDslComponents: DSLComponents,
 ): DSLComponents => {
@@ -264,7 +264,7 @@ const splitName = (name: string) => {
 
 export const generateNodeNamesWithIncreasingIndex = (
   name: string,
-  nodes: RAGFlowNodeType[],
+  nodes: FlowNodeType[],
 ) => {
   const templateNameList = nodes
     .filter((x) => {
@@ -302,7 +302,7 @@ export const generateNodeNamesWithIncreasingIndex = (
   return `${name}_${index}`;
 };
 
-export const duplicateNodeForm = (nodeData?: RAGFlowNodeType['data']) => {
+export const duplicateNodeForm = (nodeData?: FlowNodeType['data']) => {
   const form: Record<string, any> = { ...(nodeData?.form ?? {}) };
 
   // Delete the downstream node corresponding to the to field of the Categorize operator
@@ -340,7 +340,7 @@ export const needsSingleStepDebugging = (label: string) => {
 
 // Get the coordinates of the node relative to the Iteration node
 export function getRelativePositionToIterationNode(
-  nodes: RAGFlowNodeType[],
+  nodes: FlowNodeType[],
   position?: XYPosition, // relative position
 ) {
   if (!position) {

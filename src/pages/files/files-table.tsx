@@ -19,7 +19,7 @@ import { RenameDialog } from '@/components/rename-dialog';
 import { TableEmpty, TableSkeleton } from '@/components/table-skeleton';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { RAGFlowPagination } from '@/components/ui/ragflow-pagination';
+import { FlowPagination } from '@/components/ui/flow-pagination';
 import {
   Table,
   TableBody,
@@ -306,13 +306,13 @@ export function FilesTable({
 
       <div className="flex items-center justify-end py-4">
         <div className="space-x-2">
-          <RAGFlowPagination
+          <FlowPagination
             {...pick(pagination, 'current', 'pageSize')}
             total={total}
             onChange={(page, pageSize) => {
               setPagination({ page, pageSize });
             }}
-          ></RAGFlowPagination>
+          ></FlowPagination>
         </div>
       </div>
       {connectToKnowledgeVisible && (

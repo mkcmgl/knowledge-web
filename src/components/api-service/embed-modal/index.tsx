@@ -154,10 +154,11 @@ const EmbedModal = ({
         {token}
       </Paragraph>
       <Link
+      //ragflow
         href={
           isAgent
-            ? 'https://ragflow.io/docs/dev/http_api_reference#create-session-with-agent'
-            : 'https://ragflow.io/docs/dev/http_api_reference#create-session-with-chat-assistant'
+            ? 'https://baidu.io/docs/dev/http_api_reference#create-session-with-agent'
+            : 'https://baidu.io/docs/dev/http_api_reference#create-session-with-chat-assistant'
         }
         target="_blank"
       >

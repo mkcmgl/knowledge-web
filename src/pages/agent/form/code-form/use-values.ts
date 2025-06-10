@@ -1,9 +1,9 @@
 import { CodeTemplateStrMap, ProgrammingLanguage } from '@/constants/agent';
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { FlowNodeType } from '@/interfaces/database/flow';
 import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
 
-export function useValues(node?: RAGFlowNodeType) {
+export function useValues(node?: FlowNodeType) {
   const defaultValues = useMemo(
     () => ({
       lang: ProgrammingLanguage.Python,

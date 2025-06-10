@@ -13,7 +13,7 @@ import {
   FormLabel,
   FormMessage,
 } from '../ui/form';
-import { RAGFlowSelect } from '../ui/select';
+import { FlowSelect } from '../ui/select';
 import { Switch } from '../ui/switch';
 
 const excludedTagParseMethods = [
@@ -125,10 +125,10 @@ const GraphRagItems = ({
                   {t('graphRagMethod')}
                 </FormLabel>
                 <FormControl>
-                  <RAGFlowSelect
+                  <FlowSelect
                     {...field}
                     options={methodOptions}
-                  ></RAGFlowSelect>
+                  ></FlowSelect>
                 </FormControl>
                 <FormMessage />
               </FormItem>

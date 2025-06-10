@@ -1,4 +1,4 @@
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { FlowNodeType } from '@/interfaces/database/flow';
 import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
 import { convertToObjectArray } from '../../utils';
@@ -7,7 +7,7 @@ const defaultValues = {
   content: [],
 };
 
-export function useValues(node?: RAGFlowNodeType) {
+export function useValues(node?: FlowNodeType) {
   const values = useMemo(() => {
     const formData = node?.data?.form;
 

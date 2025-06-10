@@ -7,11 +7,11 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-import { RAGFlowSelect, RAGFlowSelectOptionType } from '@/components/ui/select';
+import { FlowSelect, FlowSelectOptionType } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-export type RAGFlowPaginationType = {
+export type FlowPaginationType = {
   showQuickJumper?: boolean;
   onChange?(page: number, pageSize: number): void;
   total?: number;
@@ -20,17 +20,17 @@ export type RAGFlowPaginationType = {
   showSizeChanger?: boolean;
 };
 
-export function RAGFlowPagination({
+export function FlowPagination({
   current = 1,
   pageSize = 10,
   total = 0,
   onChange,
   showSizeChanger = true,
-}: RAGFlowPaginationType) {
+}: FlowPaginationType) {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPageSize, setCurrentPageSize] = useState('10');
 
-  const sizeChangerOptions: RAGFlowSelectOptionType[] = useMemo(() => {
+  const sizeChangerOptions: FlowSelectOptionType[] = useMemo(() => {
     return [10, 20, 50, 100].map((x) => ({
       label: <span>{x} / page</span>,
       value: x.toString(),
@@ -127,12 +127,12 @@ export function RAGFlowPagination({
         </PaginationContent>
       </Pagination>
       {showSizeChanger && (
-        <RAGFlowSelect
+        <FlowSelect
           options={sizeChangerOptions}
           value={currentPageSize}
           onChange={handlePageSizeChange}
           triggerClassName="bg-background-header-bar"
-        ></RAGFlowSelect>
+        ></FlowSelect>
       )}
     </section>
   );

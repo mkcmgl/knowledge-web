@@ -8,7 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { RAGFlowSelect } from '@/components/ui/select';
+import { FlowSelect } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { FormTooltip } from '@/components/ui/tooltip';
@@ -92,11 +92,11 @@ const BeginForm = ({ node }: INextOperatorForm) => {
             <FormItem>
               <FormLabel tooltip={t('flow.modeTip')}>Mode</FormLabel>
               <FormControl>
-                <RAGFlowSelect
+                <FlowSelect
                   placeholder={t('common.pleaseSelect')}
                   options={ModeOptions}
                   {...field}
-                ></RAGFlowSelect>
+                ></FlowSelect>
               </FormControl>
               <FormMessage />
             </FormItem>

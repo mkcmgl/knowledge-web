@@ -5,7 +5,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { RAGFlowSelect } from '@/components/ui/select';
+import { FlowSelect } from '@/components/ui/select';
 import { useTranslate } from '@/hooks/common-hooks';
 import { useFormContext } from 'react-hook-form';
 import {
@@ -30,7 +30,7 @@ export function ChunkMethodItem() {
             {t('chunkMethod')}
           </FormLabel>
           <FormControl>
-            <RAGFlowSelect
+            <FlowSelect
               {...field}
               options={parserList}
               placeholder={t('chunkMethodPlaceholder')}
@@ -60,7 +60,7 @@ export function EmbeddingModelItem() {
             {t('embeddingModel')}
           </FormLabel>
           <FormControl>
-            <RAGFlowSelect
+            <FlowSelect
               {...field}
               options={embeddingModelOptions}
               disabled={disabled}

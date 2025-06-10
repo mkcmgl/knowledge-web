@@ -7,7 +7,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { RAGFlowSelect } from '@/components/ui/select';
+import { FlowSelect } from '@/components/ui/select';
 import { X } from 'lucide-react';
 import { memo } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
@@ -47,10 +47,10 @@ const DynamicPrompt = () => {
                   <FormItem className="w-1/3">
                     <FormLabel />
                     <FormControl>
-                      <RAGFlowSelect
+                      <FlowSelect
                         {...field}
                         options={options}
-                      ></RAGFlowSelect>
+                      ></FlowSelect>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

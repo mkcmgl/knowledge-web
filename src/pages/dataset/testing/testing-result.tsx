@@ -2,7 +2,7 @@ import { FormContainer } from '@/components/form-container';
 import { FilterButton } from '@/components/list-filter-bar';
 import { FilterPopover } from '@/components/list-filter-bar/filter-popover';
 import { FilterCollection } from '@/components/list-filter-bar/interface';
-import { RAGFlowPagination } from '@/components/ui/ragflow-pagination';
+import { FlowPagination } from '@/components/ui/flow-pagination';
 import { useTranslate } from '@/hooks/common-hooks';
 import { useTestRetrieval } from '@/hooks/use-knowledge-request';
 import { ITestingChunk } from '@/interfaces/database/knowledge';
@@ -84,12 +84,12 @@ export function TestingResult({
           </FormContainer>
         ))}
       </section>
-      <RAGFlowPagination
+      <FlowPagination
         total={data.total}
         onChange={onPaginationChange}
         current={page}
         pageSize={pageSize}
-      ></RAGFlowPagination>
+      ></FlowPagination>
     </div>
   );
 }

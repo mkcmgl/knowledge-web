@@ -121,8 +121,8 @@ export enum FileMimeType {
   Mp4 = 'video/mp4',
   Json = 'application/json',
 }
-
-export const Domain = 'demo.ragflow.io';
+//ragflow
+export const Domain = 'demo.mengguolin.io';
 
 //#region file preview
 export const Images = [
@@ -145,7 +145,7 @@ export const SupportedPreviewDocumentTypes = [...ExceptiveType];
 //#endregion
 
 export enum Platform {
-  RAGFlow = 'RAGFlow',
+  Flow = 'Flow',
   Dify = 'Dify',
   FastGPT = 'FastGPT',
   Coze = 'Coze',

@@ -9,7 +9,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { RAGFlowSelect } from '@/components/ui/select';
+import { FlowSelect } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { useSetModalState } from '@/hooks/common-hooks';
@@ -180,13 +180,13 @@ const DebugContent = ({
               <FormItem className="flex-1">
                 <FormLabel>{props.label}</FormLabel>
                 <FormControl>
-                  <RAGFlowSelect
+                  <FlowSelect
                     allowClear
                     options={
                       q.options?.map((x) => ({ label: x, value: x })) ?? []
                     }
                     {...field}
-                  ></RAGFlowSelect>
+                  ></FlowSelect>
                 </FormControl>
                 <FormMessage />
               </FormItem>

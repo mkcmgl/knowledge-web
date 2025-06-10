@@ -19,7 +19,7 @@ import {
   ICategorizeForm,
   IRelevantForm,
   ISwitchForm,
-  RAGFlowNodeType,
+  FlowNodeType,
 } from '@/interfaces/database/flow';
 import { message } from 'antd';
 import { humanId } from 'human-id';
@@ -595,7 +595,7 @@ export const useCopyPaste = () => {
     (event: ClipboardEvent) => {
       const nodes = JSON.parse(
         event.clipboardData?.getData('agent:nodes') || '[]',
-      ) as RAGFlowNodeType[] | undefined;
+      ) as FlowNodeType[] | undefined;
 
       if (Array.isArray(nodes) && nodes.length) {
         event.preventDefault();

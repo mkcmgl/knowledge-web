@@ -13,7 +13,7 @@ import {
   FormLabel,
   FormMessage,
 } from './ui/form';
-import { RAGFlowSelect } from './ui/select';
+import { FlowSelect } from './ui/select';
 
 type FieldType = {
   rerank_id?: string;
@@ -109,11 +109,11 @@ function RerankFormField() {
         <FormItem>
           <FormLabel tooltip={t('rerankTip')}>{t('rerankModel')}</FormLabel>
           <FormControl>
-            <RAGFlowSelect
+            <FlowSelect
               allowClear
               {...field}
               options={options}
-            ></RAGFlowSelect>
+            ></FlowSelect>
           </FormControl>
           <FormMessage />
         </FormItem>

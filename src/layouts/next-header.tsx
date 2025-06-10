@@ -1,4 +1,4 @@
-import { RAGFlowAvatar } from '@/components/ragflow-avatar';
+import { FlowAvatar } from '@/components/flow-avatar';
 import { useTheme } from '@/components/theme-provider';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -35,7 +35,8 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'umi';
 
 const handleDocHelpCLick = () => {
-  window.open('https://ragflow.io/docs/dev/category/guides', 'target');
+  //ragflow
+  window.open('https://baidu.io/docs/dev/category/guides', 'target');
 };
 
 export function Header() {
@@ -158,12 +159,12 @@ export function Header() {
           {theme === 'light' ? <Sun /> : <Moon />}
         </Button>
         <div className="relative">
-          <RAGFlowAvatar
+          <FlowAvatar
             name={nickname}
             avatar={avatar}
             className="size-8 cursor-pointer"
             onClick={navigateToProfile}
-          ></RAGFlowAvatar>
+          ></FlowAvatar>
           <Badge className="h-5 w-8 absolute font-normal p-0 justify-center -right-8 -top-2 text-text-title-invert bg-gradient-to-l from-[#42D7E7] to-[#478AF5]">
             Pro
           </Badge>

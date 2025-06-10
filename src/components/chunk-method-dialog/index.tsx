@@ -45,7 +45,7 @@ import RaptorFormFields, {
 } from '../parse-configuration/raptor-form-fields';
 import { ButtonLoading } from '../ui/button';
 import { Input } from '../ui/input';
-import { RAGFlowSelect } from '../ui/select';
+import { FlowSelect } from '../ui/select';
 import { DynamicPageRange } from './dynamic-page-range';
 import { useFetchParserListOnMount, useShowAutoKeywords } from './hooks';
 import {
@@ -250,10 +250,10 @@ export function ChunkMethodDialog({
                   <FormItem>
                     <FormLabel>{t('knowledgeDetails.chunkMethod')}</FormLabel>
                     <FormControl>
-                      <RAGFlowSelect
+                      <FlowSelect
                         {...field}
                         options={parserList}
-                      ></RAGFlowSelect>
+                      ></FlowSelect>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

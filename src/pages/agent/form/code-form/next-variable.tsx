@@ -9,9 +9,9 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { BlurInput } from '@/components/ui/input';
-import { RAGFlowSelect } from '@/components/ui/select';
+import { FlowSelect } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { FlowNodeType } from '@/interfaces/database/flow';
 import { X } from 'lucide-react';
 import { ReactNode } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { useBuildComponentIdSelectOptions } from '../../hooks/use-get-begin-query';
 
 interface IProps {
-  node?: RAGFlowNodeType;
+  node?: FlowNodeType;
   name?: string;
 }
 
@@ -74,13 +74,13 @@ export function DynamicVariableForm({ node, name = 'arguments' }: IProps) {
               render={({ field }) => (
                 <FormItem className="flex-1">
                   <FormControl>
-                    <RAGFlowSelect
+                    <FlowSelect
                       placeholder={t('common.pleaseSelect')}
                       options={
                         name === 'arguments' ? valueOptions : TypeOptions
                       }
                       {...field}
-                    ></RAGFlowSelect>
+                    ></FlowSelect>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

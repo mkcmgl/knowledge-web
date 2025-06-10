@@ -15,15 +15,15 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { RAGFlowSelect } from '@/components/ui/select';
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { FlowSelect } from '@/components/ui/select';
+import { FlowNodeType } from '@/interfaces/database/flow';
 import { Plus, Trash2 } from 'lucide-react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useBuildComponentIdSelectOptions } from '../../hooks/use-get-begin-query';
 
 interface IProps {
-  node?: RAGFlowNodeType;
+  node?: FlowNodeType;
 }
 
 enum VariableType {
@@ -66,7 +66,7 @@ export function DynamicVariableForm({ node }: IProps) {
                 <FormItem className="w-2/5">
                   <FormDescription />
                   <FormControl>
-                    <RAGFlowSelect
+                    <FlowSelect
                       {...field}
                       placeholder={t('common.pleaseSelect')}
                       options={options}
@@ -75,7 +75,7 @@ export function DynamicVariableForm({ node }: IProps) {
                         form.resetField(`query.${index}.value`);
                         form.resetField(`query.${index}.component_id`);
                       }}
-                    ></RAGFlowSelect>
+                    ></FlowSelect>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -89,11 +89,11 @@ export function DynamicVariableForm({ node }: IProps) {
                   <FormDescription />
                   <FormControl>
                     {typeValue === VariableType.Reference ? (
-                      <RAGFlowSelect
+                      <FlowSelect
                         placeholder={t('common.pleaseSelect')}
                         {...field}
                         options={valueOptions}
-                      ></RAGFlowSelect>
+                      ></FlowSelect>
                     ) : (
                       <Input placeholder={t('common.pleaseInput')} {...field} />
                     )}

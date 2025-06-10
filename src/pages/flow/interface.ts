@@ -1,10 +1,10 @@
-import { RAGFlowNodeType } from '@/interfaces/database/flow';
+import { FlowNodeType } from '@/interfaces/database/flow';
 import { FormInstance } from 'antd';
 
 export interface IOperatorForm {
   onValuesChange?(changedValues: any, values: any): void;
   form?: FormInstance;
-  node?: RAGFlowNodeType;
+  node?: FlowNodeType;
   nodeId?: string;
 }
 

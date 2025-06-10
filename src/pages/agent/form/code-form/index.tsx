@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { RAGFlowSelect } from '@/components/ui/select';
+import { FlowSelect } from '@/components/ui/select';
 import { ProgrammingLanguage } from '@/constants/agent';
 import { ICodeForm } from '@/interfaces/database/flow';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -89,7 +89,7 @@ const CodeForm = ({ node }: INextOperatorForm) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <RAGFlowSelect
+                        <FlowSelect
                           {...field}
                           onChange={(val) => {
                             field.onChange(val);
@@ -153,11 +153,11 @@ const CodeForm = ({ node }: INextOperatorForm) => {
                   <FormItem className="flex-1">
                     <FormLabel>Type</FormLabel>
                     <FormControl>
-                      <RAGFlowSelect
+                      <FlowSelect
                         placeholder={t('common.pleaseSelect')}
                         options={TypeOptions}
                         {...field}
-                      ></RAGFlowSelect>
+                      ></FlowSelect>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
