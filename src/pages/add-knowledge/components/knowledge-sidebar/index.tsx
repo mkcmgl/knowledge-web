@@ -14,13 +14,12 @@ import { Avatar, Menu, MenuProps, Space } from 'antd';
 import classNames from 'classnames';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'umi';
+import { useNavigate} from 'umi';
 import { KnowledgeRouteKey } from '../../constant';
-
 import { isEmpty } from 'lodash';
 import { GitGraph } from 'lucide-react';
 import styles from './index.less';
-
+import { cn,  } from '@/lib/utils';
 const KnowledgeSidebar = () => {
   let navigate = useNavigate();
   const activeKey = useSecondPathName();
@@ -115,11 +114,12 @@ const KnowledgeSidebar = () => {
   return (
     <div className={styles.sidebarWrapper}>
       <div className={styles.sidebarTop}>
-        <Space size={8} direction="vertical">
+        <Space size={8} >
           {/* <Avatar size={64} src={knowledgeDetails.avatar} /> */}
           <div className={styles.knowledgeTitle}>{knowledgeDetails.name}</div>
         </Space>
-        <p className={styles.knowledgeDescription}>
+        <p className={cn(
+              'truncate', styles.knowledgeDescription)} >
           {knowledgeDetails.description}
         </p>
       </div>

@@ -170,6 +170,7 @@ const Chunk = () => {
                 {...pagination}
                 total={total}
                 size={'small'}
+                align="end"
                 onChange={onPaginationChange}
               />
             </div>

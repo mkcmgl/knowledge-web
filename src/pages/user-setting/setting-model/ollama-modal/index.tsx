@@ -118,9 +118,10 @@ const OllamaModal = ({
       footer={(originNode: React.ReactNode) => {
         return (
           <Flex justify={'space-between'}>
-            <a href={url} target="_blank" rel="noreferrer">
+            {/* <a href={url} target="_blank" rel="noreferrer">
               {t('ollamaLink', { name: llmFactory })}
-            </a>
+            </a> */}
+            <div></div>
             <Space>{originNode}</Space>
           </Flex>
         );
