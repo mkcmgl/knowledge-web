@@ -9,11 +9,17 @@ import { LabelWordCloud } from './label-word-cloud';
 import { CrossLanguageItem } from '@/components/cross-language-item';
 import { UseKnowledgeGraphItem } from '@/components/use-knowledge-graph-item';
 import styles from './index.less';
+import DOMPurify from 'dompurify';
+import Editor, { loader } from '@monaco-editor/react';
 
+
+
+loader.config({ paths: { vs: '/vs' } });
 type FieldType = {
   similarity_threshold?: number;
   vector_similarity_weight?: number;
   question: string;
+  meta?: string;
 };
 
 interface IProps {
@@ -51,13 +57,49 @@ const TestingControl = ({
           <Rerank></Rerank>
           <UseKnowledgeGraphItem filedName={['use_kg']}></UseKnowledgeGraphItem>
           <CrossLanguageItem name={'cross_languages'}></CrossLanguageItem>
+
+          {/* <Card size="small" title={t('setMetaData')}> */}
+            <Form.Item<FieldType>
+              label={t('setMetaData')}
+              name={'meta'}
+              rules={[{  message: t('testSetMetaDataPlaceholder') },
+              {
+               
+                validator(rule, value) {
+                  try {
+                    JSON.parse(value);
+                    return Promise.resolve();
+                  } catch (error) {
+                    return Promise.reject(
+                      new Error(t('pleaseInputJson')),
+                    );
+                  }
+                },
+              },
+              ]}
+              tooltip={
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(
+                      t('documentMetaTips'),
+                    ),
+                  }}
+                ></div>
+              }
+            >
+              {/* <Input.TextArea autoSize={{ minRows: 8 }}></Input.TextArea> */}
+              <Editor height={200} defaultLanguage="json" theme="vs-dark" />
+            </Form.Item>
+          {/* </Card> */}
           <Card size="small" title={t('testText')}>
             <Form.Item<FieldType>
+              
               name={'question'}
               rules={[{ required: true, message: t('testTextPlaceholder') }]}
             >
               <Input.TextArea autoSize={{ minRows: 8 }}></Input.TextArea>
             </Form.Item>
+
             <Flex justify={'end'}>
               <Button
                 type="primary"
@@ -72,6 +114,7 @@ const TestingControl = ({
           </Card>
         </Form>
       </section>
+      
       <LabelWordCloud></LabelWordCloud>
       {/* <section>
         <div className={styles.historyTitle}>

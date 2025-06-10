@@ -75,7 +75,7 @@ export default {
     },
     knowledgeList: {
       welcome: 'Welcome back',
-      description: 'Which knowledge bases will you use today?',
+      description: 'Please choose to use the knowledge base',
       createKnowledgeBase: 'Create knowledge base',
       name: 'Name',
       namePlaceholder: 'Please input name!',
@@ -182,13 +182,13 @@ export default {
 <b>The meta data is:</b><br>
 <code>
   {
-      "Author": "Alex Dowson",
+      "Author": "mengguolin",
       "Date": "2024-11-12"
   }
 </code><br>
 <b>The prompt will be:</b><br>
 <p>Document: the_name_of_document</p>
-<p>Author: Alex Dowson</p>
+<p>Author: mengguolin</p>
 <p>Date: 2024-11-12</p>
 <p>Relevant fragments as following:</p>
 <ul>

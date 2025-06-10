@@ -75,7 +75,7 @@ export default {
     },
     knowledgeList: {
       welcome: '欢迎回来',
-      description: '今天我们要使用哪个知识库？',
+      description: '请选择使用知识库',
       createKnowledgeBase: '创建知识库',
       name: '名称',
       namePlaceholder: '请输入名称',
@@ -120,6 +120,27 @@ export default {
         '我们使用混合相似性评分来评估两行文本之间的距离。它是加权关键字相似性和矢量余弦相似性或rerank得分（0〜1）。两个权重的总和为1.0。',
       testText: '测试文本',
       testTextPlaceholder: '请输入您的问题！',
+      testSetMetaDataPlaceholder: '请输入元数据',
+       pleaseInputJson: '请输入JSON',
+        documentMetaTips: `<p>元数据为 Json 格式（不可搜索）。如果提示中包含此文档的任何块，它将被添加到 LLM 的提示中。</p>
+<p>示例：</p>
+<b>元数据为：</b><br>
+<code>
+{
+“作者”：“mengguolin”，
+“日期”：“2024-11-12”
+}
+</code><br>
+<b>提示将为：</b><br>
+<p>文档：the_name_of_document</p>
+<p>作者：mengguolin</p>
+<p>日期：2024-11-12</p>
+<p>相关片段如下：</p>
+<ul>
+<li> 这是块内容....</li>
+<li> 这是块内容....</li>
+</ul>
+`,
       testingLabel: '测试',
       similarity: '混合相似度',
       termSimilarity: '关键词相似度',
@@ -180,13 +201,13 @@ export default {
 <b>元数据为：</b><br>
 <code>
 {
-“作者”：“Alex Dowson”，
+“作者”：“mengguolin”，
 “日期”：“2024-11-12”
 }
 </code><br>
 <b>提示将为：</b><br>
 <p>文档：the_name_of_document</p>
-<p>作者：Alex Dowson</p>
+<p>作者：mengguolin</p>
 <p>日期：2024-11-12</p>
 <p>相关片段如下：</p>
 <ul>
