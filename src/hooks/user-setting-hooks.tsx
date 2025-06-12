@@ -106,7 +106,7 @@ export const useSelectParserList = (): Array<{
       return { value: arr[0], label: arr[1] };
     });
   }, [tenantInfo]);
-
+  console.log(`parserList`,parserList)
   return parserList;
 };
 

@@ -60,7 +60,10 @@ export const useGetChunkHighlights = (
 
 export const useFetchNextDocumentList = () => {
   const { knowledgeId } = useGetKnowledgeSearchParams();
-  const { searchString, handleInputChange } = useHandleSearchChange();
+  const [searchFilters, setSearchFilters] = useState({
+    keywords: '',
+    parser_id: '',
+  });
   const { pagination, setPagination } = useGetPaginationWithRouter();
   const { id } = useParams();
 
@@ -68,14 +71,15 @@ export const useFetchNextDocumentList = () => {
     docs: IDocumentInfo[];
     total: number;
   }>({
-    queryKey: ['fetchDocumentList', searchString, pagination],
+    queryKey: ['fetchDocumentList', searchFilters, pagination],
     initialData: { docs: [], total: 0 },
     refetchInterval: 15000,
     enabled: !!knowledgeId || !!id,
     queryFn: async () => {
       const ret = await listDocument({
         kb_id: knowledgeId || id,
-        keywords: searchString,
+        keywords: searchFilters.keywords,
+        parser_id: searchFilters.parser_id,
         page_size: pagination.pageSize,
         page: pagination.current,
       });
@@ -90,20 +94,26 @@ export const useFetchNextDocumentList = () => {
     },
   });
 
-  const onInputChange: React.ChangeEventHandler<HTMLInputElement> = useCallback(
-    (e) => {
-      setPagination({ page: 1 });
-      handleInputChange(e);
-    },
-    [handleInputChange, setPagination],
-  );
+  const handleSearch = useCallback((filters: { keywords: string; parser_id: string }) => {
+    setSearchFilters(filters);
+    setPagination({ page: 1 });
+  }, [setPagination]);
+
+  const handleReset = useCallback(() => {
+    setSearchFilters({
+      keywords: '',
+      parser_id: '',
+    });
+    setPagination({ page: 1 });
+  }, [setPagination]);
 
   return {
     loading,
-    searchString,
+    searchFilters,
     documents: data.docs,
     pagination: { ...pagination, total: data?.total },
-    handleInputChange: onInputChange,
+    handleSearch,
+    handleReset,
     setPagination,
   };
 };

@@ -10,12 +10,9 @@ import {
   useSetNextDocumentStatus,
 } from '@/hooks/document-hooks';
 import { IDocumentInfo } from '@/interfaces/database/document';
-import {
-  DownOutlined,
-  SearchOutlined,
-} from '@ant-design/icons';
-import { Button, Dropdown, Flex, Input, MenuProps, Space } from 'antd';
-import { useCallback, useMemo } from 'react';
+import { ReloadOutlined } from '@ant-design/icons';
+import { Button, Flex, Form, Input, Select, Space } from 'antd';
+import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { RunningStatus } from './constant';
 
@@ -25,23 +22,36 @@ interface IProps {
   selectedRowKeys: string[];
   showWebCrawlModal(): void;
   showDocumentUploadModal(): void;
-  searchString: string;
-  handleInputChange: React.ChangeEventHandler<HTMLInputElement>;
   documents: IDocumentInfo[];
+  onSearch: (filters: { keywords: string; parser_id: string }) => void;
+  onReset: () => void;
+  parserList: { label: string; value: string }[];
 }
 
 const DocumentToolbar = ({
-  searchString,
   selectedRowKeys,
-  handleInputChange,
   documents,
+  onSearch,
+  onReset,
+  parserList,
 }: IProps) => {
   const { t } = useTranslate('knowledgeDetails');
   const { removeDocument } = useRemoveNextDocument();
   const showDeleteConfirm = useShowDeleteConfirm();
   const { runDocumentByIds } = useRunNextDocument();
   const { setDocumentStatus } = useSetNextDocumentStatus();
+  const [form] = Form.useForm();
 
+  const handleSearch = () => {
+    const values = form.getFieldsValue();
+    console.log('搜索条件：', values);
+    onSearch(values);
+  };
+
+  const handleReset = () => {
+    form.resetFields();
+    onReset();
+  };
 
   const handleDelete = useCallback(() => {
     const deletedKeys = selectedRowKeys.filter(
@@ -167,6 +177,39 @@ const DocumentToolbar = ({
 
   return (
     <div className={styles.filter}>
+      <Flex justify="space-between" align="center" className="w-full">
+        <Form
+          form={form}
+          layout="inline"
+          className="flex-1"
+        >
+          <Space size="middle" align="center">
+            <Form.Item name="keywords" label={t('fileName')}>
+              <Input
+                placeholder={t('pleaseInputFileName')}
+                style={{ width: 200 }}
+                allowClear
+              />
+            </Form.Item>
+            <Form.Item name="parser_id" label={t('chunkMethod')}>
+              <Select
+                placeholder={t('pleaseSelectChunkMethod')}
+                style={{ width: 200 }}
+                allowClear
+                options={parserList}
+              />
+            </Form.Item>
+          </Space>
+        </Form>
+        <Space>
+          <Button type="primary" onClick={handleSearch}>
+            {t('search')}
+          </Button>
+          <Button onClick={handleReset} icon={<ReloadOutlined />}>
+            {t('reset')}
+          </Button>
+        </Space>
+      </Flex>
       {/* 批量 */}
       {/* <Dropdown
         menu={{ items }}
@@ -181,23 +224,6 @@ const DocumentToolbar = ({
           </Space>
         </Button>
       </Dropdown> */}
-      <div></div>
-      <Space>
-        <Input
-          placeholder={t('searchFiles')}
-          value={searchString}
-          style={{ width: 220 }}
-          allowClear
-          onChange={handleInputChange}
-          prefix={<SearchOutlined />}
-        />
-
-        {/* <Dropdown menu={{ items: actionItems }} trigger={['click']}>
-          <Button type="primary" icon={<PlusOutlined />}>
-            {t('addFile')}
-          </Button>
-        </Dropdown> */}
-      </Space>
     </div>
   );
 };

@@ -48,15 +48,15 @@ import { RunningStatus } from '@/constants/knowledge';
 import { IDocumentInfo } from '@/interfaces/database/document';
 import { formatDate } from '@/utils/date';
 import { CircleHelp } from 'lucide-react';
-import { useMemo } from 'react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import styles from './index.less';
 import { SetMetaModal } from './set-meta-modal';
 
 const { Text } = Typography;
 
 const KnowledgeFile = () => {
-  const { searchString, documents, pagination, handleInputChange } =
-    useFetchNextDocumentList();
+  const { documents, pagination, setPagination, handleSearch, handleReset } = useFetchNextDocumentList();
+  const [filteredDocuments, setFilteredDocuments] = useState<IDocumentInfo[]>([]);
   const parserList = useSelectParserList();
   const { setDocumentStatus } = useSetNextDocumentStatus();
   const { toChunk } = useNavigateToOtherPage();
@@ -178,7 +178,7 @@ const KnowledgeFile = () => {
       ),
       dataIndex: 'run',
       key: 'run',
-      filters: Object.entries(RunningStatus).map(([key, value]) => ({
+      filters: Object.entries(RunningStatus).map(([, value]) => ({
         text: t(`runningStatus${value}`),
         value: value,
       })),
@@ -248,6 +248,10 @@ const KnowledgeFile = () => {
     ];
   }, [showDocumentUploadModal, showCreateModal, t]);
 
+  useEffect(() => {
+    setFilteredDocuments(documents);
+  }, [documents]);
+
   return (
     <div className={styles.datasetWrapper}>
       <div className={styles.topFex}>
@@ -269,17 +273,16 @@ const KnowledgeFile = () => {
         showCreateModal={showCreateModal}
         showWebCrawlModal={showWebCrawlUploadModal}
         showDocumentUploadModal={showDocumentUploadModal}
-        searchString={searchString}
-        handleInputChange={handleInputChange}
         documents={documents}
+        onSearch={handleSearch}
+        onReset={handleReset}
+        parserList={parserList}
       ></DocumentToolbar>
       <Table
         rowKey="id"
         columns={finalColumns}
         dataSource={documents}
         pagination={pagination}
-        // 多选框
-        // rowSelection={rowSelection}
         className={styles.documentTable}
         scroll={{ scrollToFirstRowOnChange: true, x: 1300 }}
       />
