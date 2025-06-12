@@ -115,37 +115,40 @@ const TestingResult = ({
           },
         ]}
       />
-      <Flex
-        gap={'large'}
-        vertical
-        flex={1}
-        className={styles.selectFilesCollapse}
-      >
-        {isSuccess && chunks.length > 0 ? (
-          chunks?.map((x) => (
-            <Card key={x.chunk_id} title={<ChunkTitle item={x}></ChunkTitle>}>
-              <div className="flex justify-center">
-                {showImage(x.doc_type_kwd) && (
-                  <Image
-                    id={x.image_id}
-                    className={'object-contain max-h-[30vh] w-full text-center'}
-                    src={`${api_host}/document/image/${x.image_id}`}
-                  ></Image>
-                )}
-              </div>
-              <div className="pt-4">{x.content_with_weight}</div>
-            </Card>
-          ))
-        ) : isSuccess && chunks.length === 0 ? (
-          <Empty></Empty>
-        ) : null}
-      </Flex>
-      <Pagination
-        {...pagination}
-        size={'small'}
-        total={total}
-        onChange={onChange}
-      />
+      <div className={styles.resultContent}>
+        <Flex
+          gap={'large'}
+          vertical
+          flex={1}
+        >
+          {isSuccess && chunks.length > 0 ? (
+            chunks?.map((x) => (
+              <Card key={x.chunk_id} title={<ChunkTitle item={x}></ChunkTitle>}>
+                <div className="flex justify-center">
+                  {showImage(x.doc_type_kwd) && (
+                    <Image
+                      id={x.image_id}
+                      className={'object-contain max-h-[30vh] w-full text-center'}
+                      src={`${api_host}/document/image/${x.image_id}`}
+                    ></Image>
+                  )}
+                </div>
+                <div className="pt-4">{x.content_with_weight}</div>
+              </Card>
+            ))
+          ) : isSuccess && chunks.length === 0 ? (
+            <Empty></Empty>
+          ) : null}
+        </Flex>
+      </div>
+      <div className={styles.paginationWrapper}>
+        <Pagination
+          {...pagination}
+          size={'small'}
+          total={total}
+          onChange={onChange}
+        />
+      </div>
     </section>
   );
 };

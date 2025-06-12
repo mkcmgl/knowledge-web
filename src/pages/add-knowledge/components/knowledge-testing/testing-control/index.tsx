@@ -2,7 +2,7 @@ import Rerank from '@/components/rerank';
 import SimilaritySlider from '@/components/similarity-slider';
 import { useTranslate } from '@/hooks/common-hooks';
 import { useChunkIsTesting } from '@/hooks/knowledge-hooks';
-import { Button, Card, Divider, Flex, Form, Input } from 'antd';
+import { Button, Card, Divider, Flex, Form, Input, InputNumber } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { LabelWordCloud } from './label-word-cloud';
 
@@ -47,31 +47,107 @@ const TestingControl = ({
   return (
     <section className={styles.testingControlWrapper}>
       <div>
-        <b>{t('testing')}</b>
+
+        <Flex justify={'space-between'} align={'center'} gap={'small'}>
+          <b>{t('testing')}</b>
+          <Button
+            type="primary"
+            size="small"
+            onClick={onClick}
+            disabled={buttonDisabled}
+            loading={loading}
+          >
+            {t('testingLabel')}
+          </Button>
+        </Flex>
       </div>
       <p>{t('testingDescription')}</p>
+
       <Divider></Divider>
       <section>
         <Form name="testing" layout="vertical" form={form}>
-          <SimilaritySlider isTooltipShown></SimilaritySlider>
-          <Rerank></Rerank>
-          {/* <UseKnowledgeGraphItem filedName={['use_kg']}></UseKnowledgeGraphItem> */}
-          {/* <CrossLanguageItem name={'cross_languages'}></CrossLanguageItem> */}
+          <div className={styles.formContent}>
+            <Form.Item
+              label={t('similarityThreshold')}
+              name={'similarity_threshold'}
+              tooltip={t('similarityThresholdTip')}
+              initialValue={0.2}
+              rules={[
+                { required: true, message: t('pleaseInput') },
+                {
+                  validator: (_, value) => {
+                    if (value < 0 || value > 1) {
+                      return Promise.reject('请输入0-1之间的数值');
+                    }
+                    if (Math.round(value * 10) % 1 !== 0) {
+                      return Promise.reject('请输入0.1的倍数，如0.1、0.2、0.3等');
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
+            >
+              <InputNumber
+                min={0}
+                max={1}
+                step={0.1}
+                precision={1}
+                style={{ width: '100%' }}
+              />
+            </Form.Item>
+            <Form.Item
+              label={t('vectorSimilarityWeight')}
+              name={'vector_similarity_weight'}
+              initialValue={0.7}
+              tooltip={t('vectorSimilarityWeightTip')}
+              rules={[
+                { required: true, message: t('pleaseInput') },
+                {
+                  validator: (_, value) => {
+                    if (value < 0 || value > 1) {
+                      return Promise.reject('请输入0-1之间的数值');
+                    }
+                    if (Math.round(value * 10) % 1 !== 0) {
+                      return Promise.reject('请输入0.1的倍数，如0.1、0.2、0.3等');
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
+            >
+              <InputNumber
+                min={0}
+                max={1}
+                step={0.1}
+                precision={1}
+                style={{ width: '100%' }}
+              />
+            </Form.Item>
 
-          {/* <Card size="small" title={t('setMetaData')}> */}
+            <Form.Item<FieldType>
+              label={t('testText')}
+              name={'question'}
+              rules={[{ required: true, message: t('testTextPlaceholder') }]}
+            >
+              <Input.TextArea
+                placeholder={t('testTextPlaceholder')}
+                allowClear
+                // showCount maxLength={100}
+                // autoSize={{ minRows: 8 }}
+                style={{ height: 34, resize: 'vertical' }}
+              ></Input.TextArea>
+            </Form.Item>
             <Form.Item<FieldType>
               label={t('setMetaData')}
               name={'meta'}
-              rules={[{  message: t('testSetMetaDataPlaceholder') },
+              rules={[{ message: t('testSetMetaDataPlaceholder') },
               {
-               
                 validator(rule, value) {
                   try {
                     JSON.parse(value);
                     return Promise.resolve();
                   } catch (error) {
                     return Promise.reject(
-                      new Error(t('pleaseInputJson')),
                     );
                   }
                 },
@@ -87,34 +163,14 @@ const TestingControl = ({
                 ></div>
               }
             >
-              {/* <Input.TextArea autoSize={{ minRows: 8 }}></Input.TextArea> */}
               <Editor height={200} defaultLanguage="json" theme="vs-dark" />
             </Form.Item>
-          {/* </Card> */}
-          <Card size="small" title={t('testText')}>
-            <Form.Item<FieldType>
-              
-              name={'question'}
-              rules={[{ required: true, message: t('testTextPlaceholder') }]}
-            >
-              <Input.TextArea autoSize={{ minRows: 8 }}></Input.TextArea>
-            </Form.Item>
 
-            <Flex justify={'end'}>
-              <Button
-                type="primary"
-                size="small"
-                onClick={onClick}
-                disabled={buttonDisabled}
-                loading={loading}
-              >
-                {t('testingLabel')}
-              </Button>
-            </Flex>
-          </Card>
+
+          </div>
         </Form>
       </section>
-      
+
       <LabelWordCloud></LabelWordCloud>
       {/* <section>
         <div className={styles.historyTitle}>
