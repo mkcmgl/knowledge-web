@@ -55,8 +55,8 @@ const TestingControl = ({
         <Form name="testing" layout="vertical" form={form}>
           <SimilaritySlider isTooltipShown></SimilaritySlider>
           <Rerank></Rerank>
-          <UseKnowledgeGraphItem filedName={['use_kg']}></UseKnowledgeGraphItem>
-          <CrossLanguageItem name={'cross_languages'}></CrossLanguageItem>
+          {/* <UseKnowledgeGraphItem filedName={['use_kg']}></UseKnowledgeGraphItem> */}
+          {/* <CrossLanguageItem name={'cross_languages'}></CrossLanguageItem> */}
 
           {/* <Card size="small" title={t('setMetaData')}> */}
             <Form.Item<FieldType>
