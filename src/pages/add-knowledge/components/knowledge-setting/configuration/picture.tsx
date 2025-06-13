@@ -9,8 +9,8 @@ import { ChunkMethodItem, EmbeddingModelItem } from './common-item';
 export function PictureConfiguration() {
   return (
     <>
-      <EmbeddingModelItem></EmbeddingModelItem>
       <ChunkMethodItem></ChunkMethodItem>
+      <EmbeddingModelItem></EmbeddingModelItem>
 
       <PageRank></PageRank>
 

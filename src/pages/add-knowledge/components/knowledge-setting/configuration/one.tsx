@@ -11,9 +11,9 @@ import { ChunkMethodItem, EmbeddingModelItem } from './common-item';
 export function OneConfiguration() {
   return (
     <>
+      <ChunkMethodItem></ChunkMethodItem>
       <LayoutRecognize></LayoutRecognize>
       <EmbeddingModelItem></EmbeddingModelItem>
-      <ChunkMethodItem></ChunkMethodItem>
 
       <PageRank></PageRank>
 

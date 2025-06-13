@@ -11,8 +11,8 @@ import { ChunkMethodItem, EmbeddingModelItem } from './common-item';
 export function EmailConfiguration() {
   return (
     <>
-      <EmbeddingModelItem></EmbeddingModelItem>
       <ChunkMethodItem></ChunkMethodItem>
+      <EmbeddingModelItem></EmbeddingModelItem>
 
       <PageRank></PageRank>
 

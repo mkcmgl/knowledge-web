@@ -5,8 +5,8 @@ import { ChunkMethodItem, EmbeddingModelItem } from './common-item';
 export function ResumeConfiguration() {
   return (
     <>
-      <EmbeddingModelItem></EmbeddingModelItem>
       <ChunkMethodItem></ChunkMethodItem>
+      <EmbeddingModelItem></EmbeddingModelItem>
 
       <PageRank></PageRank>
 

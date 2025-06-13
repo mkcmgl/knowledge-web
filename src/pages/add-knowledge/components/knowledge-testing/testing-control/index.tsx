@@ -57,7 +57,17 @@ const TestingControl = ({
 
       <Divider></Divider>
       <section>
-        <Form name="testing" layout="vertical" form={form}>
+        <Form
+          name="testing"
+          layout="horizontal"
+          form={form}
+          // labelCol={{ span: 4 }}
+          // wrapperCol={{ span: 20 }}
+          labelCol={{ flex: '160px' }}
+          labelWrap
+          wrapperCol={{ flex: 1 }}
+          labelAlign="left"
+        >
           <div className={styles.formContent}>
             <Form.Item
               label={t('similarityThreshold')}
@@ -78,6 +88,7 @@ const TestingControl = ({
                   },
                 },
               ]}
+
             >
               <InputNumber
                 min={0}
@@ -106,6 +117,7 @@ const TestingControl = ({
                   },
                 },
               ]}
+
             >
               <InputNumber
                 min={0}
@@ -120,15 +132,16 @@ const TestingControl = ({
               label={t('testText')}
               name={'question'}
               rules={[{ required: true, message: t('testTextPlaceholder') }]}
+
             >
               <Input.TextArea
                 placeholder={t('testTextPlaceholder')}
                 allowClear
-                // showCount maxLength={100}
-                // autoSize={{ minRows: 8 }}
                 style={{ height: 34, resize: 'vertical' }}
               ></Input.TextArea>
             </Form.Item>
+
+
 
             <Form.Item
               label={t('setMetaData')}
@@ -139,6 +152,7 @@ const TestingControl = ({
                   }}
                 />
               }
+
             >
               <Form.List name="metaList">
                 {(fields, { add, remove }) => (
@@ -146,6 +160,7 @@ const TestingControl = ({
                     {fields.map(({ key, name, ...restField }) => (
                       <Flex key={key} style={{ marginBottom: 8, width: '100%' }} align="center" gap={8}>
                         <Form.Item
+                          label="字段名"
                           {...restField}
                           name={[name, 'key']}
                           rules={[
@@ -155,20 +170,25 @@ const TestingControl = ({
                             }
                           ]}
                           style={{ flex: 1, marginBottom: 0 }}
+                          labelCol={{ span: 6 }}
+                          wrapperCol={{ span: 18 }}
                         >
                           <Input placeholder="请输入字段名" allowClear />
                         </Form.Item>
                         <Form.Item
                           {...restField}
+                          label="数据"
                           name={[name, 'value']}
-                          rules={[{ required: true, message: '请输入数据' }]}
+                          rules={[{ message: '请输入数据' }]}
                           style={{ flex: 1, marginBottom: 0 }}
+                          labelCol={{ span: 6 }}
+                          wrapperCol={{ span: 18 }}
                         >
                           <Input placeholder="请输入数据" allowClear />
                         </Form.Item>
                         <MinusCircleOutlined
                           onClick={() => remove(name)}
-                          style={{ cursor: 'pointer' }}
+                          style={{ cursor: 'pointer', color: '#ff4d4f' }}
                         />
                       </Flex>
                     ))}

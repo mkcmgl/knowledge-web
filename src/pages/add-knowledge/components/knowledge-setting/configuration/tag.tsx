@@ -4,8 +4,8 @@ import { ChunkMethodItem, EmbeddingModelItem } from './common-item';
 export function TagConfiguration() {
   return (
     <>
-      <EmbeddingModelItem></EmbeddingModelItem>
       <ChunkMethodItem></ChunkMethodItem>
+      <EmbeddingModelItem></EmbeddingModelItem>
 
       <PageRank></PageRank>
     </>

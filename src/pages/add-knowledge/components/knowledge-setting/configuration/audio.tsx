@@ -11,8 +11,8 @@ import { ChunkMethodItem, EmbeddingModelItem } from './common-item';
 export function AudioConfiguration() {
   return (
     <>
-      <EmbeddingModelItem></EmbeddingModelItem>
       <ChunkMethodItem></ChunkMethodItem>
+      <EmbeddingModelItem></EmbeddingModelItem>
 
       <PageRank></PageRank>
 
