@@ -210,6 +210,7 @@ export default {
     },
     knowledgeConfiguration: {
       titleDescription: '在这里更新您的知识库详细信息，尤其是切片方法。',
+      viewDetails:'查看切片详情',
       name: '知识库名称',
       photo: '知识库图片',
       description: '描述',

@@ -2,7 +2,7 @@ import Rerank from '@/components/rerank';
 import SimilaritySlider from '@/components/similarity-slider';
 import { useTranslate } from '@/hooks/common-hooks';
 import { useChunkIsTesting } from '@/hooks/knowledge-hooks';
-import { Button, Card, Divider, Flex, Form, Input, InputNumber } from 'antd';
+import { Button, Divider, Flex, Form, Input, InputNumber, Space, message } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { LabelWordCloud } from './label-word-cloud';
 
@@ -10,6 +10,7 @@ import { CrossLanguageItem } from '@/components/cross-language-item';
 import { UseKnowledgeGraphItem } from '@/components/use-knowledge-graph-item';
 import styles from './index.less';
 import DOMPurify from 'dompurify';
+import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import Editor, { loader } from '@monaco-editor/react';
 
 
@@ -40,28 +41,19 @@ const TestingControl = ({
   const buttonDisabled =
     !question || (typeof question === 'string' && question.trim() === '');
 
-  const onClick = () => {
+  const onClick = async () => {
+    // 调用原有的handleTesting函数
     handleTesting(selectedDocumentIds);
   };
 
   return (
     <section className={styles.testingControlWrapper}>
       <div>
-
-        <Flex justify={'space-between'} align={'center'} gap={'small'}>
-          <b>{t('testing')}</b>
-          <Button
-            type="primary"
-            size="small"
-            onClick={onClick}
-            disabled={buttonDisabled}
-            loading={loading}
-          >
-            {t('testingLabel')}
-          </Button>
+        <Flex justify='center' align='center' >
+          <h3>{t('testing')}</h3>
         </Flex>
       </div>
-      <p>{t('testingDescription')}</p>
+      <p className={styles.testingDescription}>{t('testingDescription')}</p>
 
       <Divider></Divider>
       <section>
@@ -137,36 +129,79 @@ const TestingControl = ({
                 style={{ height: 34, resize: 'vertical' }}
               ></Input.TextArea>
             </Form.Item>
-            <Form.Item<FieldType>
+
+            <Form.Item
               label={t('setMetaData')}
-              name={'meta'}
-              rules={[{ message: t('testSetMetaDataPlaceholder') },
-              {
-                validator(rule, value) {
-                  try {
-                    JSON.parse(value);
-                    return Promise.resolve();
-                  } catch (error) {
-                    return Promise.reject(
-                    );
-                  }
-                },
-              },
-              ]}
               tooltip={
                 <div
                   dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(
-                      t('documentMetaTips'),
-                    ),
+                    __html: DOMPurify.sanitize(t('documentMetaTips')),
                   }}
-                ></div>
+                />
               }
             >
-              <Editor height={200} defaultLanguage="json" theme="vs-dark" />
+              <Form.List name="metaList">
+                {(fields, { add, remove }) => (
+                  <>
+                    {fields.map(({ key, name, ...restField }) => (
+                      <Flex key={key} style={{ marginBottom: 8, width: '100%' }} align="center" gap={8}>
+                        <Form.Item
+                          {...restField}
+                          name={[name, 'key']}
+                          rules={[
+                            {
+                              pattern: /^[a-zA-Z]*$/,
+                              message: '字段名只能输入英文字母'
+                            }
+                          ]}
+                          style={{ flex: 1, marginBottom: 0 }}
+                        >
+                          <Input placeholder="请输入字段名" allowClear />
+                        </Form.Item>
+                        <Form.Item
+                          {...restField}
+                          name={[name, 'value']}
+                          rules={[{ required: true, message: '请输入数据' }]}
+                          style={{ flex: 1, marginBottom: 0 }}
+                        >
+                          <Input placeholder="请输入数据" allowClear />
+                        </Form.Item>
+                        <MinusCircleOutlined
+                          onClick={() => remove(name)}
+                          style={{ cursor: 'pointer' }}
+                        />
+                      </Flex>
+                    ))}
+                    <Form.Item>
+                      <Button
+                        type="dashed"
+                        onClick={() => {
+                          if (fields.length < 50) {
+                            add();
+                          } else {
+                            message.warning('最多只能添加50行数据');
+                          }
+                        }}
+                        block
+                        icon={<PlusOutlined />}
+                      >
+                        添加元数据
+                      </Button>
+                    </Form.Item>
+                  </>
+                )}
+              </Form.List>
             </Form.Item>
 
-
+            <Button
+              type="primary"
+              onClick={onClick}
+              disabled={buttonDisabled}
+              loading={loading}
+              className={styles.testingButton}
+            >
+              {t('testingLabel')}
+            </Button>
           </div>
         </Form>
       </section>

@@ -5,10 +5,10 @@
 .preset {
   display: flex;
   height: 80px;
-  background-color: rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
   padding: 5px;
   margin-bottom: 24px;
+  background-color: rgba(0, 0, 0, .1);
+  border-radius: 5px;
 
   .left {
     flex: 1;
@@ -16,20 +16,58 @@
 
   .right {
     width: 100px;
-    border-left: 1px solid rgba(0, 0, 0, 0.4);
-    margin: 10px 0px;
     padding: 5px;
+    margin: 10px 0;
+    border-left: 1px solid rgba(0, 0, 0, .4);
   }
 }
 
 .configurationWrapper {
   padding: 0 52px;
+  .contentTop {
+    margin: 0 !important;
+    text-align: center;
+  }
   .buttonWrapper {
-    text-align: right;
+    padding-top: 20px;
+    // position: absolute;
+    // right: 0;
+    // bottom: 0;
+    // left: 0;
+    margin: 0;
+    text-align: center;
+  }
+  .rightContent {
+    overflow-y: auto;
+    height: calc(100vh - 320px);
+    min-height: 500px;
   }
   .variableSlider {
     width: 100%;
   }
+}
+
+.configurationContent {
+  width: 100%;
+}
+
+.configurationForm {
+  position: relative;
+  width: 100%;
+}
+
+.formHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+
+  gap: 16px;
+}
+
+.categoryPanel {
+  width: 100%;
+  padding: 24px 0;
 }
 
 .categoryPanelWrapper {
@@ -42,4 +80,10 @@
   .image {
     width: 100%;
   }
+}
+
+.titleDescription {
+  color: darkgrey;
+  font-size: 12px;
+  text-align: center ;
 }

@@ -20,14 +20,37 @@ const KnowledgeTesting = () => {
   const handleTesting = async (documentIds: string[] = []) => {
     try {
       const values = await form.validateFields();
+      
+      // 将元数据转换为JSON格式
+      const metaData: { [key: string]: string } = {};
+      values.metaList?.forEach((item: { key: string; value: string }) => {
+        if (item.key && item.value) {
+          metaData[item.key] = item.value;
+        }
+      });
+      
+      // 将metaData转换为JSON字符串
+      const metaJsonString = JSON.stringify(metaData);
+      
+      // 更新form中的meta字段
+      form.setFieldsValue({ meta: metaJsonString });
+      
+      // 输出所有表单数据
+      console.log('Form Data:', {
+        ...values,
+        meta: metaJsonString
+      });
+
       await Promise.all([
         testChunk({
           ...values,
+          meta: metaJsonString,
           doc_ids: Array.isArray(documentIds) ? documentIds : [],
           vector_similarity_weight: 1 - values.vector_similarity_weight,
         }),
         testChunkAll({
           ...values,
+          meta: metaJsonString,
           doc_ids: [],
           vector_similarity_weight: 1 - values.vector_similarity_weight,
         })

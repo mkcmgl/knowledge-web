@@ -18,9 +18,9 @@ export function NaiveConfiguration() {
   return (
     <section className="space-y-4 mb-4">
       <DatasetConfigurationContainer>
+        <ChunkMethodItem></ChunkMethodItem>
         <LayoutRecognize></LayoutRecognize>
         <EmbeddingModelItem></EmbeddingModelItem>
-        <ChunkMethodItem></ChunkMethodItem>
         <MaxTokenNumber></MaxTokenNumber>
         <Delimiter></Delimiter>
       </DatasetConfigurationContainer>

@@ -2,7 +2,7 @@ import { DocumentParserType } from '@/constants/knowledge';
 import { useTranslate } from '@/hooks/common-hooks';
 import { normFile } from '@/utils/file-util';
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Radio, Space, Upload } from 'antd';
+import { Button, Form, Input, Radio, Space, Upload, Row, Col, } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { useEffect, useMemo, useState } from 'react';
 import {
@@ -24,7 +24,6 @@ import { QAConfiguration } from './qa';
 import { ResumeConfiguration } from './resume';
 import { TableConfiguration } from './table';
 import { TagConfiguration } from './tag';
-
 import styles from '../index.less';
 
 const ConfigurationComponentMap = {
@@ -72,48 +71,53 @@ export const ConfigurationForm = ({ form }: { form: FormInstance }) => {
   }, [knowledgeDetails.parser_id]);
 
   return (
-    <Form form={form} name="validateOnly" layout="vertical" autoComplete="off">
-      <Form.Item name="name" label={t('name')} rules={[{ required: true }]}>
-        <Input />
-      </Form.Item>
-      <Form.Item
-        name="avatar"
-        label={t('photo')}
-        valuePropName="fileList"
-        getValueFromEvent={normFile}
-      >
-        <Upload
-          listType="picture-card"
-          maxCount={1}
-          beforeUpload={() => false}
-          showUploadList={{ showPreviewIcon: false, showRemoveIcon: false }}
-        >
-          <button style={{ border: 0, background: 'none' }} type="button">
-            <PlusOutlined />
-            <div style={{ marginTop: 8 }}>{t('upload')}</div>
-          </button>
-        </Upload>
-      </Form.Item>
-      <Form.Item name="description" label={t('description')}>
-        <Input />
-      </Form.Item>
-      <Form.Item
-        name="permission"
-        label={t('permissions')}
-        tooltip={t('permissionsTip')}
-        rules={[{ required: true }]}
-      >
-        <Radio.Group>
-          <Radio value="me">{t('me')}</Radio>
-          <Radio value="team">{t('team')}</Radio>
-        </Radio.Group>
-      </Form.Item>
+    <Form form={form} className={styles.configurationForm} name="validateOnly" layout="vertical" autoComplete="off">
+      <Row gutter={[32, 0]}>
+        <Col span={12}>
+          <Form.Item name="name" label={t('name')} rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="avatar"
+            label={t('photo')}
+            valuePropName="fileList"
+            getValueFromEvent={normFile}
+          >
+            <Upload
+              listType="picture-card"
+              maxCount={1}
+              beforeUpload={() => false}
+              showUploadList={{ showPreviewIcon: false, showRemoveIcon: false }}
+            >
+              <button style={{ border: 0, background: 'none' }} type="button">
+                <PlusOutlined />
+                <div style={{ marginTop: 8 }}>{t('upload')}</div>
+              </button>
+            </Upload>
+          </Form.Item>
+          <Form.Item name="description" label={t('description')}>
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="permission"
+            label={t('permissions')}
+            tooltip={t('permissionsTip')}
+            rules={[{ required: true }]}
+          >
+            <Radio.Group>
+              <Radio value="me">{t('me')}</Radio>
+              <Radio value="team">{t('team')}</Radio>
+            </Radio.Group>
+          </Form.Item>
+        </Col>
+        <Col span={12} className={styles.rightContent}>
+          <ConfigurationComponent></ConfigurationComponent>
+        </Col>
+      </Row>
 
-      <ConfigurationComponent></ConfigurationComponent>
-
-      <Form.Item>
-        <div className={styles.buttonWrapper}>
-          <Space>
+      <Form.Item className={styles.buttonWrapper}>
+        <div >
+          <Space  >
             <Button size={'middle'} onClick={navigateToDataset}>
               {t('cancel')}
             </Button>

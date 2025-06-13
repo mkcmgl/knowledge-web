@@ -1,4 +1,4 @@
-import { Col, Divider, Row, Spin, Typography } from 'antd';
+import { Button, Divider, Modal, Spin, Typography } from 'antd';
 import CategoryPanel from './category-panel';
 import { ConfigurationForm } from './configuration';
 import {
@@ -8,6 +8,7 @@ import {
 
 import { useTranslate } from '@/hooks/common-hooks';
 import styles from './index.less';
+import { useState } from 'react';
 
 const { Title } = Typography;
 
@@ -15,24 +16,41 @@ const Configuration = () => {
   const loading = useSelectKnowledgeDetailsLoading();
   const { form, chunkMethod } = useHandleChunkMethodChange();
   const { t } = useTranslate('knowledgeConfiguration');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <div className={styles.configurationWrapper}>
-      <Title level={5}>
+      <Title className={styles.contentTop} level={4}>
         {t('configuration', { keyPrefix: 'knowledgeDetails' })}
       </Title>
-      <p>{t('titleDescription')}</p>
+      <p className={styles.titleDescription}>{t('titleDescription')}</p>
       <Divider></Divider>
       <Spin spinning={loading}>
-        <Row gutter={32}>
-          <Col span={8}>
-            <ConfigurationForm form={form}></ConfigurationForm>
-          </Col>
-          <Col span={16}>
-            <CategoryPanel chunkMethod={chunkMethod}></CategoryPanel>
-          </Col>
-        </Row>
+        <div className={styles.configurationContent}>
+          <div className={styles.configurationForm}>
+            <div className={styles.formHeader}>
+              <ConfigurationForm form={form}></ConfigurationForm>
+            </div>
+          </div>
+        </div>
       </Spin>
+      <Modal
+        title={t('chunkMethodDetails')}
+        open={isModalOpen}
+        onCancel={handleCancel}
+        footer={null}
+        width={800}
+      >
+        <CategoryPanel chunkMethod={chunkMethod}></CategoryPanel>
+      </Modal>
     </div>
   );
 };
