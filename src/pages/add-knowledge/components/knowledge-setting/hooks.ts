@@ -16,6 +16,7 @@ import { Form, UploadFile } from 'antd';
 import { FormInstance } from 'antd/lib';
 import pick from 'lodash/pick';
 import { useCallback, useEffect, useState } from 'react';
+import { useParams } from 'umi';
 
 export const useSubmitKnowledgeConfiguration = (form: FormInstance) => {
   const { saveKnowledgeConfiguration, loading } = useUpdateKnowledge();
@@ -49,11 +50,19 @@ export function useSelectChunkMethodList() {
 
 export function useSelectEmbeddingModelOptions() {
   const allOptions = useSelectLlmOptionsByModelType();
+  console.log('useSelectEmbeddingModelOptions - allOptions:', allOptions);
   return allOptions[LlmModelType.Embedding];
 }
 
 export function useHasParsedDocument() {
   const { data: knowledgeDetails } = useFetchKnowledgeBaseConfiguration();
+  const { id } = useParams();
+  console.log(`id-----`,id)
+  // 如果是创建新知识库（没有 id），则不禁用选择
+  if (!id) {
+    return false;
+  }
+  
   return knowledgeDetails.chunk_num > 0;
 }
 

@@ -132,7 +132,7 @@ const routes = [
       
              {
         path: '/trial',
-        component: '@/pages/file-manager',
+        component: '@/pages/testing',
       },
       {
         path: '/flow',

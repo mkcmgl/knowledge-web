@@ -70,7 +70,7 @@ export default {
       logout: '登出',
       fileManager: '文件管理',
       intelligentText:'工具集',
-      trial:'命中测试',
+      trial:'检索测试',
       flow: 'Agent',
       search: '搜索',
       welcome: '欢迎来到',
@@ -87,7 +87,7 @@ export default {
     },
     knowledgeDetails: {
       dataset: '数据集',
-      testing: '命中测试',
+      testing: '检索测试',
       configuration: '设置',
       knowledgeGraph: '知识图谱',
       files: '文件',

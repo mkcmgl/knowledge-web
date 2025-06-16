@@ -2,18 +2,16 @@ import { useShowDeleteConfirm, useTranslate } from '@/hooks/common-hooks';
 import { useRemoveNextDocument } from '@/hooks/document-hooks';
 import { IDocumentInfo } from '@/interfaces/database/document';
 import { downloadDocument } from '@/utils/file-util';
-import {
-  DeleteOutlined,
-  DownloadOutlined,
-  EditOutlined,
-  ToolOutlined,
-} from '@ant-design/icons';
+
 import { Button, Dropdown, MenuProps, Space, Tooltip } from 'antd';
 import { isParserRunning } from '../utils';
-
-import { useCallback } from 'react';
+import { useNavigate } from 'umi';
+import { useCallback, useState } from 'react';
 import { DocumentType } from '../constant';
 import styles from './index.less';
+import { KnowledgeRouteKey } from '../constant';
+import { useGetKnowledgeSearchParams } from '@/hooks/route-hook';
+import PreviewModal from '../preview-modal/index';
 
 interface IProps {
   record: IDocumentInfo;
@@ -36,6 +34,8 @@ const ParsingActionCell = ({
   const { removeDocument } = useRemoveNextDocument();
   const showDeleteConfirm = useShowDeleteConfirm();
   const isVirtualDocument = record.type === DocumentType.Virtual;
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const [previewDocId, setPreviewDocId] = useState<string>('');
 
   const onRmDocument = () => {
     if (!isRunning) {
@@ -73,6 +73,37 @@ const ParsingActionCell = ({
     showSetMetaModal();
   }, [setRecord, showSetMetaModal]);
 
+  const onShowPreviewModal = (docId: string) => {
+    setPreviewDocId(docId);
+    setPreviewVisible(true);
+  };
+
+  const hidePreviewModal = () => {
+    setPreviewVisible(false);
+    setPreviewDocId('');
+  };
+
+  const useNavigateToOtherPage = () => {
+    const navigate = useNavigate();
+    const { knowledgeId } = useGetKnowledgeSearchParams();
+
+    const linkToUploadPage = useCallback(() => {
+      navigate(`/knowledge/dataset/upload?id=${knowledgeId}`);
+    }, [navigate, knowledgeId]);
+
+    const toChunk = useCallback(
+      (id: string) => {
+        navigate(
+          `/knowledge/${KnowledgeRouteKey.Dataset}/chunk?id=${knowledgeId}&doc_id=${id}`,
+        );
+      },
+      [navigate, knowledgeId],
+    );
+
+    return { linkToUploadPage, toChunk };
+  };
+
+  const { toChunk } = useNavigateToOtherPage();
   const chunkItems: MenuProps['items'] = [
     {
       key: '1',
@@ -95,35 +126,47 @@ const ParsingActionCell = ({
         </div>
       ),
     },
+    {
+      key: '3',
+      label: (
+        <div className="flex flex-col">
+          <Button
+            type="link"
+            size='small'
+            disabled={isRunning}
+            onClick={onShowRenameModal}
+            className={styles.iconButton}
+          >
+            {t('rename', { keyPrefix: 'common' })}
+          </Button>
+        </div>
+      ),
+    },
   ];
 
   return (
-    <Space size={0}>
-      {isVirtualDocument || (
-        <Dropdown
-          menu={{ items: chunkItems }}
-          trigger={['click']}
-          disabled={isRunning || record.parser_id === 'tag'}
-        >
-          <Button type="link" size='small' className={styles.iconButton}>
-            {/* <ToolOutlined size={20} /> */}
-            设置
-          </Button>
-        </Dropdown>
-      )}
-      {/* <Tooltip title={t('rename', { keyPrefix: 'common' })}> */}
+    <>
+      <Space size={0}>
+        {isVirtualDocument || (
+          <Dropdown
+            menu={{ items: chunkItems }}
+            trigger={['click']}
+            disabled={isRunning || record.parser_id === 'tag'}
+          >
+            <Button type="link" size='small' className={styles.iconButton}>
+              设置
+            </Button>
+          </Dropdown>
+        )}
         <Button
           type="link"
           size='small'
           disabled={isRunning}
-          onClick={onShowRenameModal}
+          onClick={() => onShowPreviewModal(record.id)}
           className={styles.iconButton}
         >
-          {/* <EditOutlined size={20} /> */}
-          {t('rename', { keyPrefix: 'common' })}
+          预览
         </Button>
-      {/* </Tooltip> */}
-      {/* <Tooltip title={t('delete', { keyPrefix: 'common' })}> */}
         <Button
           type="link"
           size='small'
@@ -131,12 +174,9 @@ const ParsingActionCell = ({
           onClick={onRmDocument}
           className={styles.iconButton}
         >
-          {/* <DeleteOutlined size={20} /> */}
           {t('delete', { keyPrefix: 'common' })}
         </Button>
-      {/* </Tooltip> */}
-      {isVirtualDocument || (
-        // <Tooltip title={t('download', { keyPrefix: 'common' })}>
+        {isVirtualDocument || (
           <Button
             type="link"
             size='small'
@@ -144,12 +184,16 @@ const ParsingActionCell = ({
             onClick={onDownloadDocument}
             className={styles.iconButton}
           >
-            {/* <DownloadOutlined size={20} /> */}
-             {t('download', { keyPrefix: 'common' })}
+            {t('download', { keyPrefix: 'common' })}
           </Button>
-        // </Tooltip>
-      )}
-    </Space>
+        )}
+      </Space>
+      <PreviewModal
+        visible={previewVisible}
+        hideModal={hidePreviewModal}
+        docId={previewDocId}
+      />
+    </>
   );
 };
 

@@ -63,6 +63,10 @@ export const useFetchNextDocumentList = () => {
   const [searchFilters, setSearchFilters] = useState({
     keywords: '',
     parser_id: '',
+    status: '',
+    run: '',
+    key: '',
+    value: ''
   });
   const { pagination, setPagination } = useGetPaginationWithRouter();
   const { id } = useParams();
@@ -80,6 +84,10 @@ export const useFetchNextDocumentList = () => {
         kb_id: knowledgeId || id,
         keywords: searchFilters.keywords,
         parser_id: searchFilters.parser_id,
+        status: searchFilters.status,
+        run: searchFilters.run,
+        key: searchFilters.key,
+        value: searchFilters.value,
         page_size: pagination.pageSize,
         page: pagination.current,
       });

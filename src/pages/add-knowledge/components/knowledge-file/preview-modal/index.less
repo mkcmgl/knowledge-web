@@ -1,0 +1,95 @@
+.previewModal {
+  :global {
+    .ant-modal-body {
+      overflow: hidden;
+      height: 70vh;
+      padding: 0;
+    }
+  }
+}
+
+.chunkPage {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px;
+}
+
+.pageWrapper {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+}
+
+.pagePdfWrapper {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  width: 50%;
+}
+
+.pageContent {
+  overflow-y: auto;
+  height: calc(100% - 40px);
+  padding: 16px;
+}
+
+.chunkContainer {
+  width: 100%;
+}
+
+.chunkOtherContainer {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.spin {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.pageFooter {
+  padding: 8px 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.documentPreview {
+  overflow: hidden;
+  width: 50%;
+  height: 100%;
+  border-left: 1px solid #f0f0f0;
+}
+
+.textContent {
+  overflow-y: auto;
+  height: 100%;
+  padding: 16px;
+}
+
+.textItem {
+  padding: 16px;
+  margin-bottom: 24px;
+  background: #f5f5f5;
+  border-radius: 8px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.textTitle {
+  margin-bottom: 8px;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.textBody {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.6;
+  word-break: break-all;
+  white-space: pre-wrap;
+}

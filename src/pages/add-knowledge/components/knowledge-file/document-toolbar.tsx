@@ -12,7 +12,7 @@ import {
 import { IDocumentInfo } from '@/interfaces/database/document';
 import { ReloadOutlined } from '@ant-design/icons';
 import { Button, Flex, Form, Input, Select, Space } from 'antd';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { RunningStatus } from './constant';
 
@@ -23,9 +23,17 @@ interface IProps {
   showWebCrawlModal(): void;
   showDocumentUploadModal(): void;
   documents: IDocumentInfo[];
-  onSearch: (filters: { keywords: string; parser_id: string }) => void;
+  onSearch: (filters: { 
+    keywords: string; 
+    parser_id: string;
+    status: string;
+    run: string;
+    key: string;
+    value: string;
+  }) => void;
   onReset: () => void;
   parserList: { label: string; value: string }[];
+  onFilteredDocumentsChange: (documents: IDocumentInfo[]) => void;
 }
 
 const DocumentToolbar = ({
@@ -34,6 +42,7 @@ const DocumentToolbar = ({
   onSearch,
   onReset,
   parserList,
+  onFilteredDocumentsChange,
 }: IProps) => {
   const { t } = useTranslate('knowledgeDetails');
   const { removeDocument } = useRemoveNextDocument();
@@ -45,6 +54,8 @@ const DocumentToolbar = ({
   const handleSearch = () => {
     const values = form.getFieldsValue();
     console.log('搜索条件：', values);
+    
+    // 调用接口搜索
     onSearch(values);
   };
 
@@ -52,6 +63,48 @@ const DocumentToolbar = ({
     form.resetFields();
     onReset();
   };
+
+  // 前端筛选函数
+  const filterDocuments = (documents: IDocumentInfo[], filters: any) => {
+    return documents.filter(doc => {
+      // 切片方法筛选
+      if (filters.parser_id && doc.parser_id !== filters.parser_id) {
+        return false;
+      }
+      
+      // 启用状态筛选
+      if (filters.status && doc.status !== filters.status) {
+        return false;
+      }
+      
+      // 解析状态筛选
+      if (filters.run && doc.run !== filters.run) {
+        return false;
+      }
+      
+      // 元数据筛选
+      if (filters.key || filters.value) {
+        const metaFields = doc.meta_fields || {};
+        if (filters.key && !metaFields[filters.key]) {
+          return false;
+        }
+        if (filters.value && metaFields[filters.key] !== filters.value) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
+  };
+
+  // 监听documents变化,进行前端筛选
+  useEffect(() => {
+    const values = form.getFieldsValue();
+    console.log('接口返回数据：', documents);
+    const filteredDocs = filterDocuments(documents, values);
+    console.log('前端筛选结果：', filteredDocs);
+    onFilteredDocumentsChange(filteredDocs);
+  }, [documents, form, onFilteredDocumentsChange]);
 
   const handleDelete = useCallback(() => {
     const deletedKeys = selectedRowKeys.filter(
@@ -176,39 +229,78 @@ const DocumentToolbar = ({
   ]);
 
   return (
-    <div className={styles.filter}>
-      <Flex justify="space-between" align="center" className="w-full">
+    <div className={styles.filter} style={{ height: 'fit-content' }}>
+      <Flex justify="space-between" align="center" style={{ width: '100%' }}>
         <Form
           form={form}
           layout="inline"
-          className="flex-1"
+          className="flex-wrap"
+          labelCol={{ style: { width: 80, textAlign: 'right' } }}
         >
-          <Space size="middle" align="center">
+          <Space size="middle" align="center" wrap style={{columnGap: '0'}}>
             <Form.Item name="keywords" label={t('fileName')}>
               <Input
                 placeholder={t('pleaseInputFileName')}
-                style={{ width: 200 }}
+                style={{ width: 150 }}
                 allowClear
               />
             </Form.Item>
             <Form.Item name="parser_id" label={t('chunkMethod')}>
               <Select
-                placeholder={t('pleaseSelectChunkMethod')}
-                style={{ width: 200 }}
+                placeholder={"请选择切片方法"}
+                style={{ width: 150 }}
                 allowClear
                 options={parserList}
               />
             </Form.Item>
+            <Form.Item name="status" label={t('enabled')}>
+              <Select
+                placeholder={"请选择启用状态"}
+                style={{ width: 150 }}
+                allowClear
+                options={[
+                  { label: t('enabled'), value: '1' },
+                  { label: t('disabled'), value: '0' }
+                ]}
+              />
+            </Form.Item>
+            <Form.Item name="run" label={t('parsingStatus')}>
+              <Select
+                placeholder="请选择解析状态"
+                style={{ width: 150 }}
+                allowClear
+                options={Object.entries(RunningStatus).map(([, value]) => ({
+                  label: t(`runningStatus${value}`),
+                  value: value
+                }))}
+              />
+            </Form.Item>
+            <Form.Item name="key" label="元数据名">
+              <Input
+                placeholder="请输入元数据字段名"
+                style={{ width: 150 }}
+                allowClear
+              />
+            </Form.Item>
+            <Form.Item name="value" label="元数据值">
+              <Input
+                placeholder="请输入元数据值"
+                style={{ width: 150 }}
+                allowClear
+              />
+            </Form.Item>
           </Space>
         </Form>
-        <Space>
-          <Button type="primary" onClick={handleSearch}>
-            {t('search')}
-          </Button>
-          <Button onClick={handleReset} icon={<ReloadOutlined />}>
-            {t('reset')}
-          </Button>
-        </Space>
+        <div style={{ width: 200, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+          <Space>
+            <Button type="primary" onClick={handleSearch}>
+              {t('search')}
+            </Button>
+            <Button onClick={handleReset} icon={<ReloadOutlined />}>
+              {t('reset')}
+            </Button>
+          </Space>
+        </div>
       </Flex>
       {/* 批量 */}
       {/* <Dropdown

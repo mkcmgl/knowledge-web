@@ -55,7 +55,7 @@ import { SetMetaModal } from './set-meta-modal';
 const { Text } = Typography;
 
 const KnowledgeFile = () => {
-  const { documents, pagination, setPagination, handleSearch, handleReset } = useFetchNextDocumentList();
+  const { documents, pagination, setPagination, handleSearch, handleReset, loading } = useFetchNextDocumentList();
   const [filteredDocuments, setFilteredDocuments] = useState<IDocumentInfo[]>([]);
   const parserList = useSelectParserList();
   const { setDocumentStatus } = useSetNextDocumentStatus();
@@ -249,6 +249,7 @@ const KnowledgeFile = () => {
   }, [showDocumentUploadModal, showCreateModal, t]);
 
   useEffect(() => {
+    console.log('接口返回数据：', documents);
     setFilteredDocuments(documents);
   }, [documents]);
 
@@ -277,14 +278,17 @@ const KnowledgeFile = () => {
         onSearch={handleSearch}
         onReset={handleReset}
         parserList={parserList}
+        onFilteredDocumentsChange={setFilteredDocuments}
       ></DocumentToolbar>
+       <Divider></Divider>
       <Table
         rowKey="id"
         columns={finalColumns}
-        dataSource={documents}
+        dataSource={filteredDocuments}
         pagination={pagination}
         className={styles.documentTable}
         scroll={{ scrollToFirstRowOnChange: true, x: 1300 }}
+        loading={loading}
       />
       <CreateFileModal
         visible={createVisible}

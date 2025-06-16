@@ -15,6 +15,9 @@ export const EmbeddingModelItem = memo(function EmbeddingModelItem() {
   const embeddingModelOptions = useSelectEmbeddingModelOptions();
   const disabled = useHasParsedDocument();
 
+  console.log('EmbeddingModelItem - embeddingModelOptions:', embeddingModelOptions);
+  console.log('EmbeddingModelItem - disabled:', disabled);
+
   return (
     <Form.Item
       name="embd_id"
