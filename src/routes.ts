@@ -125,6 +125,15 @@ const routes = [
         path: '/file',
         component: '@/pages/file-manager',
       },
+       {
+        path: '/intelligentText',
+        component: '@/pages/file-manager',
+      },
+      
+             {
+        path: '/trial',
+        component: '@/pages/file-manager',
+      },
       {
         path: '/flow',
         component: '@/pages/flow/list',

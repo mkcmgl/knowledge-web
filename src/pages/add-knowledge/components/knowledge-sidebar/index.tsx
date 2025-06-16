@@ -113,9 +113,9 @@ const KnowledgeSidebar = () => {
 
   return (
     <div className={styles.sidebarWrapper}>
-      <div className={styles.sidebarTop}>
+      {/* <div className={styles.sidebarTop}>
         <Space size={8} >
-          {/* <Avatar size={64} src={knowledgeDetails.avatar} /> */}
+         // <Avatar size={64} src={knowledgeDetails.avatar} /> 
           <div className={styles.knowledgeTitle}>{knowledgeDetails.name}</div>
         </Space>
         <p className={cn(
@@ -123,7 +123,8 @@ const KnowledgeSidebar = () => {
           {knowledgeDetails.description}
         </p>
       </div>
-      <div className={styles.divider}></div>
+      <div className={styles.divider}></div> */}
+      
       <div className={styles.menuWrapper}>
         <Menu
           selectedKeys={[activeKey]}

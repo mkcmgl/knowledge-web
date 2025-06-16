@@ -31,6 +31,8 @@ const RagHeader = () => {
       // { path: '/search', name: t('search'), icon: SearchOutlined },
       // { path: '/flow', name: t('flow'), icon: GraphIcon },
       { path: '/file', name: t('fileManager'), icon: FileIcon },
+      { path: '/trial', name: t('trial'), icon: FileIcon },
+       { path: '/intelligentText', name: t('intelligentText'), icon: FileIcon },
     ],
     [t],
   );

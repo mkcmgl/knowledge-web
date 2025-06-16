@@ -69,6 +69,8 @@ export default {
       setting: '用户设置',
       logout: '登出',
       fileManager: '文件管理',
+      intelligentText:'工具集',
+      trial:'命中测试',
       flow: 'Agent',
       search: '搜索',
       welcome: '欢迎来到',
