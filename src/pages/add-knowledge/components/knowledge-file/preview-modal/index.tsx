@@ -25,7 +25,9 @@ const PreviewModal = ({ visible, hideModal, docId }: IProps) => {
     const {
         data: { documentInfo, data = [] },
         loading,
-    } = useFetchNextChunkList();
+    } = useFetchNextChunkList({
+        enabled: visible && !!docId // 只在弹窗打开且有 docId 时调用接口
+    });
     
     console.log('documentInfo:', documentInfo);
     console.log('docId:', docId);
@@ -43,10 +45,8 @@ const PreviewModal = ({ visible, hideModal, docId }: IProps) => {
             footer={null}
             className={styles.previewModal}
         >
-              
             <div className={styles.chunkPage}>
                 <Spin spinning={loading}>
-                    
                     {isPdf ? (
                         <DocumentPreview
                             highlights={highlights}

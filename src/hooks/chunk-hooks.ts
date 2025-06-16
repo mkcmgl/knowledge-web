@@ -24,7 +24,7 @@ export interface IChunkListResult {
   handleSetAvailable: (available: number | undefined) => void;
 }
 
-export const useFetchNextChunkList = (): ResponseGetType<{
+export const useFetchNextChunkList = (options?: { enabled?: boolean }): ResponseGetType<{
   data: IChunk[];
   total: number;
   documentInfo: IKnowledgeFile;
@@ -48,6 +48,7 @@ export const useFetchNextChunkList = (): ResponseGetType<{
     placeholderData: (previousData) =>
       previousData ?? { data: [], total: 0, documentInfo: {} }, // https://github.com/TanStack/query/issues/8183
     gcTime: 0,
+    enabled: options?.enabled ?? true,
     queryFn: async () => {
       const { data } = await kbService.chunk_list({
         doc_id: documentId,
