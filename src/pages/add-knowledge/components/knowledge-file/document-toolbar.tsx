@@ -10,7 +10,7 @@ import {
   useSetNextDocumentStatus,
 } from '@/hooks/document-hooks';
 import { IDocumentInfo } from '@/interfaces/database/document';
-import { ReloadOutlined } from '@ant-design/icons';
+import { ReloadOutlined,SearchOutlined } from '@ant-design/icons';
 import { Button, Flex, Form, Input, Select, Space } from 'antd';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { toast } from 'sonner';
@@ -64,47 +64,10 @@ const DocumentToolbar = ({
     onReset();
   };
 
-  // 前端筛选函数
-  const filterDocuments = (documents: IDocumentInfo[], filters: any) => {
-    return documents.filter(doc => {
-      // 切片方法筛选
-      if (filters.parser_id && doc.parser_id !== filters.parser_id) {
-        return false;
-      }
-      
-      // 启用状态筛选
-      if (filters.status && doc.status !== filters.status) {
-        return false;
-      }
-      
-      // 解析状态筛选
-      if (filters.run && doc.run !== filters.run) {
-        return false;
-      }
-      
-      // 元数据筛选
-      if (filters.key || filters.value) {
-        const metaFields = doc.meta_fields || {};
-        if (filters.key && !metaFields[filters.key]) {
-          return false;
-        }
-        if (filters.value && metaFields[filters.key] !== filters.value) {
-          return false;
-        }
-      }
-      
-      return true;
-    });
-  };
-
-  // 监听documents变化,进行前端筛选
+  // 监听documents变化
   useEffect(() => {
-    const values = form.getFieldsValue();
-    console.log('接口返回数据：', documents);
-    const filteredDocs = filterDocuments(documents, values);
-    console.log('前端筛选结果：', filteredDocs);
-    onFilteredDocumentsChange(filteredDocs);
-  }, [documents, form, onFilteredDocumentsChange]);
+    onFilteredDocumentsChange(documents);
+  }, [documents, onFilteredDocumentsChange]);
 
   const handleDelete = useCallback(() => {
     const deletedKeys = selectedRowKeys.filter(
@@ -293,10 +256,10 @@ const DocumentToolbar = ({
         </Form>
         <div style={{ width: 200, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
           <Space>
-            <Button type="primary" onClick={handleSearch}>
+            <Button style={{padding:'0 10px' }} type="primary" onClick={handleSearch} icon={<SearchOutlined />}>
               {t('search')}
             </Button>
-            <Button onClick={handleReset} icon={<ReloadOutlined />}>
+            <Button style={{padding:'0 10px' }} onClick={handleReset} icon={<ReloadOutlined />}>
               {t('reset')}
             </Button>
           </Space>

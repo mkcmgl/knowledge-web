@@ -71,6 +71,34 @@ export const useFetchNextDocumentList = () => {
   const { pagination, setPagination } = useGetPaginationWithRouter();
   const { id } = useParams();
 
+  const filterDocuments = (documents: IDocumentInfo[], filters: any) => {
+    return documents.filter(doc => {
+      if (filters.parser_id && doc.parser_id !== filters.parser_id) {
+        return false;
+      }
+      
+      if (filters.status && doc.status !== filters.status) {
+        return false;
+      }
+      
+      if (filters.run && doc.run !== filters.run) {
+        return false;
+      }
+      
+      if (filters.key || filters.value) {
+        const metaFields = doc.meta_fields || {};
+        if (filters.key && !metaFields[filters.key]) {
+          return false;
+        }
+        if (filters.value && metaFields[filters.key] !== filters.value) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
+  };
+
   const { data, isFetching: loading } = useQuery<{
     docs: IDocumentInfo[];
     total: number;
@@ -92,7 +120,11 @@ export const useFetchNextDocumentList = () => {
         page: pagination.current,
       });
       if (ret.data.code === 0) {
-        return ret.data.data;
+        const filteredDocs = filterDocuments(ret.data.data.docs, searchFilters);
+        return {
+          docs: filteredDocs,
+          total: ret.data.data.total
+        };
       }
 
       return {
