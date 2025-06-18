@@ -125,12 +125,38 @@ const routes = [
         path: '/file',
         component: '@/pages/file-manager',
       },
-       {
-        path: '/intelligentText',
-        component: '@/pages/file-manager',
+      {
+        path: '/tools',
+        component: '@/pages/tools-manager',
+        routes: [
+          { path: '/tools', redirect: '/tools/ocr' },
+          {
+            path: '/tools/ocr',
+            component: '@/pages/tools-manager/components/ocr',
+          },
+          {
+            path: '/tools/textLike',
+            component: '@/pages/tools-manager/components/text-like',
+          },
+          {
+            path: '/tools/textfenxi',
+            component: '@/pages/tools-manager/components/text-fenxi',
+          },
+          {
+            path: '/tools/mingganci',
+            component: '@/pages/tools-manager/components/mingganci',
+          },
+          {
+            path: '/tools/guanjianci',
+            component: '@/pages/tools-manager/components/guanjianci',
+          },
+          {
+            path: '/tools/yuyintext',
+            component: '@/pages/tools-manager/components/yuyin-text',
+          },
+        ],
       },
-      
-             {
+      {
         path: '/trial',
         component: '@/pages/testing',
       },

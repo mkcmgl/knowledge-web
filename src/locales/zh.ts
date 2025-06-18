@@ -69,7 +69,7 @@ export default {
       setting: '用户设置',
       logout: '登出',
       fileManager: '文件管理',
-      intelligentText:'工具集',
+      tools:'工具集',
       trial:'检索测试',
       flow: 'Agent',
       search: '搜索',

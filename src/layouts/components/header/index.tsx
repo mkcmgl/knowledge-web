@@ -32,7 +32,7 @@ const RagHeader = () => {
       // { path: '/flow', name: t('flow'), icon: GraphIcon },
       { path: '/file', name: t('fileManager'), icon: FileIcon },
       { path: '/trial', name: t('trial'), icon: FileIcon },
-       { path: '/intelligentText', name: t('intelligentText'), icon: FileIcon },
+       { path: '/tools', name: t('tools'), icon: FileIcon },
     ],
     [t],
   );
