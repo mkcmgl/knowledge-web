@@ -75,7 +75,6 @@ ${formData.compareText}
 
   return (
     <div style={{ padding: '20px' }}>
-      <Title level={2}>文本相似度计算</Title>
       
       <Row gutter={24} style={{ marginTop: '20px' }}>
         {/* 左侧原始文本输入 */}

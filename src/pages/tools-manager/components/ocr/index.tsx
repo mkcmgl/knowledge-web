@@ -12,7 +12,7 @@ import {
     Form
 } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -22,6 +22,7 @@ const OCR = () => {
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
     const [recognitionResult, setRecognitionResult] = useState('');
     const [isProcessing, setIsProcessing] = useState(false);
+    const [isIndeterminate, setIsIndeterminate] = useState(false);
 
     // 全选/取消全选处理
     const handleSelectAll = (checked: boolean) => {
@@ -29,10 +30,22 @@ const OCR = () => {
             formatOutput: checked,
             textOutputHtml: checked
         });
+        setIsIndeterminate(false);
     };
 
     // 检查是否全选
     const isAllSelected = form.getFieldValue('formatOutput') && form.getFieldValue('textOutputHtml');
+
+    // 监听表单值变化，更新indeterminate状态
+    useEffect(() => {
+        const formatOutput = form.getFieldValue('formatOutput');
+        const textOutputHtml = form.getFieldValue('textOutputHtml');
+        
+        const allSelected = formatOutput && textOutputHtml;
+        const someSelected = formatOutput || textOutputHtml;
+        
+        setIsIndeterminate(someSelected && !allSelected);
+    }, [form.getFieldValue('formatOutput'), form.getFieldValue('textOutputHtml')]);
 
     // 删除上传的文件
     const handleDeleteFile = (index: number) => {
@@ -126,8 +139,7 @@ ${filesInfo}
     };
 
     return (
-        <div style={{ padding: '20px' }}>
-            <Title level={2}>OCR图片识别</Title>
+        <div >
             
             <Row gutter={24} style={{ marginTop: '20px' }}>
                 {/* 左侧配置区域 */}
@@ -137,24 +149,24 @@ ${filesInfo}
                         padding: '20px', 
                         borderRadius: '8px', 
                         border: '1px solid #f0f0f0',
-                        height: '600px',
+                        height: '500px',
                         overflow: 'auto'
                     }}>
                         <Form form={form} layout="vertical">
                             <Space direction="vertical" style={{ width: '100%' }}>
                                 {/* 识别配置Form.Item */}
                                 {/* 全选控制 */}
-                                <div>
+                                {/* <div>
                                     <Checkbox 
                                         checked={isAllSelected}
-                                        indeterminate={form.getFieldValue('formatOutput') !== form.getFieldValue('textOutputHtml')}
+                                        indeterminate={isIndeterminate}
                                         onChange={(e) => handleSelectAll(e.target.checked)}
                                     >
                                         <Text strong>全选配置</Text>
                                     </Checkbox>
-                                </div>
+                                </div> */}
                                 
-                                <Divider style={{ margin: '12px 0' }} />
+                                {/* <Divider style={{ margin: '12px 0' }} /> */}
                                 
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                                     <span style={{ minWidth: '80px' }}>识别配置：</span>
@@ -172,15 +184,15 @@ ${filesInfo}
                                 <Divider style={{ margin: '16px 0' }} />
                                 
                                 {/* 图片上传区域 */}
-                                <Form.Item label="上传图片">
-                                    <Space direction="vertical" style={{ width: '100%' }}>
+                                <Form.Item label="上传图片" style={{ width: '100%' ,textAlign: 'center' }}>
+                                    <Space direction="vertical" >
                                         {/* 上传按钮 - 始终显示 */}
-                                        <Upload {...uploadProps}>
+                                        <Upload {...uploadProps} >
                                             <Button 
-                                                icon={<PlusOutlined />} 
-                                                style={{ width: '100%', height: '80px', borderStyle: 'dashed' }}
+                                                style={{ width: '400px', height: '200px', borderStyle: 'dashed' }}
                                             >
                                                 <div>
+                                                    <PlusOutlined />
                                                     <p>点击或拖拽图片到此区域上传</p>
                                                     <p style={{ fontSize: '12px', color: '#999' }}>
                                                         支持 JPG、JPEG、PNG、BMP 格式，文件大小不超过 10MB
@@ -239,7 +251,7 @@ ${filesInfo}
                         padding: '20px', 
                         borderRadius: '8px', 
                         border: '1px solid #f0f0f0',
-                        height: '600px',
+                        height: '500px',
                         display: 'flex',
                         flexDirection: 'column'
                     }}>

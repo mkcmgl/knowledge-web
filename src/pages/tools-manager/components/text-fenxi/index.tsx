@@ -1,24 +1,221 @@
-import { Card, Typography } from 'antd';
+import { 
+  Typography, 
+  Form, 
+  Input, 
+  Button, 
+  Slider, 
+  Space, 
+  Card,
+  message
+} from 'antd';
+import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { useState } from 'react';
 
-const { Title, Paragraph } = Typography;
+const { Title, Text } = Typography;
+const { TextArea } = Input;
 
 const TextFenxi = () => {
+  const [form] = Form.useForm();
+  const [analysisResult, setAnalysisResult] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [textSegments, setTextSegments] = useState([0, 1]); // 默认两个文本段
+
+  // 添加文本段
+  const handleAddTextSegment = () => {
+    setTextSegments(prev => [...prev, prev.length]);
+  };
+
+  // 删除文本段
+  const handleDeleteTextSegment = (index: number) => {
+    if (textSegments.length <= 2) {
+      message.warning('至少需要保留两个文本段！');
+      return;
+    }
+    setTextSegments(prev => prev.filter((_, i) => i !== index));
+  };
+
+  // 聚类分析处理
+  const handleClusterAnalysis = () => {
+    const formData = form.getFieldsValue();
+    
+    if (!formData.threshold || !formData.textSegments || formData.textSegments.length < 2) {
+      message.error('请填写所有必填项！');
+      return;
+    }
+
+    const emptySegments = formData.textSegments.filter((text: string) => !text || text.trim() === '');
+    if (emptySegments.length > 0) {
+      message.error('请填写所有文本段！');
+      return;
+    }
+
+    console.log('=== 文本聚类分析信息 ===');
+    console.log('阈值:', formData.threshold);
+    console.log('文本段数量:', formData.textSegments.length);
+    console.log('文本段内容:', formData.textSegments);
+    console.log('分析时间:', new Date().toLocaleString());
+    console.log('========================');
+    
+    setIsProcessing(true);
+    
+    setTimeout(() => {
+      const segments = formData.textSegments;
+      const threshold = formData.threshold;
+      
+      const clusters = [];
+      for (let i = 0; i < segments.length; i++) {
+        const cluster = {
+          id: i + 1,
+          texts: [segments[i]],
+          similarity: Math.random() * (1 - threshold) + threshold
+        };
+        clusters.push(cluster);
+      }
+      
+      const result = `
+文本聚类分析结果：
+
+分析参数：
+• 相似度阈值：${threshold}
+• 文本段数量：${segments.length}
+
+聚类结果：
+${clusters.map((cluster, index) => `
+聚类 ${cluster.id}：
+• 文本内容：${cluster.texts.join(', ')}
+• 相似度：${(cluster.similarity * 100).toFixed(2)}%
+• 文本数量：${cluster.texts.length}
+`).join('')}
+
+统计信息：
+• 总聚类数：${clusters.length}
+• 平均相似度：${(clusters.reduce((sum, c) => sum + c.similarity, 0) / clusters.length * 100).toFixed(2)}%
+• 最大相似度：${(Math.max(...clusters.map(c => c.similarity)) * 100).toFixed(2)}%
+• 最小相似度：${(Math.min(...clusters.map(c => c.similarity)) * 100).toFixed(2)}%
+
+分析时间：${new Date().toLocaleString()}`;
+
+      setAnalysisResult(result);
+      setIsProcessing(false);
+      message.success('聚类分析完成！');
+    }, 3000);
+  };
+
   return (
-    <div>
-      <Title level={2}>文本聚类分析</Title>
-      <Paragraph>
-        这是一个文本聚类分析工具，可以对大量文本进行自动分类和聚类。
-      </Paragraph>
-      <Card title="功能说明" style={{ marginTop: 16 }}>
-        <Paragraph>
-          • 支持多种聚类算法：K-means、层次聚类、DBSCAN等<br/>
-          • 自动确定最佳聚类数量<br/>
-          • 聚类结果可视化<br/>
-          • 支持大规模文本数据<br/>
-          • 聚类质量评估<br/>
-          • 导出聚类报告
-        </Paragraph>
-      </Card>
+    <div style={{ padding: '20px', display: 'flex', justifyContent: 'center' }}>
+      <div style={{ width: '800px' }}>
+
+        
+        <Card style={{ marginBottom: '24px' }}>
+          <Form form={form} layout="vertical">
+            <Form.Item 
+              label="阈值" 
+              name="threshold"
+              rules={[{ required: true, message: '请设置阈值！' }]}
+              initialValue={0.5}
+            >
+              <div style={{ padding: '0 16px' }}>
+                <Slider
+                  min={0}
+                  max={1}
+                  step={0.1}
+                  marks={{
+                    0: '0',
+                    0.2: '0.2',
+                    0.4: '0.4',
+                    0.6: '0.6',
+                    0.8: '0.8',
+                    1: '1'
+                  }}
+                  tooltip={{
+                    formatter: (value) => `${value}`
+                  }}
+                />
+              </div>
+            </Form.Item>
+
+            <Form.Item 
+              label="文本段" 
+              required
+              style={{ marginBottom: '16px' }}
+            >
+              <Space direction="vertical" style={{ width: '100%' }}>
+                {textSegments.map((_, index) => (
+                  <div key={index} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                    <Form.Item
+                      name={['textSegments', index]}
+                      rules={[{ required: true, message: '请输入文本段！' }]}
+                      style={{ flex: 1, marginBottom: 0 }}
+                    >
+                      <TextArea
+                        placeholder={`请输入文本段 ${index + 1}...`}
+                        style={{ 
+                          height: '100px', 
+                          resize: 'none',
+                          fontSize: '14px',
+                          lineHeight: '1.6'
+                        }}
+                      />
+                    </Form.Item>
+                    {textSegments.length > 2 && (
+                      <Button 
+                        type="text" 
+                        danger 
+                        icon={<DeleteOutlined />}
+                        onClick={() => handleDeleteTextSegment(index)}
+                        style={{ marginTop: '8px' }}
+                      />
+                    )}
+                  </div>
+                ))}
+                
+                <Button 
+                  type="dashed" 
+                  icon={<PlusOutlined />}
+                  onClick={handleAddTextSegment}
+                  style={{ width: '100%' }}
+                >
+                  添加文本段
+                </Button>
+              </Space>
+            </Form.Item>
+          </Form>
+        </Card>
+
+        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+          <Button 
+            type="primary" 
+            size="large"
+            onClick={handleClusterAnalysis}
+            loading={isProcessing}
+            style={{ minWidth: '120px' }}
+          >
+            {isProcessing ? '分析中...' : '聚类分析'}
+          </Button>
+        </div>
+
+        <Card>
+          <div style={{ marginBottom: '16px' }}>
+            <Text strong style={{ fontSize: '16px' }}>分析结果</Text>
+          </div>
+          <div style={{ width: '100%' }}>
+            <TextArea
+              value={analysisResult}
+              placeholder="分析结果将在这里显示..."
+              style={{ 
+                width: '100%',
+                minHeight: '300px',
+                resize: 'none',
+                fontSize: '14px',
+                lineHeight: '1.6',
+                border: 'none',
+                background: 'transparent'
+              }}
+              readOnly
+            />
+          </div>
+        </Card>
+      </div>
     </div>
   );
 };
