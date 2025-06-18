@@ -6,7 +6,7 @@ import {
   Card,
   message
 } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 
 const { Title, Text } = Typography;
@@ -102,18 +102,22 @@ const YuyinText = () => {
             <Form.Item 
               label="语音" 
               required
+              style={{ width: '100%' ,textAlign: 'center' }}
             >
               <div style={{ width: '100%' }}>
                 {!uploadedFile ? (
                   <Upload {...uploadProps}>
                     <Button 
-                      icon={<UploadOutlined />} 
-                      style={{ width: '100%', height: '120px', borderStyle: 'dashed' }}
+                      style={{  width: '300px', height: '200px', borderStyle: 'dashed' }}
                     >
                       <div>
-                        <p>点击或拖拽音频文件到此区域上传</p>
+                         <PlusOutlined />
+                        <p>上传音频</p>
+                        <p style={{ fontSize: '12px', color: '#999',marginTop:"10px"  }}>
+                          支持 MP3、M4A、WMA、AAC、FLAC、AC3、
+                        </p>
                         <p style={{ fontSize: '12px', color: '#999' }}>
-                          支持 MP3、M4A、WMA、AAC、FLAC、AC3、M4R、APE、OGG、WAV 格式，文件大小不超过 100MB
+                          M4R、APE、OGG、WAV 格式
                         </p>
                       </div>
                     </Button>

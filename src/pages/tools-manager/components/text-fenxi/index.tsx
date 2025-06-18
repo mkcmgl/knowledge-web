@@ -1,15 +1,16 @@
-import { 
-  Typography, 
-  Form, 
-  Input, 
-  Button, 
-  Slider, 
-  Space, 
+import {
+  Typography,
+  Form,
+  Input,
+  Button,
+  Slider,
+  Space,
   Card,
   message
 } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useState } from 'react';
+import SimilaritySlider from '@/components/similarity-slider';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -37,7 +38,7 @@ const TextFenxi = () => {
   // 聚类分析处理
   const handleClusterAnalysis = () => {
     const formData = form.getFieldsValue();
-    
+
     if (!formData.threshold || !formData.textSegments || formData.textSegments.length < 2) {
       message.error('请填写所有必填项！');
       return;
@@ -55,13 +56,13 @@ const TextFenxi = () => {
     console.log('文本段内容:', formData.textSegments);
     console.log('分析时间:', new Date().toLocaleString());
     console.log('========================');
-    
+
     setIsProcessing(true);
-    
+
     setTimeout(() => {
       const segments = formData.textSegments;
       const threshold = formData.threshold;
-      
+
       const clusters = [];
       for (let i = 0; i < segments.length; i++) {
         const cluster = {
@@ -71,7 +72,7 @@ const TextFenxi = () => {
         };
         clusters.push(cluster);
       }
-      
+
       const result = `
 文本聚类分析结果：
 
@@ -105,37 +106,23 @@ ${clusters.map((cluster, index) => `
     <div style={{ padding: '20px', display: 'flex', justifyContent: 'center' }}>
       <div style={{ width: '800px' }}>
 
-        
+
         <Card style={{ marginBottom: '24px' }}>
           <Form form={form} layout="vertical">
-            <Form.Item 
-              label="阈值" 
+            <Form.Item
+              label="阈值"
               name="threshold"
               rules={[{ required: true, message: '请设置阈值！' }]}
               initialValue={0.5}
             >
               <div style={{ padding: '0 16px' }}>
-                <Slider
-                  min={0}
-                  max={1}
-                  step={0.1}
-                  marks={{
-                    0: '0',
-                    0.2: '0.2',
-                    0.4: '0.4',
-                    0.6: '0.6',
-                    0.8: '0.8',
-                    1: '1'
-                  }}
-                  tooltip={{
-                    formatter: (value) => `${value}`
-                  }}
-                />
+
+                <Slider max={1} step={0.1} min={0} />
               </div>
             </Form.Item>
 
-            <Form.Item 
-              label="文本段" 
+            <Form.Item
+              label="文本段"
               required
               style={{ marginBottom: '16px' }}
             >
@@ -149,8 +136,8 @@ ${clusters.map((cluster, index) => `
                     >
                       <TextArea
                         placeholder={`请输入文本段 ${index + 1}...`}
-                        style={{ 
-                          height: '100px', 
+                        style={{
+                          height: '100px',
                           resize: 'none',
                           fontSize: '14px',
                           lineHeight: '1.6'
@@ -158,9 +145,9 @@ ${clusters.map((cluster, index) => `
                       />
                     </Form.Item>
                     {textSegments.length > 2 && (
-                      <Button 
-                        type="text" 
-                        danger 
+                      <Button
+                        type="text"
+                        danger
                         icon={<DeleteOutlined />}
                         onClick={() => handleDeleteTextSegment(index)}
                         style={{ marginTop: '8px' }}
@@ -168,9 +155,9 @@ ${clusters.map((cluster, index) => `
                     )}
                   </div>
                 ))}
-                
-                <Button 
-                  type="dashed" 
+
+                <Button
+                  type="dashed"
                   icon={<PlusOutlined />}
                   onClick={handleAddTextSegment}
                   style={{ width: '100%' }}
@@ -183,8 +170,8 @@ ${clusters.map((cluster, index) => `
         </Card>
 
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <Button 
-            type="primary" 
+          <Button
+            type="primary"
             size="large"
             onClick={handleClusterAnalysis}
             loading={isProcessing}
@@ -202,7 +189,7 @@ ${clusters.map((cluster, index) => `
             <TextArea
               value={analysisResult}
               placeholder="分析结果将在这里显示..."
-              style={{ 
+              style={{
                 width: '100%',
                 minHeight: '300px',
                 resize: 'none',

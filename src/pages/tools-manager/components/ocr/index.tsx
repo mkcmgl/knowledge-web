@@ -189,13 +189,16 @@ ${filesInfo}
                                         {/* 上传按钮 - 始终显示 */}
                                         <Upload {...uploadProps} >
                                             <Button 
-                                                style={{ width: '400px', height: '200px', borderStyle: 'dashed' }}
+                                                style={{ width: '300px', height: '200px', borderStyle: 'dashed' }}
                                             >
                                                 <div>
                                                     <PlusOutlined />
-                                                    <p>点击或拖拽图片到此区域上传</p>
+                                                    <p>上传图片</p>
+                                                    <p style={{ fontSize: '12px', color: '#999',marginTop:"10px" }}>
+                                                        支持 JPG、JPEG、PNG、BMP 格式，
+                                                    </p>
                                                     <p style={{ fontSize: '12px', color: '#999' }}>
-                                                        支持 JPG、JPEG、PNG、BMP 格式，文件大小不超过 10MB
+                                                       图片大小不超过 10MB
                                                     </p>
                                                 </div>
                                             </Button>
