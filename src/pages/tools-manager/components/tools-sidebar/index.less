@@ -16,8 +16,15 @@
     padding: 0;
 
     .menu {
+      font-size: @fontSize16;
+      font-weight: @fontWeight600;
       background: transparent;
       border: none;
+      border: none;
+      :global(.ant-menu-item) {
+        display: flex;
+        align-items: center;
+      }
 
       &.defaultWidth {
         width: 180px;
@@ -31,19 +38,20 @@
         .ant-menu-item {
           height: 48px;
           margin: 4px 4px;
-          color: #666;
-          font-size: 14px;
+          color: @gray3;
+          font-size: @fontSize14;
+          font-weight: @fontWeight700;
           line-height: 48px;
           border-radius: 8px;
 
           &:hover {
-            color: #1890ff;
             background: #f5f5f5;
           }
 
           &.ant-menu-item-selected {
             color: #1890ff;
-            font-weight: 500;
+            font-size: @fontSize14;
+            font-weight: @fontWeight700;
             background: #e6f7ff;
 
             &::after {

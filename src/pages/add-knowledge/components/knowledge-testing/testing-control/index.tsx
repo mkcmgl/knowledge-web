@@ -127,6 +127,8 @@ const TestingControl = ({
                 style={{ width: '100%' }}
               />
             </Form.Item>
+            <Rerank></Rerank>
+            <UseKnowledgeGraphItem filedName={['use_kg']}></UseKnowledgeGraphItem>
 
             <Form.Item<FieldType>
               label={t('testText')}

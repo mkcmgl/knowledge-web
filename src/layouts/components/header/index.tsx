@@ -75,7 +75,7 @@ const RagHeader = () => {
           {/* <img src="/logo.svg" alt="" className={styles.appIcon} /> */}
           <span className={styles.appName}>知识库平台</span>
         </Space>
-      <Space size={[0, 8]} wrap className='flex-1 pl-8'>
+      <Space size={[0, 8]} wrap className='flex-1 pl-[5.25rem]'>
         <Radio.Group
           defaultValue="a"
           buttonStyle="solid"
