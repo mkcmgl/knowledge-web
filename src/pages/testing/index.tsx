@@ -36,7 +36,7 @@ const KnowledgeTesting = () => {
       form.setFieldsValue({ meta: metaJsonString });
       
       // 获取 test_kb_ids 的第一个值作为 kb_id
-      const kb_id = values.test_kb_ids?.[0];
+      const kb_id = values.test_kb_ids;
       
       // 输出所有表单数据
       console.log('Form Data:', {
@@ -51,14 +51,16 @@ const KnowledgeTesting = () => {
           meta: metaJsonString,
           doc_ids: Array.isArray(documentIds) ? documentIds : [],
           vector_similarity_weight: 1 - values.vector_similarity_weight,
-          kb_id
+          kb_id,
+          test_kb_ids: kb_id,
         }),
         testChunkAll({
           ...values,
           meta: metaJsonString,
           doc_ids: [],
           vector_similarity_weight: 1 - values.vector_similarity_weight,
-          kb_id
+          kb_id,
+          test_kb_ids: kb_id,
         })
       ]);
       

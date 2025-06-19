@@ -1,8 +1,8 @@
 import Rerank from '@/components/rerank';
 import SimilaritySlider from '@/components/similarity-slider';
 import { useTranslate } from '@/hooks/common-hooks';
-import { useChunkIsTesting, useSelectKnowledgeOptions } from '@/hooks/knowledge-hooks';
-import { Button, Divider, Flex, Form, Input, InputNumber, Space, message, Select } from 'antd';
+import { useChunkIsTesting } from '@/hooks/knowledge-hooks';
+import { Button, Divider, Flex, Form, Input, InputNumber, Space, message, TreeSelect } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { LabelWordCloud } from './label-word-cloud';
 
@@ -12,6 +12,8 @@ import styles from './index.less';
 import DOMPurify from 'dompurify';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import Editor, { loader } from '@monaco-editor/react';
+import { useSelectLlmList } from '@/hooks/llm-hooks';
+import { useFetchKnowledgeList } from '@/hooks/knowledge-hooks';
 
 
 
@@ -37,10 +39,34 @@ const TestingControl = ({
   const question = Form.useWatch('question', { form, preserve: true });
   const loading = useChunkIsTesting();
   const { t } = useTranslate('knowledgeDetails');
-  const knowledgeOptions = useSelectKnowledgeOptions();
+  const { myLlmList } = useSelectLlmList();
+  const { list: knowledgeList } = useFetchKnowledgeList();
 
   const buttonDisabled =
     !question || (typeof question === 'string' && question.trim() === '');
+    console.log(`myLlmList,knowledgeList`,myLlmList,knowledgeList)
+
+  // 构造树形结构数据（修正版）
+  const treeData = myLlmList.flatMap((model) => {
+    return model.llm.map((llmItem) => {
+      const children = knowledgeList
+        .filter((kb) => kb.embd_id && kb.embd_id.split('@')[0] === llmItem.name)
+        .map((kb) => ({
+          title: kb.name,
+          value: kb.id,
+          key: kb.id,
+          isLeaf: true,
+        }));
+      return {
+        title: <span style={{ paddingLeft: 4 }}>{llmItem.name}</span>,
+        value: llmItem.name,
+        key: llmItem.name,
+        selectable: false,
+        children,
+      };
+    }).filter((node) => node.children.length > 0);
+  }).filter((node) => node.children && node.children.length > 0);
+  console.log(`treeData68`,treeData)
 
   const onClick = async () => {
     try {
@@ -81,14 +107,32 @@ const TestingControl = ({
               label="测试知识库"
               name={'test_kb_ids'}
               tooltip={t('testKnowledgeBaseTip')}
-              rules={[{ required: true, message: "请选择至少一个知识库" }]}
+              rules={[{ required: true, message: "请选择一个知识库" }]}
             >
-              <Select
-                mode="multiple"
+              <TreeSelect
+                treeData={treeData}
+                value={form.getFieldValue('test_kb_ids') || undefined}
+                onChange={(value: string) => {
+                  // 只允许选择叶子节点
+                  let isLeaf = false;
+                  for (const parent of treeData) {
+                    if (parent.children && parent.children.some((child: any) => child.value === value)) {
+                      isLeaf = true;
+                      break;
+                    }
+                  }
+                  if (isLeaf) {
+                    form.setFieldsValue({ test_kb_ids: value });
+                  } else {
+                    form.setFieldsValue({ test_kb_ids: undefined });
+                  }
+                }}
                 placeholder="请选择测试知识库"
                 allowClear
                 style={{ width: '100%' }}
-                options={knowledgeOptions}
+                treeDefaultExpandAll
+                showSearch
+                dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
               />
             </Form.Item>
 
@@ -150,7 +194,8 @@ const TestingControl = ({
                 style={{ width: '100%' }}
               />
             </Form.Item>
-
+            <Rerank></Rerank>
+            <UseKnowledgeGraphItem filedName={['use_kg']}></UseKnowledgeGraphItem>
             <Form.Item<FieldType>
               label={t('testText')}
               name={'question'}
