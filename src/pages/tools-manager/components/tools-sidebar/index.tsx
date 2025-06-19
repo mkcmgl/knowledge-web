@@ -57,28 +57,28 @@ const ToolsSidebar = () => {
         <OCRIdentifyIcon size={16} />,
       ),
       getItem(
-        toolsRouteMap[ToolsMenuRouteKey.TextLike],
-        ToolsMenuRouteKey.TextLike,
+        toolsRouteMap[ToolsMenuRouteKey.textSimilarity],
+        ToolsMenuRouteKey.textSimilarity,
         <TextSimilarityIcon size={16} />,
       ),
       getItem(
-        toolsRouteMap[ToolsMenuRouteKey.TextFenxi],
-        ToolsMenuRouteKey.TextFenxi,
+        toolsRouteMap[ToolsMenuRouteKey.ClusteringAnalysis],
+        ToolsMenuRouteKey.ClusteringAnalysis,
         <TextClusterIcon size={16} />,
       ),
       getItem(
-        toolsRouteMap[ToolsMenuRouteKey.Mingganci],
-        ToolsMenuRouteKey.Mingganci,
+        toolsRouteMap[ToolsMenuRouteKey.SensitiveWord],
+        ToolsMenuRouteKey.SensitiveWord,
         <SensitiveWordIcon size={16} />,
       ),
       getItem(
-        toolsRouteMap[ToolsMenuRouteKey.Guanjianci],
-        ToolsMenuRouteKey.Guanjianci,
+        toolsRouteMap[ToolsMenuRouteKey.KeywordExtraction],
+        ToolsMenuRouteKey.KeywordExtraction,
         <KeywordExtractIcon size={16} />,
       ),
       getItem(
-        toolsRouteMap[ToolsMenuRouteKey.YuyinText],
-        ToolsMenuRouteKey.YuyinText,
+        toolsRouteMap[ToolsMenuRouteKey.SpeechToText],
+        ToolsMenuRouteKey.SpeechToText,
         <SpeechToTextIcon size={16} />,
       ),
     ];

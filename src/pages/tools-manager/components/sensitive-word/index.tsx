@@ -11,13 +11,13 @@ import { useState } from 'react';
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
-const Guanjianci = () => {
+const SensitiveWord = () => {
   const [form] = Form.useForm();
-  const [keywordsResult, setKeywordsResult] = useState('');
+  const [desensitizedResult, setDesensitizedResult] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // 关键词提取处理
-  const handleExtractKeywords = () => {
+  // 脱敏处理
+  const handleDesensitize = () => {
     const formData = form.getFieldsValue();
     
     if (!formData.textSegment || formData.textSegment.trim() === '') {
@@ -25,9 +25,9 @@ const Guanjianci = () => {
       return;
     }
 
-    console.log('=== 关键词提取信息 ===');
+    console.log('=== 敏感词处理信息 ===');
     console.log('原始文本:', formData.textSegment);
-    console.log('提取时间:', new Date().toLocaleString());
+    console.log('处理时间:', new Date().toLocaleString());
     console.log('========================');
     
     setIsProcessing(true);
@@ -35,62 +35,46 @@ const Guanjianci = () => {
     setTimeout(() => {
       const originalText = formData.textSegment;
       
-      // 模拟关键词提取算法
-      const words = originalText.split(/[\s,，。！？；：""''（）【】、]+/).filter(word => word.length > 1);
-      const wordCount: { [key: string]: number } = {};
+      // 模拟敏感词检测和替换
+      const sensitiveWords = ['敏感', '违规', '违法', '色情', '暴力', '政治', '赌博', '毒品'];
+      let processedText = originalText;
+      let detectedWords: string[] = [];
       
-      // 统计词频
-      words.forEach((word: string) => {
-        wordCount[word] = (wordCount[word] || 0) + 1;
+      sensitiveWords.forEach(word => {
+        if (originalText.includes(word)) {
+          detectedWords.push(word);
+          const regex = new RegExp(word, 'g');
+          processedText = processedText.replace(regex, '*'.repeat(word.length));
+        }
       });
       
-      // 按频率排序，取前10个作为关键词
-      const sortedWords = Object.entries(wordCount)
-        .sort(([,a], [,b]) => b - a)
-        .slice(0, 10);
-      
-      // 计算TF-IDF权重（简化版）
-      const totalWords = words.length;
-      const keywords = sortedWords.map(([word, count], index) => ({
-        word,
-        frequency: count,
-        tf: count / totalWords,
-        weight: (count / totalWords) * Math.log(10 / (index + 1))
-      }));
-      
       const result = `
-关键词提取结果：
+敏感词处理结果：
 
 原始文本：
 ${originalText}
 
-提取的关键词：
-${keywords.map((kw, index) => `
-${index + 1}. ${kw.word}
-   • 出现频率：${kw.frequency} 次
-   • TF值：${(kw.tf * 100).toFixed(2)}%
-   • 权重：${kw.weight.toFixed(4)}
-`).join('')}
+处理结果：
+${processedText}
 
-统计信息：
-• 总词汇数：${totalWords}
-• 提取关键词数：${keywords.length}
-• 最高频率词：${keywords[0]?.word} (${keywords[0]?.frequency} 次)
-• 平均权重：${(keywords.reduce((sum, kw) => sum + kw.weight, 0) / keywords.length).toFixed(4)}
+检测信息：
+• 检测到的敏感词：${detectedWords.length > 0 ? detectedWords.join(', ') : '无'}
+• 敏感词数量：${detectedWords.length}
+• 替换字符：*
+• 处理方式：字符替换
 
-提取算法：TF-IDF + 词频统计
-提取时间：${new Date().toLocaleString()}`;
+处理时间：${new Date().toLocaleString()}`;
 
-      setKeywordsResult(result);
+      setDesensitizedResult(result);
       setIsProcessing(false);
-      message.success('关键词提取完成！');
-    }, 2500);
+      message.success('脱敏处理完成！');
+    }, 2000);
   };
 
   return (
     <div style={{ padding: '20px', display: 'flex', justifyContent: 'center' }}>
       <div style={{ width: '800px' }}>
-
+  
         
         <Card style={{ marginBottom: '24px' }}>
           <Form form={form} layout="vertical">
@@ -100,7 +84,7 @@ ${index + 1}. ${kw.word}
               rules={[{ required: true, message: '请输入文本段！' }]}
             >
               <TextArea
-                placeholder="请输入需要提取关键词的文本..."
+                placeholder="请输入需要脱敏处理的文本..."
                 style={{ 
                   height: '100px', 
                   resize: 'none',
@@ -116,22 +100,22 @@ ${index + 1}. ${kw.word}
           <Button 
             type="primary" 
             size="large"
-            onClick={handleExtractKeywords}
+            onClick={handleDesensitize}
             loading={isProcessing}
             style={{ minWidth: '120px' }}
           >
-            {isProcessing ? '提取中...' : '提取关键词'}
+            {isProcessing ? '处理中...' : '脱敏处理'}
           </Button>
         </div>
 
         <Card>
           <div style={{ marginBottom: '16px' }}>
-            <Text strong style={{ fontSize: '16px' }}>关键词</Text>
+            <Text strong style={{ fontSize: '16px' }}>脱敏结果</Text>
           </div>
           <div style={{ width: '100%' }}>
             <TextArea
-              value={keywordsResult}
-              placeholder="关键词提取结果将在这里显示..."
+              value={desensitizedResult}
+              placeholder="脱敏结果将在这里显示..."
               style={{ 
                 width: '100%',
                 minHeight: '300px',
@@ -150,4 +134,4 @@ ${index + 1}. ${kw.word}
   );
 };
 
-export default Guanjianci; 
+export default SensitiveWord; 

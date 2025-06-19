@@ -129,30 +129,30 @@ const routes = [
         path: '/tools',
         component: '@/pages/tools-manager',
         routes: [
-          { path: '/tools', redirect: '/tools/ocr' },
+          { path: '/tools', redirect: '/tools/ocr-recognition' },
           {
-            path: '/tools/ocr',
-            component: '@/pages/tools-manager/components/ocr',
+            path: '/tools/ocr-recognition',
+            component: '@/pages/tools-manager/components/ocr-recognition',
           },
           {
-            path: '/tools/textLike',
-            component: '@/pages/tools-manager/components/text-like',
+            path: '/tools/text-similarity',
+            component: '@/pages/tools-manager/components/text-similarity',
           },
           {
-            path: '/tools/textfenxi',
-            component: '@/pages/tools-manager/components/text-fenxi',
+            path: '/tools/clustering-analysis',
+            component: '@/pages/tools-manager/components/clustering-analysis',
           },
           {
-            path: '/tools/mingganci',
-            component: '@/pages/tools-manager/components/mingganci',
+            path: '/tools/sensitive-word',
+            component: '@/pages/tools-manager/components/sensitive-word',
           },
           {
-            path: '/tools/guanjianci',
-            component: '@/pages/tools-manager/components/guanjianci',
+            path: '/tools/keyword-extraction',
+            component: '@/pages/tools-manager/components/keyword-extraction',
           },
           {
-            path: '/tools/yuyintext',
-            component: '@/pages/tools-manager/components/yuyin-text',
+            path: '/tools/speech-to-text',
+            component: '@/pages/tools-manager/components/speech-to-text',
           },
         ],
       },

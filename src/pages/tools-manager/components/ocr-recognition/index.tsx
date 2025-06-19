@@ -31,7 +31,20 @@ const OCR = () => {
     ];
 
     // 组件内部（假设在函数组件体内）
-    const [checkedList, setCheckedList] = useState<string[]>([]);
+    const [checkedList, setCheckedList] = useState<string[]>(() => {
+        const init: string[] = [];
+        if (form.getFieldValue('formatOutput')) init.push('formatOutput');
+        if (form.getFieldValue('textOutputHtml')) init.push('textOutputHtml');
+        return init;
+    });
+
+    // 监听表单变化，保持checkedList和form同步
+    const onFormValuesChange = (changedValues: any, allValues: any) => {
+        const list: string[] = [];
+        if (allValues.formatOutput) list.push('formatOutput');
+        if (allValues.textOutputHtml) list.push('textOutputHtml');
+        setCheckedList(list);
+    };
 
     const checkAll = outputOptions.length === checkedList.length;
     const indeterminate = checkedList.length > 0 && checkedList.length < outputOptions.length;
@@ -47,7 +60,8 @@ const OCR = () => {
 
     const onCheckAllChange: CheckboxProps['onChange'] = (e) => {
         const checked = e.target.checked;
-        setCheckedList(checked ? outputOptions.map(opt => opt.value) : []);
+        const list = checked ? outputOptions.map(opt => opt.value) : [];
+        setCheckedList(list);
         form.setFieldsValue({
             formatOutput: checked,
             textOutputHtml: checked,
@@ -95,6 +109,7 @@ const OCR = () => {
 
     // OCR识别处理
     const handleOCRRecognition = () => {
+        console.log('当前表单所有值:', form.getFieldsValue());
         if (uploadedFiles.length === 0) {
             message.error('请先上传图片！');
             return;
@@ -159,7 +174,7 @@ ${filesInfo}
                         height: '500px',
                         overflow: 'auto'
                     }}>
-                        <Form form={form} layout="vertical">
+                        <Form form={form} layout="vertical" onValuesChange={onFormValuesChange}>
                             <Space direction="vertical" style={{ width: '100%' }}>
                                 {/* 全选Checkbox */}
                                 <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
@@ -170,13 +185,30 @@ ${filesInfo}
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                                     <span style={{ minWidth: '80px' }}>识别配置：</span>
                                     <Space>
-                                        <Checkbox.Group
-                                            options={outputOptions}
-                                            value={checkedList}
-                                            onChange={onOutputChange}
-                                            style={{ marginBottom: 8 }}
-                                        />
-
+                                        <Form.Item name="formatOutput" valuePropName="checked" noStyle>
+                                            <Checkbox
+                                                checked={checkedList.includes('formatOutput')}
+                                                onChange={e => onOutputChange(
+                                                    e.target.checked
+                                                        ? [...checkedList, 'formatOutput']
+                                                        : checkedList.filter(v => v !== 'formatOutput')
+                                                )}
+                                            >
+                                                格式化输出
+                                            </Checkbox>
+                                        </Form.Item>
+                                        <Form.Item name="textOutputHtml" valuePropName="checked" noStyle>
+                                            <Checkbox
+                                                checked={checkedList.includes('textOutputHtml')}
+                                                onChange={e => onOutputChange(
+                                                    e.target.checked
+                                                        ? [...checkedList, 'textOutputHtml']
+                                                        : checkedList.filter(v => v !== 'textOutputHtml')
+                                                )}
+                                            >
+                                                文本输出HTML
+                                            </Checkbox>
+                                        </Form.Item>
                                     </Space>
                                 </div>
 

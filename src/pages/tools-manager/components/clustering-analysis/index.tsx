@@ -15,7 +15,7 @@ import SimilaritySlider from '@/components/similarity-slider';
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
-const TextFenxi = () => {
+const ClusteringAnalysis = () => {
   const [form] = Form.useForm();
   const [analysisResult, setAnalysisResult] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -108,17 +108,17 @@ ${clusters.map((cluster, index) => `
 
 
         <Card style={{ marginBottom: '24px' }}>
-          <Form form={form} layout="vertical">
+          <Form form={form} layout="vertical" >
             <Form.Item
               label="阈值"
               name="threshold"
+              initialValue={0.3}
               rules={[{ required: true, message: '请设置阈值！' }]}
-              initialValue={0.5}
             >
-              <div style={{ padding: '0 16px' }}>
+              {/* <div style={{ padding: '0 16px' }}> */}
 
                 <Slider max={1} step={0.1} min={0} />
-              </div>
+              {/* </div> */}
             </Form.Item>
 
             <Form.Item
@@ -207,4 +207,4 @@ ${clusters.map((cluster, index) => `
   );
 };
 
-export default TextFenxi; 
+export default ClusteringAnalysis; 

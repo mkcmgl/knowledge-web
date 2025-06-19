@@ -12,7 +12,7 @@ import { useState } from 'react';
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
-const TextLike = () => {
+const textSimilarity = () => {
   const [form] = Form.useForm();
   const [analysisResult, setAnalysisResult] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -188,4 +188,4 @@ ${formData.compareText}
   );
 };
 
-export default TextLike; 
+export default textSimilarity; 

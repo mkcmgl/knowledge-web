@@ -11,7 +11,7 @@ import { useState } from 'react';
 
 const { Title, Text } = Typography;
 
-const YuyinText = () => {
+const SpeechToText = () => {
   const [form] = Form.useForm();
   const [transcriptionResult, setTranscriptionResult] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -193,4 +193,4 @@ const YuyinText = () => {
   );
 };
 
-export default YuyinText; 
+export default SpeechToText; 
