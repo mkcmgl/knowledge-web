@@ -50,6 +50,23 @@
               display: none;
             }
           }
+
+          // SVG图标样式
+          img {
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+            transition: opacity .2s ease;
+            opacity: .6;
+          }
+
+          &:hover img {
+            opacity: .8;
+          }
+
+          &.ant-menu-item-selected img {
+            opacity: 1;
+          }
         }
       }
     }

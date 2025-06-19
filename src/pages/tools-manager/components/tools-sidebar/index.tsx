@@ -8,14 +8,14 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate} from 'umi';
 import { ToolsMenuRouteKey, toolsRouteMap } from '../../constant';
 import styles from './index.less';
-import { 
-  Camera, 
-  FileText, 
-  BarChart3, 
-  Shield, 
-  Hash, 
-  Mic 
-} from 'lucide-react';
+import {
+  OCRIdentifyIcon,
+  TextSimilarityIcon,
+  TextClusterIcon,
+  SensitiveWordIcon,
+  KeywordExtractIcon,
+  SpeechToTextIcon,
+} from './icons';
 
 const ToolsSidebar = () => {
   let navigate = useNavigate();
@@ -54,32 +54,32 @@ const ToolsSidebar = () => {
       getItem(
         toolsRouteMap[ToolsMenuRouteKey.OCR],
         ToolsMenuRouteKey.OCR,
-        <Camera size={16} />,
+        <OCRIdentifyIcon size={16} />,
       ),
       getItem(
         toolsRouteMap[ToolsMenuRouteKey.TextLike],
         ToolsMenuRouteKey.TextLike,
-        <FileText size={16} />,
+        <TextSimilarityIcon size={16} />,
       ),
       getItem(
         toolsRouteMap[ToolsMenuRouteKey.TextFenxi],
         ToolsMenuRouteKey.TextFenxi,
-        <BarChart3 size={16} />,
+        <TextClusterIcon size={16} />,
       ),
       getItem(
         toolsRouteMap[ToolsMenuRouteKey.Mingganci],
         ToolsMenuRouteKey.Mingganci,
-        <Shield size={16} />,
+        <SensitiveWordIcon size={16} />,
       ),
       getItem(
         toolsRouteMap[ToolsMenuRouteKey.Guanjianci],
         ToolsMenuRouteKey.Guanjianci,
-        <Hash size={16} />,
+        <KeywordExtractIcon size={16} />,
       ),
       getItem(
         toolsRouteMap[ToolsMenuRouteKey.YuyinText],
         ToolsMenuRouteKey.YuyinText,
-        <Mic size={16} />,
+        <SpeechToTextIcon size={16} />,
       ),
     ];
   }, [getItem]);
