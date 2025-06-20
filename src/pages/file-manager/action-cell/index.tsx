@@ -69,57 +69,56 @@ const ActionCell = ({
   };
 
   return (
-    <Space size={0}>
-      {isKnowledgeBase || (
-        <Tooltip title={t('addToKnowledge')}>
-          <Button type="text" onClick={onShowConnectToKnowledgeModal}>
-            <LinkOutlined size={20} />
-          </Button>
-        </Tooltip>
-      )}
+    <Space size={0} className='flex items-center gap-3'>
+      {/* {isKnowledgeBase || ( */}
+      {record.type !== 'folder' && (
+      <Button style={{ padding: 0, fontSize: 14 }} type="link" onClick={onShowConnectToKnowledgeModal}>
+        链接知识库
+      </Button>
+       )}
 
-      {isKnowledgeBase || (
-        <Tooltip title={t('rename', { keyPrefix: 'common' })}>
-          <Button type="text" disabled={beingUsed} onClick={onShowRenameModal}>
-            <EditOutlined size={20} />
-          </Button>
-        </Tooltip>
-      )}
-      {isKnowledgeBase || (
-        <Tooltip title={t('move', { keyPrefix: 'common' })}>
-          <Button
-            type="text"
-            disabled={beingUsed}
-            onClick={onShowMoveFileModal}
-            className="flex items-end"
-          >
-            <FolderInput className="size-4" />
-          </Button>
-        </Tooltip>
-      )}
-      {isKnowledgeBase || (
-        <Tooltip title={t('delete', { keyPrefix: 'common' })}>
-          <Button
-            type="text"
-            disabled={beingUsed}
-            onClick={handleRemoveFile}
-            className="flex items-end"
-          >
-            <Trash2 className="size-4" />
-          </Button>
-        </Tooltip>
+      {/* {isKnowledgeBase || ( */}
+      {record.type !== 'folder' && (
+      <Button style={{ padding: 0, fontSize: 14 }} type="link" disabled={beingUsed} onClick={onShowRenameModal}>
+        重命名
+      </Button>
+      )} 
+
+      
+      {/* {isKnowledgeBase || ( */}
+      {record.type !== 'folder' && (
+      <Button
+        style={{ padding: 0, fontSize: 14 }}
+        type="link"
+        disabled={beingUsed}
+        onClick={onShowMoveFileModal}
+
+      >
+        移动
+      </Button>
+       )}
+      {/* {isKnowledgeBase || ( */}
+      {record.type !== 'folder' && (
+      <Button
+        style={{ padding: 0, fontSize: 14 }}
+        type="link"
+        disabled={beingUsed}
+        onClick={handleRemoveFile}
+
+      >
+        删除
+      </Button>
       )}
       {record.type !== 'folder' && (
-        <Tooltip title={t('download', { keyPrefix: 'common' })}>
-          <Button
-            type="text"
-            disabled={beingUsed}
-            loading={loading}
-            onClick={onDownloadDocument}
-          >
-            <DownloadOutlined size={20} />
-          </Button>
-        </Tooltip>
+        <Button
+          style={{ padding: 0, fontSize: 14 }}
+          type="link"
+          disabled={beingUsed}
+          loading={loading}
+          onClick={onDownloadDocument}
+        >
+          下载
+        </Button>
       )}
       {isSupportedPreviewDocumentType(extension) && (
         <NewDocumentLink
@@ -127,11 +126,9 @@ const ActionCell = ({
           documentName={record.name}
           color="black"
         >
-          <Tooltip title={t('preview')}>
-            <Button type="text">
-              <EyeOutlined size={20} />
-            </Button>
-          </Tooltip>
+          <Button style={{ padding: 0, fontSize: 14 }} type="link">
+            预览
+          </Button>
         </NewDocumentLink>
       )}
     </Space>

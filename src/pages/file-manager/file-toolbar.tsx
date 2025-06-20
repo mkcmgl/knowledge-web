@@ -1,14 +1,10 @@
 import { useTranslate } from '@/hooks/common-hooks';
 import {
-  IListResult,
-  useFetchParentFolderList,
-} from '@/hooks/file-manager-hooks';
-import {
-  DownOutlined,
   FileTextOutlined,
   FolderOpenOutlined,
   PlusOutlined,
   SearchOutlined,
+  ReloadOutlined,
 } from '@ant-design/icons';
 import {
   Breadcrumb,
@@ -19,24 +15,29 @@ import {
   Input,
   MenuProps,
   Space,
+  DatePicker,
+  Divider,
+  Form,
 } from 'antd';
-import { useCallback, useMemo } from 'react';
+import { RangePickerProps } from 'antd/es/date-picker';
+import { useCallback, useMemo, useState } from 'react';
 import {
   useHandleBreadcrumbClick,
   useHandleDeleteFile,
   useSelectBreadcrumbItems,
 } from './hooks';
-
 import { FolderInput, Trash2 } from 'lucide-react';
 import styles from './index.less';
+import dayjs from 'dayjs';
 
-interface IProps
-  extends Pick<IListResult, 'searchString' | 'handleInputChange'> {
+interface IProps {
   selectedRowKeys: string[];
   showFolderCreateModal: () => void;
   showFileUploadModal: () => void;
   setSelectedRowKeys: (keys: string[]) => void;
   showMoveFileModal: (ids: string[]) => void;
+  onSearch: (filters: { name: string; knowledgeName: string; dateRange: [string, string] | null }) => void;
+  onReset: () => void;
 }
 
 const FileToolbar = ({
@@ -44,16 +45,16 @@ const FileToolbar = ({
   showFolderCreateModal,
   showFileUploadModal,
   setSelectedRowKeys,
-  searchString,
-  handleInputChange,
   showMoveFileModal,
+  onSearch,
+  onReset,
 }: IProps) => {
   const { t } = useTranslate('knowledgeDetails');
   const breadcrumbItems = useSelectBreadcrumbItems();
   const { handleBreadcrumbClick } = useHandleBreadcrumbClick();
-  const parentFolderList = useFetchParentFolderList();
-  const isKnowledgeBase =
-    parentFolderList.at(-1)?.source_type === 'knowledgebase';
+  // const parentFolderList = useFetchParentFolderList();
+  // const isKnowledgeBase =
+  //   parentFolderList.at(-1)?.source_type === 'knowledgebase';
 
   const itemRender: BreadcrumbProps['itemRender'] = (
     currentRoute,
@@ -116,74 +117,120 @@ const FileToolbar = ({
   const handleShowMoveFileModal = useCallback(() => {
     showMoveFileModal(selectedRowKeys);
   }, [selectedRowKeys, showMoveFileModal]);
-
   const disabled = selectedRowKeys.length === 0;
+  const [form] = Form.useForm();
+  const [name, setName] = useState('');
+  const [knowledgeName, setKnowledgeName] = useState('');
+  const [dateRange, setDateRange] = useState<[string, string] | null>(null);
 
-  const items: MenuProps['items'] = useMemo(() => {
-    return [
-      {
-        key: '4',
-        onClick: handleRemoveFile,
-        label: (
-          <Flex gap={10}>
-            <span className="flex items-center justify-center">
-              <Trash2 className="size-4" />
-            </span>
-            <b>{t('delete', { keyPrefix: 'common' })}</b>
-          </Flex>
-        ),
-      },
-      {
-        key: '5',
-        onClick: handleShowMoveFileModal,
-        label: (
-          <Flex gap={10}>
-            <span className="flex items-center justify-center">
-              <FolderInput className="size-4"></FolderInput>
-            </span>
-            <b>{t('move', { keyPrefix: 'common' })}</b>
-          </Flex>
-        ),
-      },
-    ];
-  }, [handleShowMoveFileModal, t, handleRemoveFile]);
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+  };
+  const handleKnowledgeNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setKnowledgeName(e.target.value);
+  };
+  const handleDateChange: RangePickerProps['onChange'] = (
+    dates,
+    dateStrings
+  ) => {
+    if (dateStrings[0] && dateStrings[1]) {
+      setDateRange([dateStrings[0], dateStrings[1]]);
+    } else {
+      setDateRange(null);
+    }
+  };
+  const handleSearch = () => {
+    const values = form.getFieldsValue();
+    console.log('搜索条件：', values);
+    onSearch({
+      name: values.name || '',
+      knowledgeName: values.knowledgeName || '',
+      dateRange: values.dateRange
+        ? [values.dateRange[0].format('YYYY-MM-DD'), values.dateRange[1].format('YYYY-MM-DD')]
+        : null,
+    });
+  };
+  const handleReset = () => {
+    form.resetFields();
+    setName('');
+    setKnowledgeName('');
+    setDateRange(null);
+    onReset();
+  };
 
   return (
     <div className={styles.filter}>
-      <Breadcrumb items={breadcrumbItems} itemRender={itemRender} />
-      <Space>
-        {isKnowledgeBase || (
-          <Dropdown
-            menu={{ items }}
-            placement="bottom"
-            arrow={false}
-            disabled={disabled}
-          >
-            <Button>
-              <Space>
-                <b> {t('bulk')}</b>
-                <DownOutlined />
-              </Space>
-            </Button>
-          </Dropdown>
-        )}
-        <Input
-          placeholder={t('searchFiles')}
-          value={searchString}
-          style={{ width: 220 }}
-          allowClear
-          onChange={handleInputChange}
-          prefix={<SearchOutlined />}
-        />
 
-        {isKnowledgeBase || (
+
+      <Flex justify="space-between" align="center" style={{ width: '100%' }}>
+        <Form
+          form={form}
+          layout="inline"
+          className="flex-wrap"
+          labelCol={{ style: { width: 80, textAlign: 'left' } }}
+        >
+          <Space size="middle" align="center" wrap style={{ columnGap: '0' }}>
+            <Form.Item name="name" label="文件名" >
+              <Input
+                placeholder="请输入文件名"
+                style={{ width: 180 }}
+                allowClear
+                value={name}
+                onChange={handleNameChange}
+
+              />
+            </Form.Item>
+            <Form.Item name="knowledgeName" label="知识库名称">
+              <Input
+                placeholder="请输入知识库名称"
+                style={{ width: 180 }}
+                allowClear
+                value={knowledgeName}
+                onChange={handleKnowledgeNameChange}
+              />
+            </Form.Item>
+            <Form.Item name="dateRange" label="上传日期">
+              <DatePicker.RangePicker
+                style={{ width: 190 }}
+                value={dateRange ? [dateRange[0] ? dayjs(dateRange[0]) : null, dateRange[1] ? dayjs(dateRange[1]) : null] : undefined}
+                onChange={handleDateChange}
+                format="YYYY-MM-DD"
+                allowClear
+              />
+            </Form.Item>
+          </Space>
+
+
+        </Form>
+        <div style={{ width: 200, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}  >
+          <Space>
+            <Button type="primary" icon={<SearchOutlined />} onClick={handleSearch} style={{ padding: '0 10px', marginRight: 8 }}>查询</Button>
+            <Button style={{ padding: '0 10px' }} icon={<ReloadOutlined />} onClick={handleReset}>重置</Button>
+
+          </Space>
+        </div>
+      </Flex>
+
+      <Divider style={{ margin: '16px 0' }} />
+      <div className='w-full flex mt-5 justify-between items-center'>
+        <Breadcrumb items={breadcrumbItems} itemRender={itemRender} />
+
+        <div className='wjustify-between flex items-center gap-2' style={{width:300}}>
           <Dropdown menu={{ items: actionItems }} trigger={['click']}>
             <Button type="primary" icon={<PlusOutlined />}>
               {t('addFile')}
             </Button>
           </Dropdown>
-        )}
-      </Space>
+          
+          <Button disabled={disabled} onClick={handleShowMoveFileModal}
+          // icon={<FolderInput className="size-4" />}
+          >批量移动</Button>
+
+          <Button disabled={disabled} onClick={handleRemoveFile} style={{flex:'end'}}
+          // icon={<Trash2 className="size-4" />}
+          >批量删除</Button>
+        </div>
+      </div>
     </div>
   );
 };

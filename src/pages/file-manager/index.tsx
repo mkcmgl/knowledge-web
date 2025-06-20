@@ -25,6 +25,7 @@ import ConnectToKnowledgeModal from './connect-to-knowledge-modal';
 import FolderCreateModal from './folder-create-modal';
 import styles from './index.less';
 import FileMovingModal from './move-file-modal';
+import { useState } from 'react';
 
 const { Text } = Typography;
 
@@ -70,14 +71,28 @@ const FileManager = () => {
     hideMoveFileModal,
     moveFileLoading,
   } = useHandleMoveFile(setSelectedRowKeys);
-  const { pagination, data, searchString, handleInputChange, loading } =
-    useFetchFileList();
+  const [searchFilters, setSearchFilters] = useState<{ name: string; dateRange: [string, string] | null }>({ name: '', dateRange: null });
+  const { pagination, data, loading, setPagination } = useFetchFileList(searchFilters);
+
+  // 查询按钮逻辑
+  const handleSearch = (filters: { name: string; dateRange: [string, string] | null }) => {
+    setSearchFilters(filters);
+    setPagination({ page: 1, pageSize: pagination.pageSize || 10 });
+    console.log('FileManager 查询条件:', filters);
+  };
+  // 重置按钮逻辑
+  const handleReset = () => {
+    setSearchFilters({ name: '', dateRange: null });
+    setPagination({ page: 1, pageSize: pagination.pageSize || 10 });
+    console.log('FileManager 重置');
+  };
+
   const columns: ColumnsType<IFile> = [
     {
       title: t('name'),
       dataIndex: 'name',
       key: 'name',
-      fixed: 'left',
+     
       render(value, record) {
         return (
           <Flex gap={10} align="center">
@@ -140,6 +155,8 @@ const FileManager = () => {
       title: t('action'),
       dataIndex: 'action',
       key: 'action',
+      width: 320, 
+      fixed: 'right',
       render: (text, record) => (
         <ActionCell
           record={record}
@@ -158,13 +175,13 @@ const FileManager = () => {
   return (
     <section className={styles.fileManagerWrapper}>
       <FileToolbar
-        searchString={searchString}
-        handleInputChange={handleInputChange}
         selectedRowKeys={rowSelection.selectedRowKeys as string[]}
         showFolderCreateModal={showFolderCreateModal}
         showFileUploadModal={showFileUploadModal}
         setSelectedRowKeys={setSelectedRowKeys}
         showMoveFileModal={showMoveFileModal}
+        onSearch={handleSearch}
+        onReset={handleReset}
       ></FileToolbar>
       <Table
         dataSource={data?.files}

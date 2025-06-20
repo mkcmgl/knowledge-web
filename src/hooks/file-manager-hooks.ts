@@ -46,7 +46,9 @@ export const useFetchPureFileList = () => {
   return { loading, fetchList: mutateAsync };
 };
 
-export const useFetchFileList = (): ResponseType<any> & IListResult => {
+export const useFetchFileList = (
+  filters?: { name?: string; dateRange?: [string, string] | null }
+): ResponseType<any> & IListResult => {
   const { searchString, handleInputChange } = useHandleSearchChange();
   const { pagination, setPagination } = useGetPaginationWithRouter();
   const id = useGetFolderId();
@@ -58,18 +60,23 @@ export const useFetchFileList = (): ResponseType<any> & IListResult => {
         id,
         searchString,
         ...pagination,
+        ...(filters || {}),
       },
     ],
     initialData: {},
     gcTime: 0,
     queryFn: async () => {
-      const { data } = await fileManagerService.listFile({
+      const params: any = {
         parent_id: id,
-        keywords: searchString,
+        keywords: filters?.name ?? searchString,
         page_size: pagination.pageSize,
         page: pagination.current,
-      });
-
+      };
+      if (filters?.dateRange && filters.dateRange[0] && filters.dateRange[1]) {
+        params.start_date = filters.dateRange[0];
+        params.end_date = filters.dateRange[1];
+      }
+      const { data } = await fileManagerService.listFile(params);
       return data;
     },
   });
