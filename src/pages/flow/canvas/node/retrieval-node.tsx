@@ -19,7 +19,7 @@ export function RetrievalNode({
 }: NodeProps<IRetrievalNode>) {
   const knowledgeBaseIds: string[] = get(data, 'form.kb_ids', []);
   const { theme } = useTheme();
-  const { list: knowledgeList } = useFetchKnowledgeList(true);
+  const { list: knowledgeList } = useFetchKnowledgeList();
   const [showAllKnowledge, setShowAllKnowledge] = useState(false);
   const knowledgeBases = useMemo(() => {
     return knowledgeBaseIds.map((x) => {

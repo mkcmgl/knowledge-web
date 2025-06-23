@@ -173,7 +173,7 @@ const FileToolbar = ({
             <Form.Item name="name" label="文件名" >
               <Input
                 placeholder="请输入文件名"
-                style={{ width: 180 }}
+                style={{ width: 190 }}
                 allowClear
                 value={name}
                 onChange={handleNameChange}
@@ -183,7 +183,7 @@ const FileToolbar = ({
             <Form.Item name="knowledgeName" label="知识库名称">
               <Input
                 placeholder="请输入知识库名称"
-                style={{ width: 180 }}
+                style={{ width: 190 }}
                 allowClear
                 value={knowledgeName}
                 onChange={handleKnowledgeNameChange}

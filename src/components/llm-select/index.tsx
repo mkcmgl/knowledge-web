@@ -54,7 +54,7 @@ const LLMSelect = ({
       <AntSelect
         options={modelOptions}
         style={{ width: '100%' }}
-        dropdownStyle={{ display: 'none' }}
+        styles={{ popup:{root:{display:'nome'} } }}
         id={id}
         value={value}
         onChange={onChange}

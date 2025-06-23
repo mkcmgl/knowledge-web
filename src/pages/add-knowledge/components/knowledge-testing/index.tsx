@@ -83,7 +83,7 @@ const KnowledgeTesting = () => {
           onCancel={handleModalClose}
           width="80%"
           footer={null}
-          destroyOnClose
+          destroyOnHidden
         >
           <TestingResult
             handleTesting={handleTesting}

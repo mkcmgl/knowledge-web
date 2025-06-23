@@ -1,27 +1,26 @@
-import { useInfiniteFetchKnowledgeList } from '@/hooks/knowledge-hooks';
-import { useFetchUserInfo } from '@/hooks/user-setting-hooks';
-import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { PlusOutlined, SearchOutlined, ReloadOutlined } from '@ant-design/icons';
 import {
   Button,
-  Divider,
   Empty,
   Flex,
   Input,
-  Skeleton,
   Space,
   Spin,
+  Pagination,
+  Form,
+  DatePicker,
 } from 'antd';
 import { useTranslation } from 'react-i18next';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import { useSaveKnowledge } from './hooks';
 import KnowledgeCard from './knowledge-card';
 // import ChatPage from './chat';
 import KnowledgeCreatingModal from './knowledge-creating-modal';
-import { useMemo } from 'react';
+import { useState } from 'react';
 import styles from './index.less';
+import { useFetchKnowledgeList } from '@/hooks/knowledge-hooks';
+// import { useFetchUserInfo } from '@/hooks/user-hooks';
 
 const KnowledgeList = () => {
-  const { data: userInfo } = useFetchUserInfo();
   const { t } = useTranslation('translation', { keyPrefix: 'knowledgeList' });
   const {
     visible,
@@ -30,45 +29,36 @@ const KnowledgeList = () => {
     onCreateOk,
     loading: creatingLoading,
   } = useSaveKnowledge();
-  const {
-    fetchNextPage,
-    data,
-    hasNextPage,
-    searchString,
-    handleInputChange,
-    loading,
-  } = useInfiniteFetchKnowledgeList();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [form] = Form.useForm();
+  const [searchFilters, setSearchFilters] = useState<{ name: string; model: string; dateRange: [string, string] | null }>({ name: '', model: '', dateRange: null });
+  const { list, total, loading } = useFetchKnowledgeList(page, pageSize, searchFilters.name, searchFilters.model, searchFilters.dateRange);
 
-  const nextList = useMemo(() => {
-    const list =
-      data?.pages?.flatMap((x) => (Array.isArray(x.kbs) ? x.kbs : [])) ?? [];
-    return list;
-  }, [data?.pages]);
+  const handleSearch = () => {
+    const values = form.getFieldsValue();
+    setSearchFilters({
+      name: values.name || '',
+      model: values.model || '',
+      dateRange: values.dateRange
+        ? [values.dateRange[0].format('YYYY-MM-DD'), values.dateRange[1].format('YYYY-MM-DD')]
+        : null,
+    });
+    setPage(1);
+  };
+  const handleReset = () => {
+    form.resetFields();
+    setSearchFilters({ name: '', model: '', dateRange: null });
+    setPage(1);
+  };
 
-  const total = useMemo(() => {
-    return data?.pages.at(-1).total ?? 0;
-  }, [data?.pages]);
+  const nextList = list || [];
 
   return (
     <Flex className={styles.knowledge} vertical flex={1}>
-      <div className={styles.topWrapper}>
-        <div >
-          <span className={styles.title}>
-            {t('welcome')}, {userInfo.nickname}
-          </span>
-          <p className={styles.description}>{t('description')}</p>
-          {/* <ChatPage /> */}
-        </div>
-        <Space size={'large'}>
-          <Input
-            placeholder={t('searchKnowledgePlaceholder')}
-            value={searchString}
-            style={{ width: 220 }}
-            allowClear
-            onChange={handleInputChange}
-            prefix={<SearchOutlined />}
-          />
-
+      <div className={styles.topWrapper} >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',marginBottom:'30px' }} >
+          <div></div>
           <Button
             type="primary"
             icon={<PlusOutlined />}
@@ -77,47 +67,90 @@ const KnowledgeList = () => {
           >
             {t('createKnowledgeBase')}
           </Button>
-        </Space>
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} >
+          <Form
+            form={form}
+            layout="inline"
+            className="flex-wrap"
+            labelCol={{ style: { width: 80, textAlign: 'left' } }}
+          >
+            <Space size="middle" align="center" wrap style={{ columnGap: '0' }}>
+              <Form.Item name="name" label="名称">
+                <Input
+                  placeholder="请输入知识库名称"
+                  style={{ width: 190 }}
+                  allowClear
+                />
+              </Form.Item>
+              <Form.Item name="model" label="嵌入模型">
+                {/* 下拉选择模式，后续如需恢复可取消注释
+                <Select
+                  placeholder="请选择嵌入模型"
+                  style={{ width: 190 }}
+                  allowClear
+                  options={[]}
+                />
+                */}
+                <Input
+                  placeholder="请输入嵌入模型"
+                  style={{ width: 190 }}
+                  allowClear
+                />
+              </Form.Item>
+              <Form.Item name="dateRange" label="创建时间">
+                <DatePicker.RangePicker
+                  style={{ width: 190 }}
+                  format="YYYY-MM-DD"
+                  allowClear
+                />
+              </Form.Item>
+            </Space>
+          </Form>
+          <div style={{ width: 200, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }} >
+            <Button type="primary" icon={<SearchOutlined />} onClick={handleSearch} style={{ marginRight: 8 }}>查询</Button>
+            <Button icon={<ReloadOutlined />} onClick={handleReset} >重置</Button>
+
+          </div>
+        </div>
+
       </div>
       <Spin spinning={loading}>
-        <div
-          id="scrollableDiv"
-          style={{
-            height: 'calc(100vh - 250px)',
-            overflow: 'auto',
-            padding: '0 16px',
-          }}
-        >
-          <InfiniteScroll
-            dataLength={nextList?.length ?? 0}
-            next={fetchNextPage}
-            hasMore={hasNextPage}
-            loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
-            endMessage={
-              !!total && <Divider plain>{t('noMoreData')}</Divider>
-            }
-            scrollableTarget="scrollableDiv"
-            scrollThreshold="200px"
+        <div style={{ padding: '0 16px' }}>
+          <Flex
+            gap={'large'}
+            wrap="wrap"
+            className={styles.knowledgeCardContainer}
           >
-            <Flex
-              gap={'large'}
-              wrap="wrap"
-              className={styles.knowledgeCardContainer}
-            >
-              {nextList?.length > 0 ? (
-                nextList.map((item: any, index: number) => {
-                  return (
-                    <KnowledgeCard
-                      item={item}
-                      key={`${item?.name}-${index}`}
-                    ></KnowledgeCard>
-                  );
-                })
-              ) : (
-                <Empty className={styles.knowledgeEmpty}></Empty>
-              )}
-            </Flex>
-          </InfiniteScroll>
+            {nextList?.length > 0 ? (
+              nextList.map((item: any, index: number) => {
+                return (
+                  <KnowledgeCard
+                    item={item}
+                    key={`${item?.name}-${index}`}
+                  ></KnowledgeCard>
+                );
+              })
+            ) : (
+              <Empty className={styles.knowledgeEmpty}></Empty>
+            )}
+          </Flex>
+          <div style={{ textAlign: 'center', margin: '24px 0' }}>
+            <Pagination
+              current={page}
+              pageSize={pageSize}
+              total={total}
+              showSizeChanger
+              align="end"
+              pageSizeOptions={[5, 10, 20, 30, 50]}
+              showTotal={total => `总共 ${total}`}
+              onChange={(p, ps) => {
+                setPage(p);
+                setPageSize(ps);
+              }}
+            />
+          </div>
         </div>
       </Spin>
       <KnowledgeCreatingModal
@@ -126,10 +159,10 @@ const KnowledgeList = () => {
         hideModal={hideModal}
         onOk={onCreateOk}
       ></KnowledgeCreatingModal>
+      {/* <span className={styles.title}>
+        {t('welcome')}, {userInfo?.nickname}
+      </span> */}
     </Flex>
-
-               
-
   );
 };
 

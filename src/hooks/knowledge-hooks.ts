@@ -55,25 +55,39 @@ export const useFetchKnowledgeBaseConfiguration = () => {
 };
 
 export const useFetchKnowledgeList = (
-  shouldFilterListWithoutDocument: boolean = false,
-): {
-  list: IKnowledge[];
-  loading: boolean;
-} => {
+  page: number = 1,
+  pageSize: number = 10,
+  keywords: string = '',
+  model: string = '',
+  dateRange: [string, string] | null = null,
+): { list: IKnowledge[]; total: number; loading: boolean } => {
   const { data, isFetching: loading } = useQuery({
-    queryKey: ['fetchKnowledgeList'],
-    initialData: [],
-    gcTime: 0, // https://tanstack.com/query/latest/docs/framework/react/guides/caching?from=reactQueryV3
+    queryKey: [
+      'fetchKnowledgeList',
+      page,
+      pageSize,
+      keywords,
+      model,
+      dateRange,
+    ],
+    initialData: { kbs: [], total: 0 },
+    gcTime: 0,
     queryFn: async () => {
-      const { data } = await listDataset();
-      const list = data?.data?.kbs ?? [];
-      return shouldFilterListWithoutDocument
-        ? list.filter((x: IKnowledge) => x.chunk_num > 0)
-        : list;
+      console.log(page, pageSize, keywords);
+      const params: any = { page, page_size: pageSize, keywords };
+      if (model) params.model = model;
+      if (dateRange && dateRange[0] && dateRange[1]) {
+        params.start_date = dateRange[0];
+        params.end_date = dateRange[1];
+      }
+      const { data } = await listDataset(params);
+      return {
+        kbs: data?.data?.kbs ?? [],
+        total: data?.data?.total ?? 0,
+      };
     },
   });
-
-  return { list: data, loading };
+  return { list: data.kbs, total: data.total, loading };
 };
 
 export const useSelectKnowledgeOptions = () => {
@@ -104,6 +118,11 @@ export const useInfiniteFetchKnowledgeList = () => {
   } = useInfiniteQuery({
     queryKey: ['infiniteFetchKnowledgeList', debouncedSearchString],
     queryFn: async ({ pageParam }) => {
+      console.log(``, {
+        page: pageParam,
+        page_size: PageSize,
+        keywords: debouncedSearchString,
+      });
       const { data } = await listDataset({
         page: pageParam,
         page_size: PageSize,

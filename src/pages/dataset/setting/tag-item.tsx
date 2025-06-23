@@ -18,7 +18,7 @@ export const TagSetItem = () => {
   const { t } = useTranslation();
   const form = useFormContext();
 
-  const { list: knowledgeList } = useFetchKnowledgeList(true);
+  const { list: knowledgeList } = useFetchKnowledgeList();
 
   const knowledgeOptions = knowledgeList
     .filter((x) => x.parser_id === 'tag')

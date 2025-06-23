@@ -26,7 +26,7 @@ const KnowledgeBaseItem = ({
 }: KnowledgeBaseItemProps) => {
   const { t } = useTranslate('chat');
 
-  const { list: knowledgeList } = useFetchKnowledgeList(true);
+  const { list: knowledgeList } = useFetchKnowledgeList();
 
   const filteredKnowledgeList = knowledgeList.filter(
     (x) => x.parser_id !== DocumentParserType.Tag,
@@ -71,7 +71,7 @@ export function KnowledgeBaseFormField() {
   const form = useFormContext();
   const { t } = useTranslate('chat');
 
-  const { list: knowledgeList } = useFetchKnowledgeList(true);
+  const { list: knowledgeList } = useFetchKnowledgeList();
 
   const filteredKnowledgeList = knowledgeList.filter(
     (x) => x.parser_id !== DocumentParserType.Tag,

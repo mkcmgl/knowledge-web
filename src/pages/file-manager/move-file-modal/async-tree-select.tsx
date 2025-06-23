@@ -57,7 +57,7 @@ const AsyncTreeSelect = ({ value, onChange }: IProps) => {
       treeDataSimpleMode
       style={{ width: '100%' }}
       value={value}
-      dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+      styles={{ popup: { root: { maxHeight: 400, overflow: 'auto' } } }}
       placeholder={t('fileManager.pleaseSelect')}
       onChange={handleChange}
       loadData={onLoadData}

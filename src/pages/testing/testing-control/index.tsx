@@ -44,7 +44,7 @@ const TestingControl = ({
 
   const buttonDisabled =
     !question || (typeof question === 'string' && question.trim() === '');
-    console.log(`myLlmList,knowledgeList`,myLlmList,knowledgeList)
+  console.log(`myLlmList,knowledgeList`, myLlmList, knowledgeList)
 
   // 构造树形结构数据（修正版）
   const treeData = myLlmList.flatMap((model) => {
@@ -66,7 +66,7 @@ const TestingControl = ({
       };
     }).filter((node) => node.children.length > 0);
   }).filter((node) => node.children && node.children.length > 0);
-  console.log(`treeData68`,treeData)
+  console.log(`treeData68`, treeData)
 
   const onClick = async () => {
     try {
@@ -75,7 +75,7 @@ const TestingControl = ({
       // 校验通过后再调用 handleTesting
       handleTesting(selectedDocumentIds);
     } catch (error) {
-     
+
     }
   };
 
@@ -102,7 +102,7 @@ const TestingControl = ({
           labelAlign="left"
         >
           <div className={styles.formContent}>
-            
+
             <Form.Item
               label="测试知识库"
               name={'test_kb_ids'}
@@ -132,7 +132,7 @@ const TestingControl = ({
                 style={{ width: '100%' }}
                 treeDefaultExpandAll
                 showSearch
-                dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                styles={{ popup: { root: { maxHeight: 400, overflow: 'auto' } } }}
               />
             </Form.Item>
 

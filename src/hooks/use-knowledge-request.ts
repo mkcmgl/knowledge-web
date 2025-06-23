@@ -116,6 +116,18 @@ export const useFetchNextKnowledgeListByPage = () => {
     },
     gcTime: 0,
     queryFn: async () => {
+      console.log(
+        `{
+          keywords: debouncedSearchString,
+          page_size: pagination.pageSize,
+          page: pagination.current,
+        },`,
+        {
+          keywords: debouncedSearchString,
+          page_size: pagination.pageSize,
+          page: pagination.current,
+        },
+      );
       const { data } = await listDataset(
         {
           keywords: debouncedSearchString,
