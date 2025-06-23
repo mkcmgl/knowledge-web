@@ -92,7 +92,7 @@ const FileManager = () => {
       title: t('name'),
       dataIndex: 'name',
       key: 'name',
-     
+
       render(value, record) {
         return (
           <Flex gap={10} align="center">
@@ -115,14 +115,7 @@ const FileManager = () => {
         );
       },
     },
-    {
-      title: t('uploadDate'),
-      dataIndex: 'create_time',
-      key: 'create_time',
-      render(text) {
-        return formatDate(text);
-      },
-    },
+
     {
       title: t('size'),
       dataIndex: 'size',
@@ -131,6 +124,14 @@ const FileManager = () => {
         return (
           formatNumberWithThousandsSeparator((value / 1024).toFixed(2)) + ' KB'
         );
+      },
+    },
+    {
+      title: t('uploadDate'),
+      dataIndex: 'create_time',
+      key: 'create_time',
+      render(text) {
+        return formatDate(text);
       },
     },
     {
@@ -155,7 +156,7 @@ const FileManager = () => {
       title: t('action'),
       dataIndex: 'action',
       key: 'action',
-      width: 320, 
+      width: 320,
       fixed: 'right',
       render: (text, record) => (
         <ActionCell
