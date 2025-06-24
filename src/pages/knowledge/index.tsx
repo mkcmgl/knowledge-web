@@ -9,6 +9,7 @@ import {
   Pagination,
   Form,
   DatePicker,
+  Divider,
 } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useSaveKnowledge } from './hooks';
@@ -57,17 +58,7 @@ const KnowledgeList = () => {
   return (
     <Flex className={styles.knowledge} vertical flex={1}>
       <div className={styles.topWrapper} >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',marginBottom:'30px' }} >
-          <div></div>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={showModal}
-            className={styles.topButton}
-          >
-            {t('createKnowledgeBase')}
-          </Button>
-        </div>
+
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} >
           <Form
@@ -115,6 +106,34 @@ const KnowledgeList = () => {
           </div>
         </div>
 
+      </div>
+      <div className={styles.topUsrNum}>
+         <Divider style={{ margin: '20px 0' }} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }} >
+          <div></div>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={showModal}
+            className={styles.topButton}
+          >
+            {t('createKnowledgeBase')}
+          </Button>
+        </div>
+        <div className={styles.topNumContent}>
+          <div className='flex-1 text-center'>
+            <div>知识库</div>
+            <div className='font-semibold text-[18px]'>199</div>
+          </div>
+          <div className='flex-1  text-center '>
+            <div>文档</div>
+            <div className='font-semibold text-[18px]'>199</div>
+          </div>
+          <div className='flex-1  text-center'>
+            <div>嵌入模型</div>
+            <div className='font-semibold text-[18px]'>9</div>
+          </div>
+        </div>
       </div>
       <Spin spinning={loading}>
         <div style={{ padding: '0 16px' }}>
