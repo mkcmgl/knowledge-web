@@ -126,6 +126,7 @@ const ParsingActionCell = ({
         </div>
       ),
     },
+    { type: 'divider' },
     {
       key: '3',
       label: (

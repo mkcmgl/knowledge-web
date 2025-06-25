@@ -9,7 +9,7 @@ import {
 } from '../hooks';
 import { Modal } from 'antd';
 import CategoryPanel from '../category-panel';
-
+import styles from '../index.less';
 export const EmbeddingModelItem = memo(function EmbeddingModelItem() {
   const { t } = useTranslate('knowledgeConfiguration');
   const embeddingModelOptions = useSelectEmbeddingModelOptions();
@@ -59,7 +59,8 @@ export const ChunkMethodItem = memo(function ChunkMethodItem() {
           label={t('chunkMethod')}
           tooltip={t('chunkMethodTip')}
           rules={[{ required: true }]}
-          className='flex-1'
+          className={styles.topItem}
+          layout="horizontal"
         >
           <Select
             placeholder={t('chunkMethodPlaceholder')}
@@ -68,7 +69,7 @@ export const ChunkMethodItem = memo(function ChunkMethodItem() {
             style={{ width: '100%' }}
           />
         </Form.Item>
-        <Form.Item label=" " colon={false}>
+        <Form.Item label=" " colon={false}  layout="horizontal">
           <Button type="link" onClick={showModal}>
             {t('viewDetails')}
           </Button>

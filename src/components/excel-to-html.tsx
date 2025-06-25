@@ -10,6 +10,7 @@ const ExcelToHtml = () => {
       initialValue={false}
       valuePropName="checked"
       tooltip={t('html4excelTip')}
+       layout="horizontal"
     >
       <Switch />
     </Form.Item>

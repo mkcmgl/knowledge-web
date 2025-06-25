@@ -10,8 +10,8 @@ import {
   useSetNextDocumentStatus,
 } from '@/hooks/document-hooks';
 import { IDocumentInfo } from '@/interfaces/database/document';
-import { ReloadOutlined,SearchOutlined } from '@ant-design/icons';
-import { Button, Flex, Form, Input, Select, Space } from 'antd';
+import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
+import { Button, DatePicker, Flex, Form, Input, Select, Space } from 'antd';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { RunningStatus } from './constant';
@@ -23,8 +23,8 @@ interface IProps {
   showWebCrawlModal(): void;
   showDocumentUploadModal(): void;
   documents: IDocumentInfo[];
-  onSearch: (filters: { 
-    keywords: string; 
+  onSearch: (filters: {
+    keywords: string;
     parser_id: string;
     status: string;
     run: string;
@@ -54,7 +54,7 @@ const DocumentToolbar = ({
   const handleSearch = () => {
     const values = form.getFieldsValue();
     console.log('搜索条件：', values);
-    
+
     // 调用接口搜索
     onSearch(values);
   };
@@ -200,26 +200,26 @@ const DocumentToolbar = ({
           className="flex-wrap"
           labelCol={{ style: { width: 80, textAlign: 'right' } }}
         >
-          <Space size="middle" align="center" wrap style={{columnGap: '0'}}>
+          <Space size="middle" align="center" wrap style={{ columnGap: '0' }}>
             <Form.Item name="keywords" label={t('fileName')}>
               <Input
                 placeholder={t('pleaseInputFileName')}
-                style={{ width: 150 }}
+                style={{ width: 190  }}
                 allowClear
               />
             </Form.Item>
             <Form.Item name="parser_id" label={t('chunkMethod')}>
               <Select
                 placeholder={"请选择切片方法"}
-                style={{ width: 150 }}
+                style={{ width: 190  }}
                 allowClear
                 options={parserList}
               />
             </Form.Item>
-            <Form.Item name="status" label={t('enabled')}>
+            <Form.Item name="status" label='启用状态'>
               <Select
                 placeholder={"请选择启用状态"}
-                style={{ width: 150 }}
+                style={{ width: 190  }}
                 allowClear
                 options={[
                   { label: t('enabled'), value: '1' },
@@ -230,7 +230,7 @@ const DocumentToolbar = ({
             <Form.Item name="run" label={t('parsingStatus')}>
               <Select
                 placeholder="请选择解析状态"
-                style={{ width: 150 }}
+                style={{ width: 190  }}
                 allowClear
                 options={Object.entries(RunningStatus).map(([, value]) => ({
                   label: t(`runningStatus${value}`),
@@ -241,14 +241,21 @@ const DocumentToolbar = ({
             <Form.Item name="key" label="元数据名">
               <Input
                 placeholder="请输入元数据字段名"
-                style={{ width: 150 }}
+                style={{ width: 190  }}
                 allowClear
               />
             </Form.Item>
             <Form.Item name="value" label="元数据值">
               <Input
                 placeholder="请输入元数据值"
-                style={{ width: 150 }}
+                style={{ width: 190  }}
+                allowClear
+              />
+            </Form.Item>
+            <Form.Item name="dateRange" label="创建时间">
+              <DatePicker.RangePicker
+                style={{ width: 190 }}
+                format="YYYY-MM-DD"
                 allowClear
               />
             </Form.Item>
@@ -256,10 +263,10 @@ const DocumentToolbar = ({
         </Form>
         <div style={{ width: 200, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
           <Space>
-            <Button style={{padding:'0 10px' }} type="primary" onClick={handleSearch} icon={<SearchOutlined />}>
+            <Button style={{ padding: '0 10px' }} type="primary" onClick={handleSearch} icon={<SearchOutlined />}>
               {t('search')}
             </Button>
-            <Button style={{padding:'0 10px' }} onClick={handleReset} icon={<ReloadOutlined />}>
+            <Button style={{ padding: '0 10px' }} onClick={handleReset} icon={<ReloadOutlined />}>
               {t('reset')}
             </Button>
           </Space>

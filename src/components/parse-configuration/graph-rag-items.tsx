@@ -49,6 +49,7 @@ export function UseGraphRagItem() {
       initialValue={false}
       valuePropName="checked"
       tooltip={t('useGraphRagTip')}
+      layout="horizontal"
     >
       <Switch />
     </Form.Item>
@@ -101,6 +102,7 @@ const GraphRagItems = ({ marginBottom = false }: GraphRagItemsProps) => {
                 <Form.Item
                   name={['parser_config', 'graphrag', 'method']}
                   label={t('graphRagMethod')}
+
                   tooltip={renderWideTooltip(
                     <div
                       dangerouslySetInnerHTML={{

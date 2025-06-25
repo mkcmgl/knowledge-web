@@ -13,12 +13,15 @@ import GraphRagItems from '@/components/parse-configuration/graph-rag-items';
 import { Divider } from 'antd';
 import { TagItems } from '../tag-item';
 import { ChunkMethodItem, EmbeddingModelItem } from './common-item';
-
+import styles from '../index.less';
 export function NaiveConfiguration() {
   return (
     <section className="space-y-4 mb-4">
-      <DatasetConfigurationContainer>
+      <div className={styles.setRightTopStick}>
         <ChunkMethodItem></ChunkMethodItem>
+      </div>
+      <DatasetConfigurationContainer className={styles.setRightTop}>
+
         <LayoutRecognize></LayoutRecognize>
         <EmbeddingModelItem></EmbeddingModelItem>
         <MaxTokenNumber></MaxTokenNumber>

@@ -152,21 +152,7 @@ const KnowledgeFile = () => {
         return parserList.find((x) => x.value === text)?.label;
       },
     },
-    {
-      title: t('enabled'),
-      key: 'status',
-      dataIndex: 'status',
-      render: (_, { status, id }) => (
-        <>
-          <Switch
-            checked={status === '1'}
-            onChange={(e) => {
-              setDocumentStatus({ status: e, documentId: id });
-            }}
-          />
-        </>
-      ),
-    },
+
     {
       title: (
         <span className="flex items-center gap-2">
@@ -186,6 +172,26 @@ const KnowledgeFile = () => {
       render: (text, record) => {
         return <ParsingStatusCell record={record}></ParsingStatusCell>;
       },
+    },
+        {
+      title: '元数据',
+      dataIndex: 'chunk_num',
+      key: 'chunk_num',
+    },
+        {
+      title: '启用状态',
+      key: 'status',
+      dataIndex: 'status',
+      render: (_, { status, id }) => (
+        <>
+          <Switch
+            checked={status === '1'}
+            onChange={(e) => {
+              setDocumentStatus({ status: e, documentId: id });
+            }}
+          />
+        </>
+      ),
     },
     {
       title: t('uploadDate'),

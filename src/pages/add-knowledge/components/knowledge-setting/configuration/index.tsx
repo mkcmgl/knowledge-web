@@ -105,7 +105,7 @@ export const ConfigurationForm = ({ form }: { form: FormInstance }) => {
             rules={[{ required: true }]}
           >
             <Radio.Group>
-              <Radio value="me">{t('me')}</Radio>
+              <Radio value="me">仅自己</Radio>
               <Radio value="team">{t('team')}</Radio>
             </Radio.Group>
           </Form.Item>

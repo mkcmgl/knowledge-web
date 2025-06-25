@@ -50,6 +50,7 @@ const ParseConfiguration = () => {
         initialValue={false}
         valuePropName="checked"
         tooltip={t('useRaptorTip')}
+         layout="horizontal"
       >
         <Switch />
       </Form.Item>
