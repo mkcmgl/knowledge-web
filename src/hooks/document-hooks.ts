@@ -105,7 +105,7 @@ export const useFetchNextDocumentList = () => {
   }>({
     queryKey: ['fetchDocumentList', searchFilters, pagination],
     initialData: { docs: [], total: 0 },
-    refetchInterval: 15000,
+    refetchInterval: 120000,
     enabled: !!knowledgeId || !!id,
     queryFn: async () => {
       const ret = await listDocument({

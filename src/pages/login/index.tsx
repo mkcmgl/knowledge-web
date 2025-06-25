@@ -103,6 +103,7 @@ const Login = () => {
             layout="vertical"
             name="dynamic_rule"
             style={{ maxWidth: 600 }}
+            autoComplete="off"
           >
             <Form.Item
               {...formItemLayout}
@@ -110,7 +111,7 @@ const Login = () => {
               label="邮箱"
               rules={[{ required: true, message: '请输入邮箱地址' }]}
             >
-              <Input size="large" placeholder="请输入邮箱地址" />
+              <Input autoComplete="new-email" size="large" placeholder="请输入邮箱地址" />
             </Form.Item>
             {title === 'register' && (
               <Form.Item
@@ -119,7 +120,7 @@ const Login = () => {
                 label="名称"
                 rules={[{ required: true, message: '请输入名称' }]}
               >
-                <Input size="large" placeholder="请输入名称" />
+                <Input autoComplete="off" size="large" placeholder="请输入名称" />
               </Form.Item>
             )}
             <Form.Item
@@ -131,6 +132,7 @@ const Login = () => {
               <Input.Password
                 size="large"
                 placeholder="请输入密码"
+                autoComplete="new-password"
                 onPressEnter={onCheck}
               />
             </Form.Item>
