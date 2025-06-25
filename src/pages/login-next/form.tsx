@@ -17,21 +17,18 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from '@/components/ui/input-otp';
-import { useTranslate } from '@/hooks/common-hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 export function SignUpForm() {
-  const { t } = useTranslate('login');
-
   const FormSchema = z.object({
     email: z.string().email({
-      message: t('emailPlaceholder'),
+      message: '请输入邮箱地址',
     }),
-    nickname: z.string({ required_error: t('nicknamePlaceholder') }),
-    password: z.string({ required_error: t('passwordPlaceholder') }),
-    agree: z.boolean({ required_error: t('passwordPlaceholder') }),
+    nickname: z.string({ required_error: '请输入名称' }),
+    password: z.string({ required_error: '请输入密码' }),
+    agree: z.boolean({ required_error: '请同意服务条款' }),
   });
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -61,9 +58,9 @@ export function SignUpForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('emailLabel')}</FormLabel>
+              <FormLabel>邮箱</FormLabel>
               <FormControl>
-                <Input placeholder={t('emailPlaceholder')} {...field} />
+                <Input placeholder="请输入邮箱地址" autoComplete="off" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -74,9 +71,9 @@ export function SignUpForm() {
           name="nickname"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('nicknameLabel')}</FormLabel>
+              <FormLabel>名称</FormLabel>
               <FormControl>
-                <Input placeholder={t('nicknamePlaceholder')} {...field} />
+                <Input placeholder="请输入名称" autoComplete="off" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -87,11 +84,12 @@ export function SignUpForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('passwordLabel')}</FormLabel>
+              <FormLabel>密码</FormLabel>
               <FormControl>
                 <Input
                   type={'password'}
-                  placeholder={t('passwordPlaceholder')}
+                  placeholder="请输入密码"
+                  autoComplete="off"
                   {...field}
                 />
               </FormControl>
@@ -112,29 +110,24 @@ export function SignUpForm() {
               </FormControl>
               <div className="space-y-1 leading-none">
                 <FormLabel>
-                  I understand and agree to the Terms of Service and Privacy
-                  Policy.
+                  我已阅读并同意《服务条款》和《隐私政策》
                 </FormLabel>
               </div>
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">
-          {t('signUp')}
-        </Button>
+        <Button type="submit" className="w-full">注册</Button>
       </form>
     </Form>
   );
 }
 
 export function SignInForm() {
-  const { t } = useTranslate('login');
-
   const FormSchema = z.object({
     email: z.string().email({
-      message: t('emailPlaceholder'),
+      message: '请输入邮箱地址',
     }),
-    password: z.string({ required_error: t('passwordPlaceholder') }),
+    password: z.string({ required_error: '请输入密码' }),
   });
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -164,9 +157,9 @@ export function SignInForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('emailLabel')}</FormLabel>
+              <FormLabel>邮箱</FormLabel>
               <FormControl>
-                <Input placeholder={t('emailPlaceholder')} {...field} />
+                <Input placeholder="请输入邮箱地址" autoComplete="off" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -177,11 +170,12 @@ export function SignInForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('passwordLabel')}</FormLabel>
+              <FormLabel>密码</FormLabel>
               <FormControl>
                 <Input
                   type={'password'}
-                  placeholder={t('passwordPlaceholder')}
+                  placeholder="请输入密码"
+                  autoComplete="off"
                   {...field}
                 />
               </FormControl>
@@ -195,12 +189,10 @@ export function SignInForm() {
             htmlFor="terms"
             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
-            {t('rememberMe')}
+            记住我
           </label>
         </div>
-        <Button type="submit" className="w-full">
-          {t('login')}
-        </Button>
+        <Button type="submit" className="w-full">登录</Button>
       </form>
     </Form>
   );
@@ -240,7 +232,7 @@ export function VerifyEmailForm() {
           name="pin"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>One-Time Password</FormLabel>
+              <FormLabel>一次性验证码</FormLabel>
               <FormControl>
                 <InputOTP maxLength={6} {...field}>
                   <InputOTPGroup>
@@ -258,9 +250,7 @@ export function VerifyEmailForm() {
           )}
         />
 
-        <Button type="submit" className="w-full">
-          Verify
-        </Button>
+        <Button type="submit" className="w-full">验证</Button>
       </form>
     </Form>
   );

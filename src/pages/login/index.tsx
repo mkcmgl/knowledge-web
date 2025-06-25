@@ -10,7 +10,6 @@ import { useSystemConfig } from '@/hooks/system-hooks';
 import { rsaPsw } from '@/utils';
 import { Button, Checkbox, Form, Input } from 'antd';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'umi';
 import RightPanel from './right-panel';
 
@@ -24,7 +23,6 @@ const Login = () => {
   const { channels, loading: channelsLoading } = useLoginChannels();
   const { login: loginWithChannel, loading: loginWithChannelLoading } =
     useLoginWithChannel();
-  const { t } = useTranslation('translation', { keyPrefix: 'login' });
   const loading =
     signLoading ||
     registerLoading ||
@@ -94,11 +92,9 @@ const Login = () => {
       <div className={styles.loginLeft}>
         <div className={styles.leftContainer}>
           <div className={styles.loginTitle}>
-            <div>{title === 'login' ? t('login') : t('register')}</div>
+            <div>{title === 'login' ? '登录' : '注册'}</div>
             <span>
-              {title === 'login'
-                ? t('loginDescription')
-                : t('registerDescription')}
+              {title === 'login' ? '很高兴再次见到您！' : '很高兴您加入！'}
             </span>
           </div>
 
@@ -111,52 +107,52 @@ const Login = () => {
             <Form.Item
               {...formItemLayout}
               name="email"
-              label={t('emailLabel')}
-              rules={[{ required: true, message: t('emailPlaceholder') }]}
+              label="邮箱"
+              rules={[{ required: true, message: '请输入邮箱地址' }]}
             >
-              <Input size="large" placeholder={t('emailPlaceholder')} />
+              <Input size="large" placeholder="请输入邮箱地址" />
             </Form.Item>
             {title === 'register' && (
               <Form.Item
                 {...formItemLayout}
                 name="nickname"
-                label={t('nicknameLabel')}
-                rules={[{ required: true, message: t('nicknamePlaceholder') }]}
+                label="名称"
+                rules={[{ required: true, message: '请输入名称' }]}
               >
-                <Input size="large" placeholder={t('nicknamePlaceholder')} />
+                <Input size="large" placeholder="请输入名称" />
               </Form.Item>
             )}
             <Form.Item
               {...formItemLayout}
               name="password"
-              label={t('passwordLabel')}
-              rules={[{ required: true, message: t('passwordPlaceholder') }]}
+              label="密码"
+              rules={[{ required: true, message: '请输入密码' }]}
             >
               <Input.Password
                 size="large"
-                placeholder={t('passwordPlaceholder')}
+                placeholder="请输入密码"
                 onPressEnter={onCheck}
               />
             </Form.Item>
             {title === 'login' && (
               <Form.Item name="remember" valuePropName="checked">
-                <Checkbox> {t('rememberMe')}</Checkbox>
+                <Checkbox> 记住我</Checkbox>
               </Form.Item>
             )}
             <div>
               {title === 'login' && registerEnabled && (
                 <div>
-                  {t('signInTip')}
+                  没有帐户？
                   <Button type="link" onClick={changeTitle}>
-                    {t('signUp')}
+                    注册
                   </Button>
                 </div>
               )}
               {title === 'register' && (
                 <div>
-                  {t('signUpTip')}
+                  已经有帐户？
                   <Button type="link" onClick={changeTitle}>
-                    {t('login')}
+                    登录
                   </Button>
                 </div>
               )}
@@ -168,7 +164,7 @@ const Login = () => {
               onClick={onCheck}
               loading={loading}
             >
-              {title === 'login' ? t('login') : t('continue')}
+              {title === 'login' ? '登录' : '继续'}
             </Button>
             {title === 'login' && channels && channels.length > 0 && (
               <div className={styles.thirdPartyLoginButton}>
@@ -187,7 +183,7 @@ const Login = () => {
                         height={20}
                         style={{ marginRight: 5 }}
                       />
-                      Sign in with {item.display_name}
+                      使用 {item.display_name} 登录
                     </div>
                   </Button>
                 ))}

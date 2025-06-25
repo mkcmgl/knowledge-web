@@ -1,15 +1,11 @@
-import { ReactComponent as Avatars } from '@/assets/svg/login-avatars.svg';
-import SvgIcon from '@/components/svg-icon';
-import { Flex, Rate, Space, Typography } from 'antd';
+import { Flex, Typography } from 'antd';
 import classNames from 'classnames';
 
-import { useTranslate } from '@/hooks/common-hooks';
 import styles from './index.less';
 
 const { Title, Text } = Typography;
 
 const LoginRightPanel = () => {
-  const { t } = useTranslate('login');
   return (
     <section className={styles.rightPanel}>
       {/* <SvgIcon name="login-star" width={80}></SvgIcon> */}
@@ -18,10 +14,10 @@ const LoginRightPanel = () => {
           level={1}
           className={classNames(styles.white, styles.loginTitle)}
         >
-          {t('title')}
+          知识库平台
         </Title>
         <Text className={classNames(styles.pink, styles.loginDescription)}>
-          {t('description')}
+          创建知识库和人工智能来增强您的业务
         </Text>
         {/* <Flex align="center" gap={16}>
            <Avatars></Avatars>

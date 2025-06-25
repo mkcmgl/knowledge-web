@@ -1,6 +1,5 @@
 import { Authorization } from '@/constants/authorization';
 import { MessageType } from '@/constants/chat';
-import { LanguageTranslationMap } from '@/constants/common';
 import { ResponseType } from '@/interfaces/database/base';
 import { IAnswer, Message } from '@/interfaces/database/chat';
 import { IKnowledgeFile } from '@/interfaces/database/knowledge';
@@ -21,11 +20,9 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useTranslation } from 'react-i18next';
-import { v4 as uuid } from 'uuid';
 import { useTranslate } from './common-hooks';
 import { useSetPaginationParams } from './route-hook';
-import { useFetchTenantInfo, useSaveSetting } from './user-setting-hooks';
+import { useFetchTenantInfo } from './user-setting-hooks';
 
 export const useSetSelectedRecord = <T = IKnowledgeFile>() => {
   const [currentRecord, setCurrentRecord] = useState<T>({} as T);
@@ -53,17 +50,17 @@ export const useHandleSearchChange = () => {
 };
 
 export const useChangeLanguage = () => {
-  const { i18n } = useTranslation();
-  const { saveSetting } = useSaveSetting();
-
-  const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(
-      LanguageTranslationMap[lng as keyof typeof LanguageTranslationMap],
-    );
-    saveSetting({ language: lng });
+  // 直接写死为中文
+  return () => {
+    if (window.localStorage) {
+      window.localStorage.setItem('lng', 'zh');
+    }
+    // 如果有 i18n 实例，强制切换为中文
+    const win = window as any;
+    if (win.i18n && typeof win.i18n.changeLanguage === 'function') {
+      win.i18n.changeLanguage('zh');
+    }
   };
-
-  return changeLanguage;
 };
 
 export const useGetPaginationWithRouter = () => {

@@ -59,7 +59,17 @@ const KnowledgeList = () => {
     <Flex className={styles.knowledge} vertical flex={1}>
       <div className={styles.topWrapper} >
 
-
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }} >
+          <div></div>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={showModal}
+            className={styles.topButton}
+          >
+            {t('createKnowledgeBase')}
+          </Button>
+        </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} >
           <Form
             form={form}
@@ -108,18 +118,8 @@ const KnowledgeList = () => {
 
       </div>
       <div className={styles.topUsrNum}>
-         <Divider style={{ margin: '20px 0' }} />
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }} >
-          <div></div>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={showModal}
-            className={styles.topButton}
-          >
-            {t('createKnowledgeBase')}
-          </Button>
-        </div>
+        <Divider style={{ margin: '20px 0' }} />
+
         <div className={styles.topNumContent}>
           <div className='flex-1 text-center'>
             <div>知识库</div>

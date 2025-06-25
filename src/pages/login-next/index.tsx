@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { useTranslate } from '@/hooks/common-hooks';
 import { DiscordLogoIcon, GitHubLogoIcon } from '@radix-ui/react-icons';
 import { useSearchParams } from 'umi';
 import { SignInForm, SignUpForm, VerifyEmailForm } from './form';
@@ -11,7 +10,7 @@ function LoginFooter() {
   return (
     <section className="pt-4">
       <Separator />
-      <p className="text-center pt-4">or continue with</p>
+      <p className="text-center pt-4">或使用以下方式登录</p>
       <div className="flex gap-4 justify-center pt-[20px]">
         <GitHubLogoIcon className="w-8 h-8"></GitHubLogoIcon>
         <DiscordLogoIcon className="w-8 h-8"></DiscordLogoIcon>
@@ -21,20 +20,18 @@ function LoginFooter() {
 }
 
 export function SignUpCard() {
-  const { t } = useTranslate('login');
-
   const { switchStep } = useSwitchStep(Step.SignIn);
 
   return (
     <Card className="w-[400px]">
       <CardHeader>
-        <CardTitle>{t('signUp')}</CardTitle>
+        <CardTitle>注册</CardTitle>
       </CardHeader>
       <CardContent>
         <SignUpForm></SignUpForm>
         <div className="text-center">
           <Button variant={'link'} className="pt-6" onClick={switchStep}>
-            Already have an account? Log In
+            已经有帐户？登录
           </Button>
         </div>
         <LoginFooter></LoginFooter>
@@ -44,13 +41,12 @@ export function SignUpCard() {
 }
 
 export function SignInCard() {
-  const { t } = useTranslate('login');
   const { switchStep } = useSwitchStep(Step.SignUp);
 
   return (
     <Card className="w-[400px]">
       <CardHeader>
-        <CardTitle>{t('login')}</CardTitle>
+        <CardTitle>登录</CardTitle>
       </CardHeader>
       <CardContent>
         <SignInForm></SignInForm>
@@ -59,7 +55,7 @@ export function SignInCard() {
           onClick={switchStep}
           variant={'secondary'}
         >
-          {t('signUp')}
+          注册
         </Button>
       </CardContent>
     </Card>
@@ -67,23 +63,21 @@ export function SignInCard() {
 }
 
 export function VerifyEmailCard() {
-  // const { t } = useTranslate('login');
-
   return (
     <Card className="w-[400px]">
       <CardHeader>
-        <CardTitle>Verify email</CardTitle>
+        <CardTitle>验证邮箱</CardTitle>
       </CardHeader>
       <CardContent>
         <section className="flex gap-y-6 flex-col">
           <div className="flex items-center space-x-4">
             <div className="flex-1 space-y-1">
               <p className="text-sm font-medium leading-none">
-                We’ve sent a 6-digit code to
+                我们已向您的邮箱发送了6位验证码
               </p>
-              <p className="text-sm text-blue-500">yifanwu92@gmail.com.</p>
+              <p className="text-sm text-blue-500">yifanwu92@gmail.com。</p>
             </div>
-            <Button>Resend</Button>
+            <Button>重新发送</Button>
           </div>
           <VerifyEmailForm></VerifyEmailForm>
         </section>
