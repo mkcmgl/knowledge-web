@@ -23,6 +23,7 @@ import {
   Table,
   Tooltip,
   Typography,
+  Modal,
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { useTranslation } from 'react-i18next';
@@ -51,6 +52,7 @@ import { CircleHelp } from 'lucide-react';
 import { useMemo, useState, useCallback, useEffect } from 'react';
 import styles from './index.less';
 import { SetMetaModal } from './set-meta-modal';
+import Editor from '@monaco-editor/react';
 
 const { Text } = Typography;
 
@@ -114,6 +116,9 @@ const KnowledgeFile = () => {
 
   const rowSelection = useGetRowSelection();
 
+  const [viewMetaVisible, setViewMetaVisible] = useState(false);
+  const [viewMetaData, setViewMetaData] = useState<any>(null);
+
   const columns: ColumnsType<IDocumentInfo> = [
     {
       title: t('name'),
@@ -173,12 +178,24 @@ const KnowledgeFile = () => {
         return <ParsingStatusCell record={record}></ParsingStatusCell>;
       },
     },
-        {
+    {
       title: '元数据',
-      dataIndex: 'chunk_num',
-      key: 'chunk_num',
+      dataIndex: 'meta_fields',
+      key: 'meta_fields',
+      render: (meta, record) => (
+        <a
+          style={{ cursor: 'pointer' }}
+          onClick={e => {
+            e.stopPropagation();
+            setViewMetaData(record.meta_fields);
+            setViewMetaVisible(true);
+          }}
+        >
+          {typeof record.meta_fields === 'object' ? JSON.stringify(record.meta_fields) : record.meta_fields}
+        </a>
+      ),
     },
-        {
+    {
       title: '启用状态',
       key: 'status',
       dataIndex: 'status',
@@ -286,7 +303,7 @@ const KnowledgeFile = () => {
         parserList={parserList}
         onFilteredDocumentsChange={setFilteredDocuments}
       ></DocumentToolbar>
-       <Divider></Divider>
+      <Divider></Divider>
       <Table
         rowKey="id"
         columns={finalColumns}
@@ -344,6 +361,22 @@ const KnowledgeFile = () => {
           initialMetaData={currentRecord.meta_fields}
         ></SetMetaModal>
       )}
+      <Modal
+        title="查看元数据"
+        open={viewMetaVisible}
+        onCancel={() => setViewMetaVisible(false)}
+        footer={null}
+        width={600}
+      >
+
+        <Editor
+          height={200}
+          defaultLanguage="json"
+          theme="vs-dark"
+          value={viewMetaData ? JSON.stringify(viewMetaData, null, 4) : ''}
+          options={{ readOnly: true }}
+        />
+      </Modal>
     </div>
   );
 };

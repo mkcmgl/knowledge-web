@@ -1,13 +1,11 @@
 import { IModalProps } from '@/interfaces/common';
 import { IDocumentInfo } from '@/interfaces/database/document';
-import Editor, { loader } from '@monaco-editor/react';
+import Editor from '@monaco-editor/react';
 
 import { Form, Modal } from 'antd';
 import DOMPurify from 'dompurify';
 import { useCallback, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 
-loader.config({ paths: { vs: '/vs' } });
 
 type FieldType = {
   meta?: string;
@@ -19,7 +17,6 @@ export function SetMetaModal({
   onOk,
   initialMetaData,
 }: IModalProps<any> & { initialMetaData?: IDocumentInfo['meta_fields'] }) {
-  const { t } = useTranslation();
   const [form] = Form.useForm();
 
   const handleOk = useCallback(async () => {
@@ -33,7 +30,7 @@ export function SetMetaModal({
 
   return (
     <Modal
-      title={t('knowledgeDetails.setMetaData')}
+      title='设置元数据'
       open={visible}
       onOk={handleOk}
       onCancel={hideModal}
@@ -46,7 +43,7 @@ export function SetMetaModal({
         form={form}
       >
         <Form.Item<FieldType>
-          label={t('knowledgeDetails.metaData')}
+          label='元数据'
           name="meta"
           rules={[
             {
@@ -57,7 +54,7 @@ export function SetMetaModal({
                   return Promise.resolve();
                 } catch (error) {
                   return Promise.reject(
-                    new Error(t('knowledgeDetails.pleaseInputJson')),
+                    new Error('请输入JSON'),
                   );
                 }
               },
@@ -67,7 +64,25 @@ export function SetMetaModal({
             <div
               dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(
-                  t('knowledgeDetails.documentMetaTips'),
+                  `<p>元数据为 Json 格式（不可搜索）。如果提示中包含此文档的任何块，它将被添加到 LLM 的提示中。</p>
+<p>示例：</p>
+<b>元数据为：</b><br>
+<code>
+{
+“作者”：“mengguolin”，
+“日期”：“2024-11-12”
+}
+</code><br>
+<b>提示将为：</b><br>
+<p>文档：the_name_of_document</p>
+<p>作者：mengguolin</p>
+<p>日期：2024-11-12</p>
+<p>相关片段如下：</p>
+<ul>
+<li> 这是块内容....</li>
+<li> 这是块内容....</li>
+</ul>
+`
                 ),
               }}
             ></div>
