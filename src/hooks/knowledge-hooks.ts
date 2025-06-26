@@ -82,7 +82,7 @@ export const useFetchKnowledgeList = (
       }
       const { data } = await listDataset(params);
       return {
-        kbs: data?.data?.kbs ?? [],
+        kbs: data?.data?.records ?? [],
         total: data?.data?.total ?? 0,
       };
     },
@@ -249,12 +249,20 @@ export const useTestChunkRetrieval = (): ResponsePostType<ITestingResult> & {
   } = useMutation({
     mutationKey: ['testChunk'], // This method is invalid
     gcTime: 0,
+
     mutationFn: async (values: any) => {
+      console.log(`values`, values);
       const { data } = await kbService.retrieval_test({
         ...values,
-        kb_id: values.kb_id ?? knowledgeBaseId,
+        knowledge_id: values.kb_id[0] ?? knowledgeBaseId,
+        query: values.question,
+        keyword: false,
+        highlight: false,
+        similarity_threshold: values.similarity_threshold,
+        chunkDeduplicationCoefficient: 0,
+        metadata_condition: { conditions: [...values.metaList] },
         page,
-        size: pageSize,
+        page_size: pageSize,
       });
       if (data.code === 0) {
         const res = data.data;

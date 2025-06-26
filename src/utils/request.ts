@@ -90,7 +90,7 @@ request.interceptors.request.use((url: string, options: any) => {
       headers: {
         ...(options.skipToken
           ? undefined
-          : { [Authorization]: getAuthorization() }),
+          : { [Authorization]:'Bearer ' +  getAuthorization() }),
         ...options.headers,
       },
       interceptors: true,

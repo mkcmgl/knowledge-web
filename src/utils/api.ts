@@ -1,7 +1,7 @@
+let api_rag_host = `/api`;
 let api_host = `/v1`;
-
 export { api_host };
-
+export { api_rag_host }
 export default {
   // user
   login: `${api_host}/user/login`,
@@ -36,7 +36,7 @@ export default {
   llm_tools: `${api_host}/plugin/llm_tools`,
 
   // knowledge base
-  kb_list: `${api_host}/kb/list`,
+  kb_list: `${api_rag_host}/dataset/list`,
   create_kb: `${api_host}/kb/create`,
   update_kb: `${api_host}/kb/update`,
   rm_kb: `${api_host}/kb/rm`,
@@ -58,7 +58,8 @@ export default {
   get_chunk: `${api_host}/chunk/get`,
   switch_chunk: `${api_host}/chunk/switch`,
   rm_chunk: `${api_host}/chunk/rm`,
-  retrieval_test: `${api_host}/chunk/retrieval_test`,
+  // retrieval_test: `${api_host}/chunk/retrieval_test`,
+  retrieval_test: `${api_rag_host}/query/retrieval`,
   knowledge_graph: `${api_host}/chunk/knowledge_graph`,
 
   // document
@@ -143,4 +144,7 @@ export default {
   testDbConnect: `${api_host}/canvas/test_db_connect`,
   getInputElements: `${api_host}/canvas/input_elements`,
   debug: `${api_host}/canvas/debug`,
+
+  // tools
+  speechToText: `${api_rag_host}/tools/speechToText`,
 };
