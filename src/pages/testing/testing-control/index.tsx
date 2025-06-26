@@ -138,7 +138,7 @@ const TestingControl = ({
             </Form.Item>
 
             <Form.Item
-              label={t('similarityThreshold')}
+              label='相似度阈值'
               name={'similarity_threshold'}
               tooltip={t('similarityThresholdTip')}
               initialValue={0.2}

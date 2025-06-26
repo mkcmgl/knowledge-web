@@ -1,23 +1,24 @@
 @import url(./inter.less);
 
 html {
-  height: 100%;
   overflow: hidden; // The content of the DatasetSettings page is too high, which will cause scroll bars to appear on the html tags. Setting the maximum height in DatasetSettings does not work either. I don't understand.
+  height: 100%;
 }
 
 body {
-  font-family: Inter;
-  margin: 0;
   height: 100%;
+  margin: 0;
+  font-family: Inter;
 }
 
 #root {
+  overflow: auto;
   height: 100%;
 }
 
 .ant-app {
-  height: 100%;
   width: 100%;
+  height: 100%;
 }
 
 /* Scroll bar stylings */
@@ -33,7 +34,7 @@ body {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #aaaaaa;
+  background: #aaa;
   border-radius: 5px;
 }
 

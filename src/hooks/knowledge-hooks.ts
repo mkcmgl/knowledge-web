@@ -72,13 +72,13 @@ export const useFetchKnowledgeList = (
     initialData: { kbs: [], total: 0 },
     gcTime: 0,
     queryFn: async () => {
-      const body: any = { page, page_size: pageSize,dataset_name:keywords };
+      const body: any = { page, page_size: pageSize, dataset_name: keywords };
       if (model) body.model = model;
       if (dateRange && dateRange[0] && dateRange[1]) {
         body.start_date = dateRange[0];
         body.end_date = dateRange[1];
       }
-      console.log(`body`,body);
+      console.log(`body`, body);
       const { data } = await listDataset(body);
       // const { data } = await request.post('/api/dataset/list', body);
       return {
@@ -260,7 +260,19 @@ export const useTestChunkRetrieval = (): ResponsePostType<ITestingResult> & {
         highlight: false,
         similarity_threshold: values.similarity_threshold,
         chunkDeduplicationCoefficient: 0,
-        metadata_condition: { conditions: [...values.metaList] },
+        retrieval_setting: {
+          score_threshold: 0,
+          top_k: 0,
+        },
+        metadata_condition: {
+          conditions: (
+            values.metaList as Array<{ key: string; value: string }>
+          ).map((item) => ({
+            name: item.key,
+            value: item.value,
+            comparison_operator: ' eq',
+          })),
+        },
         page,
         page_size: pageSize,
       });

@@ -17,46 +17,54 @@
 }
 
 .appIcon {
-  vertical-align: middle;
   max-width: 36px;
+}
+.appIconLogo {
+  width: 175px;
 }
 
 .appName {
-  vertical-align: middle;
   font-family: Inter;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 20px;
+  font-family: YouSheBiaoTiHei !important;
+  font-size: 24px !important;
+  font-weight: normal !important;
+  line-height: 30px !important;
+  letter-spacing: normal !important;
 }
 
 .radioGroup {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  align-items: end;
+  height: 100%;
   & label {
-    height: 40px;
-    line-height: 40px;
-    border: 0 !important;
-    background-color: rgba(249, 249, 249, 1);
-    font-weight: @fontWeight700;
+    height: 50px;
     color: rgba(29, 25, 41, 1);
+    font-weight: @fontWeight700;
+    line-height: 50px;
+    background-color: rgb(234, 240, 254);
+    border: 0 !important;
     &::before {
       display: none !important;
     }
   }
   :global(.ant-radio-button-wrapper-checked) {
-    border-radius: 6px !important;
+    border-bottom: 2px solid #306efd !important;
+    border-radius: 0 !important;
     & a {
       color: white;
     }
   }
   :global(.ant-radio-button-wrapper-checked.dark) {
-    border-radius: 0px !important;
+    border-radius: 0 !important;
     & a {
       color: white;
     }
   }
   :global(.ant-radio-button-wrapper-checked.dark.first) {
-    border-top-left-radius: 6px !important;
     border-bottom-left-radius: 6px !important;
+    border-top-left-radius: 6px !important;
     & a {
       color: white;
     }
@@ -71,13 +79,17 @@
 }
 
 .radioGroupDark {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  align-items: end;
   & label {
     height: 40px;
-    line-height: 40px;
-    border: 0 !important;
-    background-color: rgba(249, 249, 249, 0.25);
-    font-weight: @fontWeight700;
     color: rgba(29, 25, 41, 1);
+    font-weight: @fontWeight700;
+    line-height: 40px;
+    background-color: rgba(249, 249, 249, .25);
+    border: 0 !important;
     &::before {
       display: none !important;
     }
@@ -89,14 +101,14 @@
     }
   }
   :global(.ant-radio-button-wrapper-checked.dark) {
-    border-radius: 0px !important;
+    border-radius: 0 !important;
     & a {
       color: white;
     }
   }
   :global(.ant-radio-button-wrapper-checked.dark.first) {
-    border-top-left-radius: 6px !important;
     border-bottom-left-radius: 6px !important;
+    border-top-left-radius: 6px !important;
     & a {
       color: white;
     }
@@ -114,7 +126,40 @@
   border-radius: 6px !important;
 }
 .radioButtonIcon {
-  vertical-align: middle;
   max-width: 15px;
   max-height: 15px;
+  vertical-align: middle;
+}
+
+:global(.ant-radio-button-wrapper) {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  color: #1d2129;
+  font-family: "Alibaba PuHuiTi 3.0", Inter, "YouSheBiaoTiHei", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: normal;
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  transition: background .2s,
+  color .2s;
+}
+
+:global(.ant-radio-button-wrapper-checked) {
+  color: #306efd !important;
+  background: rgba(48, 110, 253, .14) !important;
+  border-radius: 0 !important;
+}
+
+:global(.ant-radio-button-wrapper-checked) a,
+:global(.ant-radio-button-wrapper-checked) {
+  color: #306efd !important;
+  font-family: "Alibaba PuHuiTi 3.0", Inter, "YouSheBiaoTiHei", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: normal;
 }

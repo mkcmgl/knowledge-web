@@ -33,7 +33,7 @@ const RagHeader = () => {
       // { path: '/flow', name: t('flow'), icon: GraphIcon },
       { path: '/file', name: t('fileManager'), icon: FileIcon },
       { path: '/trial', name: t('trial'), icon: TrialIcon },
-       { path: '/tools', name: t('tools'), icon: ToolsIcon },
+      { path: '/tools', name: t('tools'), icon: ToolsIcon },
     ],
     [t],
   );
@@ -61,22 +61,22 @@ const RagHeader = () => {
     <Header
       style={{
         padding: '0 16px',
-        background: colorBgContainer,
+        background: "#EAF0FE",
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        height: '72px',
+        height: '64px',
       }}
     >
-        <Space
-          size={12}
-          onClick={handleLogoClick}
-          className={styles.logoWrapper}
-        >
-          {/* <img src="/logo.svg" alt="" className={styles.appIcon} /> */}
-          <span className={styles.appName}>知识库平台</span>
-        </Space>
-      <Space size={[0, 8]} wrap className='flex-1 pl-[5.25rem]'>
+      <Space
+        size={12}
+        onClick={handleLogoClick}
+        className={styles.logoWrapper}
+      >
+        <img src="/logo.svg" alt="logo" className={styles.appIcon} />
+        <img src="/RAG_SYSTEM.png" alt="logo" className={styles.appIconLogo} />
+      </Space>
+      <Space size={[0, 8]} wrap className='flex-1 'style={{paddingLeft:72,height:'100%',position:"relative"}}>
         <Radio.Group
           defaultValue="a"
           buttonStyle="solid"
@@ -87,7 +87,9 @@ const RagHeader = () => {
         >
           {tagsData.map((item, index) => (
             <Radio.Button
-              className={`${themeRag === 'dark' ? 'dark' : 'light'} ${index === 0 ? 'first' : ''} ${index === tagsData.length - 1 ? 'last' : ''}`}
+              className={`${themeRag === 'dark' ? 'dark' : 'light'} 
+                ${index === 0 ? 'first' : ''} 
+                ${index === tagsData.length - 1 ? 'last' : ''}`}
               value={item.name}
               key={item.name}
             >

@@ -70,7 +70,7 @@ const RightToolBar = () => {
 
   return (
     <div className={styled.toolbarWrapper}>
-      <Space wrap size={16}>
+      <Space wrap size={10}>
         {/* <Dropdown menu={{ items, onClick: handleItemClick }} placement="bottom">
           <Space className={styled.language}>
             <b>{t(camelCase(language))}</b>
