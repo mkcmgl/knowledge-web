@@ -107,31 +107,32 @@ const TestingControl = ({
               label="测试知识库"
               name={'test_kb_ids'}
               tooltip={t('testKnowledgeBaseTip')}
-              rules={[{ required: true, message: "请选择一个知识库" }]}
+              rules={[{ required: true, message: "请选择一个或多个知识库" }]}
             >
               <TreeSelect
                 treeData={treeData}
-                value={form.getFieldValue('test_kb_ids') || undefined}
-                onChange={(value: string) => {
-                  // 只允许选择叶子节点
-                  let isLeaf = false;
+                value={form.getFieldValue('test_kb_ids') || []}
+                onChange={(value: string[] | string) => {
+                  // 只允许选择叶子节点，且支持多选
+                  let selected: string[] = Array.isArray(value) ? value : [value];
+                  const leafValues: string[] = [];
                   for (const parent of treeData) {
-                    if (parent.children && parent.children.some((child: any) => child.value === value)) {
-                      isLeaf = true;
-                      break;
+                    if (parent.children) {
+                      for (const child of parent.children) {
+                        if (selected.includes(child.value)) {
+                          leafValues.push(child.value);
+                        }
+                      }
                     }
                   }
-                  if (isLeaf) {
-                    form.setFieldsValue({ test_kb_ids: value });
-                  } else {
-                    form.setFieldsValue({ test_kb_ids: undefined });
-                  }
+                  form.setFieldsValue({ test_kb_ids: leafValues });
                 }}
                 placeholder="请选择测试知识库"
                 allowClear
                 style={{ width: '100%' }}
                 treeDefaultExpandAll
                 showSearch
+                multiple
                 styles={{ popup: { root: { maxHeight: 400, overflow: 'auto' } } }}
               />
             </Form.Item>
