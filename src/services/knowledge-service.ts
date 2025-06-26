@@ -7,6 +7,7 @@ import {
 import api from '@/utils/api';
 import registerServer from '@/utils/register-server';
 import request, { post } from '@/utils/request';
+import request_api from '@/utils/request-api';
 
 const {
   create_kb,
@@ -179,9 +180,11 @@ export function deleteKnowledgeGraph(knowledgeId: string) {
 }
 
 export const listDataset = (
-  params?: IFetchKnowledgeListRequestParams,
-  body?: IFetchKnowledgeListRequestBody,
-) => request.post(api.kb_list, { data: body || {}, params });
+  body?: IFetchKnowledgeListRequestParams,
+) => {
+  console.log(body);
+  return request_api.post(api.kb_list, {data:body});
+};
 
 export const listDocument = (
   params?: IFetchKnowledgeListRequestParams,

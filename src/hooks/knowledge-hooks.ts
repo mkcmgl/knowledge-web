@@ -28,7 +28,6 @@ import { useState } from 'react';
 import { useSearchParams } from 'umi';
 import { useHandleSearchChange } from './logic-hooks';
 import { useSetPaginationParams } from './route-hook';
-
 export const useKnowledgeBaseId = (): string => {
   const [searchParams] = useSearchParams();
   const knowledgeBaseId = searchParams.get('id');
@@ -73,14 +72,15 @@ export const useFetchKnowledgeList = (
     initialData: { kbs: [], total: 0 },
     gcTime: 0,
     queryFn: async () => {
-      console.log(page, pageSize, keywords);
-      const params: any = { page, page_size: pageSize, keywords };
-      if (model) params.model = model;
+      const body: any = { page, page_size: pageSize,dataset_name:keywords };
+      if (model) body.model = model;
       if (dateRange && dateRange[0] && dateRange[1]) {
-        params.start_date = dateRange[0];
-        params.end_date = dateRange[1];
+        body.start_date = dateRange[0];
+        body.end_date = dateRange[1];
       }
-      const { data } = await listDataset(params);
+      console.log(`body`,body);
+      const { data } = await listDataset(body);
+      // const { data } = await request.post('/api/dataset/list', body);
       return {
         kbs: data?.data?.records ?? [],
         total: data?.data?.total ?? 0,

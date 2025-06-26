@@ -135,7 +135,7 @@ export const get = (url: string) => {
 };
 
 export const post = (url: string, body: any) => {
-  return request.post(url, { data: body });
+  return request.post(url, body);
 };
 
 export const drop = () => {};
