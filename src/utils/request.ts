@@ -78,7 +78,7 @@ const request: RequestMethod = extend({
 });
 
 request.interceptors.request.use((url: string, options: any) => {
-  const data = convertTheKeysOfTheObjectToSnake(options.data);
+  const data = options.data
   const params = convertTheKeysOfTheObjectToSnake(options.params);
 
   return {

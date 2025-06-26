@@ -46,13 +46,13 @@ const KnowledgeTesting = () => {
           ...values,
           meta: metaJsonString,
           doc_ids: Array.isArray(documentIds) ? documentIds : [],
-          vector_similarity_weight: 1 - values.vector_similarity_weight,
+          vector_similarity_weight:  values.vector_similarity_weight,
         }),
         testChunkAll({
           ...values,
           meta: metaJsonString,
           doc_ids: [],
-          vector_similarity_weight: 1 - values.vector_similarity_weight,
+          vector_similarity_weight:  values.vector_similarity_weight,
         })
       ]);
       

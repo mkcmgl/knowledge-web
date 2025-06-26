@@ -25,7 +25,18 @@ const App: React.FC = () => {
         }
       />
       <span className={styles.rightName}>
-        {userInfo.nickname}
+        {userInfo.nickname || (() => {
+          try {
+            const localUser = localStorage.getItem('userInfo');
+            if (localUser) {
+              const parsed = JSON.parse(localUser);
+              return parsed.name || '';
+            }
+          } catch {
+            return '';
+          }
+          return '';
+        })()}
       </span>
     </div>
 

@@ -251,26 +251,29 @@ export const useTestChunkRetrieval = (): ResponsePostType<ITestingResult> & {
     gcTime: 0,
 
     mutationFn: async (values: any) => {
-      console.log(`values`, values);
+      console.log(`values`, values,knowledgeBaseId);
+      console.log(knowledgeBaseId);
       const { data } = await kbService.retrieval_test({
-        ...values,
-        knowledge_id: values.kb_id[0] ?? knowledgeBaseId,
+        knowledge_id: values.kb_id ?values.kb_id[0]: knowledgeBaseId,
         query: values.question,
         keyword: false,
+        document_ids: [],
         highlight: false,
+         rerank_id:'',
         similarity_threshold: values.similarity_threshold,
         chunkDeduplicationCoefficient: 0,
         retrieval_setting: {
           score_threshold: 0,
           top_k: 0,
         },
+        vector_similarity_weight: values.vector_similarity_weight,
         metadata_condition: {
           conditions: (
             values.metaList as Array<{ key: string; value: string }>
-          ).map((item) => ({
+          )?.map((item) => ({
             name: item.key,
             value: item.value,
-            comparison_operator: ' eq',
+            comparison_operator: 'eq',
           })),
         },
         page,
@@ -314,12 +317,32 @@ export const useTestChunkAllRetrieval = (): ResponsePostType<ITestingResult> & {
     mutationKey: ['testChunkAll'], // This method is invalid
     gcTime: 0,
     mutationFn: async (values: any) => {
+      console.log(`values`, values,knowledgeBaseId);
       const { data } = await kbService.retrieval_test({
-        ...values,
-        kb_id: values.kb_id ?? knowledgeBaseId,
-        doc_ids: [],
+        knowledge_id: values.kb_id ?values.kb_id[0]: knowledgeBaseId,
+        query: values.question,
+        keyword: false,
+        document_ids: [],
+        highlight: false,
+         rerank_id:'',
+        similarity_threshold: values.similarity_threshold,
+        chunkDeduplicationCoefficient: 0,
+        retrieval_setting: {
+          score_threshold: 0,
+          top_k: 0,
+        },
+        vector_similarity_weight: values.vector_similarity_weight,
+        metadata_condition: {
+          conditions: (
+            values.metaList as Array<{ key: string; value: string }>
+          )?.map((item) => ({
+            name: item.key,
+            value: item.value,
+            comparison_operator: 'eq',
+          })),
+        },
         page,
-        size: pageSize,
+        page_size: pageSize,
       });
       if (data.code === 0) {
         const res = data.data;
