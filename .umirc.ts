@@ -44,8 +44,16 @@ export default defineConfig({
     //   logger: console,
     // },
     {
-      context: ['/api', '/v1'],
+      context: [ '/v1'],
       target: 'http://119.84.128.68:6580/',
+      changeOrigin: true,
+      ws: true,
+      logger: console,
+      // pathRewrite: { '^/v1': '/v1' },
+    },
+     {
+      context: ['/api/tools','/api'],
+      target: 'http://119.84.128.68:6581/rag-api/',
       changeOrigin: true,
       ws: true,
       logger: console,
