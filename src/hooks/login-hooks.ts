@@ -59,6 +59,8 @@ export const useLogin = () => {
   } = useMutation({
     mutationKey: ['login'],
     mutationFn: async (params: { email: string; password: string }) => {
+
+      console.log(`paramsparamsparamsparamsparams`,params)
       const { data: res = {}, response } = await userService.login(params);
       if (res.code === 0) {
         const { data } = res;

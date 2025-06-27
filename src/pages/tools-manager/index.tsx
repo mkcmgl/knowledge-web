@@ -37,8 +37,9 @@ const ToolsManager = () => {
     <>
       <div className={styles.container}>
         <ToolsSidebar></ToolsSidebar>
+
         <div className={styles.contentWrapper}>
-          <Breadcrumb items={breadcrumbItems} />
+          <Breadcrumb items={breadcrumbItems} className={styles.contentBreadcrumb} />
           <div className={styles.content}>
             <Outlet></Outlet>
           </div>

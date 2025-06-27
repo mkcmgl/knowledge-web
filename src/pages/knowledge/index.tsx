@@ -56,7 +56,7 @@ const KnowledgeList = () => {
   const nextList = list || [];
 
   return (
-    <Flex className={styles.knowledge} vertical flex={1}>
+    <section className={styles.knowledge} >
       <div className={styles.topWrapper} >
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }} >
@@ -181,7 +181,7 @@ const KnowledgeList = () => {
       {/* <span className={styles.title}>
         {t('welcome')}, {userInfo?.nickname}
       </span> */}
-    </Flex>
+    </section>
   );
 };
 

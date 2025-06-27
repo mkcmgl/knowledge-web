@@ -72,42 +72,30 @@ const ActionCell = ({
     <Space size={0} className='flex items-center gap-3'>
       {/* {isKnowledgeBase || ( */}
       {record.type !== 'folder' && (
-      <Button style={{ padding: 0, fontSize: 14 }} type="link" onClick={onShowConnectToKnowledgeModal}>
-        链接知识库
-      </Button>
-       )}
+        <Button style={{ padding: 0, fontSize: 14 }} type="link" onClick={onShowConnectToKnowledgeModal}>
+          链接知识库
+        </Button>
+      )}
 
       {/* {isKnowledgeBase || ( */}
       {record.type !== 'folder' && (
-      <Button style={{ padding: 0, fontSize: 14 }} type="link" disabled={beingUsed} onClick={onShowRenameModal}>
-        重命名
-      </Button>
-      )} 
+        <Button style={{ padding: 0, fontSize: 14 }} type="link" disabled={beingUsed} onClick={onShowRenameModal}>
+          重命名
+        </Button>
+      )}
 
-      
+
       {/* {isKnowledgeBase || ( */}
       {record.type !== 'folder' && (
-      <Button
-        style={{ padding: 0, fontSize: 14 }}
-        type="link"
-        disabled={beingUsed}
-        onClick={onShowMoveFileModal}
+        <Button
+          style={{ padding: 0, fontSize: 14 }}
+          type="link"
+          disabled={beingUsed}
+          onClick={onShowMoveFileModal}
 
-      >
-        移动
-      </Button>
-       )}
-      {/* {isKnowledgeBase || ( */}
-      {record.type !== 'folder' && (
-      <Button
-        style={{ padding: 0, fontSize: 14 }}
-        type="link"
-        disabled={beingUsed}
-        onClick={handleRemoveFile}
-
-      >
-        删除
-      </Button>
+        >
+          移动
+        </Button>
       )}
       {record.type !== 'folder' && (
         <Button
@@ -131,6 +119,19 @@ const ActionCell = ({
           </Button>
         </NewDocumentLink>
       )}
+      {/* {isKnowledgeBase || ( */}
+      {record.type !== 'folder' && (
+        <Button
+          style={{ padding: 0, fontSize: 14, color: "#F56C6C" }}
+          type="link"
+          disabled={beingUsed}
+          onClick={handleRemoveFile}
+
+        >
+          删除
+        </Button>
+      )}
+
     </Space>
   );
 };

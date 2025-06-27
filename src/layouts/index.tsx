@@ -21,10 +21,9 @@ const App: React.FC = () => {
         <Content
           style={{
             minHeight: 280,
-            background: colorBgContainer,
+            background:'#F2F3F5',
             borderRadius: borderRadiusLG,
             overflow: 'auto',
-            display: 'flex',
           }}
         >
           <Outlet />
