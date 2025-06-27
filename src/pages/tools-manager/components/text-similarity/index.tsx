@@ -106,7 +106,7 @@ ${formData.compareText}
                 <TextArea
                   placeholder="请输入原始文本..."
                   style={{
-                    height: '100%',
+                    height: '400px',
                     resize: 'none',
                     fontSize: '14px',
                     lineHeight: '1.6'
@@ -149,7 +149,7 @@ ${formData.compareText}
                 <TextArea
                   placeholder="请输入比对文本..."
                   style={{
-                    height: '500px',
+                    height: '350px',
                     resize: 'none',
                     fontSize: '14px',
                     lineHeight: '1.6'
@@ -161,7 +161,7 @@ ${formData.compareText}
 
           </Form>
           {/* 相似度计算按钮 */}
-          <div style={{ textAlign: 'center', marginTop: '24px' }}>
+          <div style={{ textAlign: 'center', marginTop: '6px' }}>
             <Button
               type="primary"
               size="large"

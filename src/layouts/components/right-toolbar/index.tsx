@@ -70,22 +70,23 @@ const RightToolBar = () => {
 
   return (
     <div className={styled.toolbarWrapper}>
-      <Space wrap size={10}>
+
+
+      <div className='flex'>
         {/* <Dropdown menu={{ items, onClick: handleItemClick }} placement="bottom">
           <Space className={styled.language}>
             <b>{t(camelCase(language))}</b>
             <DownOutlined />
           </Space>
         </Dropdown> */}
-
-
-        <Circle>
+        {/* <Circle>
           {theme === 'dark' ? (
             <MoonIcon onClick={onMoonClick} size={20} />
           ) : (
             <SunIcon onClick={onSunClick} size={20} />
           )}
-        </Circle>
+        </Circle> */}
+        <div></div>
         {showBell && (
           <Circle>
             <div className="relative" onClick={handleBellClick}>
@@ -95,7 +96,8 @@ const RightToolBar = () => {
           </Circle>
         )}
         <User></User>
-      </Space>
+      </div>
+
     </div>
   );
 };
