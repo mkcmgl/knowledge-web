@@ -1,5 +1,5 @@
 import api from '@/utils/api';
-import request from '@/utils/request-api';
+import request from '@/utils/request';
 
 export const speechToText = (file: File) => {
   const formData = new FormData();

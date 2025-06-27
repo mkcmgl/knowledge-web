@@ -13,6 +13,7 @@ import kbService, {
   listTag,
   removeTag,
   renameTag,
+  retrieval_test,
 } from '@/services/knowledge-service';
 import {
   useInfiniteQuery,
@@ -253,15 +254,15 @@ export const useTestChunkRetrieval = (): ResponsePostType<ITestingResult> & {
     mutationFn: async (values: any) => {
       console.log(`values`, values,knowledgeBaseId);
       console.log(knowledgeBaseId);
-      const { data } = await kbService.retrieval_test({
-        knowledge_id: values.kb_id ?values.kb_id[0]: knowledgeBaseId,
+      const { data } = await retrieval_test({
+        knowledge_ids: values.kb_id ?values.kb_id: [knowledgeBaseId],
         query: values.question,
         keyword: false,
         document_ids: [],
         highlight: false,
          rerank_id:'',
         similarity_threshold: values.similarity_threshold,
-        chunkDeduplicationCoefficient: 0,
+        chunk_deduplication_coefficient: 0,
         retrieval_setting: {
           score_threshold: 0,
           top_k: 0,
@@ -318,15 +319,15 @@ export const useTestChunkAllRetrieval = (): ResponsePostType<ITestingResult> & {
     gcTime: 0,
     mutationFn: async (values: any) => {
       console.log(`values`, values,knowledgeBaseId);
-      const { data } = await kbService.retrieval_test({
-        knowledge_id: values.kb_id ?values.kb_id[0]: knowledgeBaseId,
+      const { data } = await retrieval_test({
+        knowledge_ids: values.kb_id ?values.kb_id: [knowledgeBaseId],
         query: values.question,
         keyword: false,
         document_ids: [],
         highlight: false,
          rerank_id:'',
         similarity_threshold: values.similarity_threshold,
-        chunkDeduplicationCoefficient: 0,
+        chunk_deduplication_coefficient: 0,
         retrieval_setting: {
           score_threshold: 0,
           top_k: 0,

@@ -1,4 +1,3 @@
-import { Authorization } from '@/constants/authorization';
 import { ResponseType } from '@/interfaces/database/base';
 import i18n from '@/locales/config';
 import authorizationUtil, {
@@ -78,21 +77,24 @@ const request: RequestMethod = extend({
 });
 
 request.interceptors.request.use((url: string, options: any) => {
-  const data = options.data
+  const data = options.data;
   const params = convertTheKeysOfTheObjectToSnake(options.params);
-
+  const token = getAuthorization();
+  if (url.includes('/api/')) {
+    options.headers.Authorization = 'Bearer ragflow-' + token;
+  } else {
+    options.headers.Authorization = 'Bearer ' + token;
+  }
+  const headers = {
+    ...options.headers,
+  };
   return {
     url,
     options: {
       ...options,
       data,
       params,
-      headers: {
-        ...(options.skipToken
-          ? undefined
-          : { [Authorization]:'Bearer ' +  getAuthorization() }),
-        ...options.headers,
-      },
+      headers,
       interceptors: true,
     },
   };

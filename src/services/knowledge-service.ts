@@ -7,7 +7,7 @@ import {
 import api from '@/utils/api';
 import registerServer from '@/utils/register-server';
 import request, { post } from '@/utils/request';
-import request_api from '@/utils/request-api';
+
 
 const {
   create_kb,
@@ -28,7 +28,6 @@ const {
   get_chunk,
   switch_chunk,
   rm_chunk,
-  retrieval_test,
   document_rename,
   document_run,
   document_upload,
@@ -136,10 +135,7 @@ const methods = {
     url: rm_chunk,
     method: 'post',
   },
-  retrieval_test: {
-    url: retrieval_test,
-    method: 'post',
-  },
+
   knowledge_graph: {
     url: knowledge_graph,
     method: 'get',
@@ -159,7 +155,16 @@ const methods = {
 };
 
 const kbService = registerServer<keyof typeof methods>(methods, request);
+export const retrieval_test = (
+  body?: IFetchKnowledgeListRequestParams,
+) => {
+  return request.post(api.retrieval_test, {data:body});
+};
 
+  // retrieval_test: {
+  //   url: retrieval_test,
+  //   method: 'post',
+  // },
 export const listTag = (knowledgeId: string) =>
   request.get(api.listTag(knowledgeId));
 
@@ -182,8 +187,8 @@ export function deleteKnowledgeGraph(knowledgeId: string) {
 export const listDataset = (
   body?: IFetchKnowledgeListRequestParams,
 ) => {
-  console.log(body);
-  return request_api.post(api.kb_list, {data:body});
+  return request.post(api.kb_list, {data:body})
+   
 };
 
 export const listDocument = (
