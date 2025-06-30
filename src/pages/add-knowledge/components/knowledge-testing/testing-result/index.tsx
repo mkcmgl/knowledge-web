@@ -37,12 +37,14 @@ const ChunkTitle = ({ item }: { item: ITestingChunk }) => {
   return (
     <Flex gap={10}>
       {similarityList.map((x) => (
-        <Space key={x.field}>
-          <span className={styles.similarityCircle}>
-            {((item[x.field] as number) * 100).toFixed(2)}
-          </span>
-          <span className={styles.similarityText}>{t(camelCase(x.field))}</span>
-        </Space>
+        typeof item[x.field] === 'number' ? (
+          <Space key={x.field}>
+            <span style={{ color: '#306EFD', fontSize: 20 }} className={styles.similarityCircle}>
+              {((item[x.field] as number) * 100).toFixed(2)}
+            </span>
+            <span className={styles.similarityText}>{t(camelCase(x.field))}</span>
+          </Space>
+        ) : null
       ))}
     </Flex>
   );
@@ -60,7 +62,7 @@ const TestingResult = ({
   setSelectedDocumentIds,
 }: IProps) => {
   // const { documents, } = useSelectTestingResult();
-  const { documents: documentsAll,chunks, total } = useAllTestingResult();
+  const { documents: documentsAll, chunks, total } = useAllTestingResult();
   const { t } = useTranslate('knowledgeDetails');
   const { pagination, setPagination } = useGetPaginationWithRouter();
   const isSuccess = useSelectIsTestingSuccess();
