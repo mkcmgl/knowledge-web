@@ -4,7 +4,7 @@ import { useAllTestingResult } from '@/hooks/knowledge-hooks';
 import { ITestingDocument } from '@/interfaces/database/knowledge';
 import { EyeOutlined } from '@ant-design/icons';
 import { Button, Table, TableProps, Tooltip } from 'antd';
-
+import { ReactComponent as Eyes } from '@/assets/svg/eyes.svg';
 interface IProps {
   handleTesting: (ids: string[]) => void;
   setSelectedDocumentIds: (ids: string[]) => void;
@@ -40,7 +40,7 @@ const SelectFiles = ({ setSelectedDocumentIds, handleTesting }: IProps) => {
         >
           <Tooltip title={t('preview')}>
             <Button type="text">
-              <EyeOutlined size={20} />
+              <Eyes  />
             </Button>
           </Tooltip>
         </NewDocumentLink>

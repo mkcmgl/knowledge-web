@@ -300,6 +300,7 @@ export const useTestChunkRetrieval = (): ResponsePostType<ITestingResult> & {
           kb_id: item.metadata.dataset_id,
           positions: item.metadata.positions,
           similarity: item.score,
+          ...item
           // 你可以根据需要添加其他字段
         }));
         console.log(`chunks`,chunks,res);
@@ -389,6 +390,7 @@ export const useTestChunkAllRetrieval = (): ResponsePostType<ITestingResult> & {
           kb_id: item.metadata.dataset_id,
           positions: item.metadata.positions,
           similarity: item.score,
+          ...item
           // 你可以根据需要添加其他字段
         }));
         console.log(`chunks`,chunks,res);
