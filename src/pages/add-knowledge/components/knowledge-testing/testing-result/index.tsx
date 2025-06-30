@@ -59,13 +59,13 @@ const TestingResult = ({
   selectedDocumentIds,
   setSelectedDocumentIds,
 }: IProps) => {
-  const { documents, chunks, total } = useSelectTestingResult();
-  const { documents: documentsAll, total: totalAll } = useAllTestingResult();
+  // const { documents, } = useSelectTestingResult();
+  const { documents: documentsAll,chunks, total } = useAllTestingResult();
   const { t } = useTranslate('knowledgeDetails');
   const { pagination, setPagination } = useGetPaginationWithRouter();
   const isSuccess = useSelectIsTestingSuccess();
   const isAllSuccess = useAllTestingSuccess();
-
+  console.log(chunks)
   const onChange: PaginationProps['onChange'] = (pageNumber, pageSize) => {
     pagination.onChange?.(pageNumber, pageSize);
     handleTesting(selectedDocumentIds);
@@ -121,7 +121,7 @@ const TestingResult = ({
           vertical
           flex={1}
         >
-          {isSuccess && chunks.length > 0 ? (
+          {isSuccess && chunks?.length > 0 ? (
             chunks?.map((x) => (
               <Card key={x.chunk_id} title={<ChunkTitle item={x}></ChunkTitle>}>
                 <div className="flex justify-center">
@@ -133,10 +133,10 @@ const TestingResult = ({
                     ></Image>
                   )}
                 </div>
-                <div className="pt-4">{x.content_with_weight}</div>
+                <div className="pt-4">{x.content_ltks}</div>
               </Card>
             ))
-          ) : isSuccess && chunks.length === 0 ? (
+          ) : isSuccess && chunks?.length === 0 ? (
             <Empty></Empty>
           ) : null}
         </Flex>
