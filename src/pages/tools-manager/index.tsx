@@ -26,7 +26,14 @@ const ToolsManager = () => {
         ),
       },
       {
-        title: toolsRouteMap[activeKey] || '工具',
+
+        title:
+          (
+            <span style={{color:'red'}}>
+              {toolsRouteMap[activeKey] || '工具'}
+            </span>
+          ),
+
       },
     ];
 
