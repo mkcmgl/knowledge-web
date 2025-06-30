@@ -76,7 +76,6 @@ const KnowledgeTesting = () => {
   };
 
   return (
-    <App>
       <div className={styles.testingWrapper}>
         <div className={styles.testingControlSection}>
           <TestingControl
@@ -100,7 +99,6 @@ const KnowledgeTesting = () => {
           />
         </Modal>
       </div>
-    </App>
   );
 };
 
