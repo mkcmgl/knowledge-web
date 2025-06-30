@@ -37,6 +37,7 @@ const {
   upload_and_parse,
   listTagByKnowledgeIds,
   setMeta,
+  //retrieval_test,
 } = api;
 
 const methods = {
@@ -152,6 +153,10 @@ const methods = {
     url: listTagByKnowledgeIds,
     method: 'get',
   },
+  //   retrieval_test: {
+  //   url: retrieval_test,
+  //   method: 'post',
+  // },
 };
 
 const kbService = registerServer<keyof typeof methods>(methods, request);

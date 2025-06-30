@@ -64,8 +64,7 @@ const TestingResult = ({
   const { t } = useTranslate('knowledgeDetails');
   const { pagination, setPagination } = useGetPaginationWithRouter();
   const isSuccess = useSelectIsTestingSuccess();
-  const isAllSuccess = useAllTestingSuccess();
-
+  // const isAllSuccess = useAllTestingSuccess();
   const onChange: PaginationProps['onChange'] = (pageNumber, pageSize) => {
     pagination.onChange?.(pageNumber, pageSize);
     handleTesting(selectedDocumentIds);

@@ -29,7 +29,7 @@ const ToolsManager = () => {
 
         title:
           (
-            <span style={{color:'red'}}>
+            <span style={{color:'#306EFD'}}>
               {toolsRouteMap[activeKey] || '工具'}
             </span>
           ),

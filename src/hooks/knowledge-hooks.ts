@@ -13,7 +13,8 @@ import kbService, {
   listTag,
   removeTag,
   renameTag,
-  retrieval_test,
+ // retrieval_test,
+ retrieval_test,
 } from '@/services/knowledge-service';
 import {
   useInfiniteQuery,
@@ -255,6 +256,11 @@ export const useTestChunkRetrieval = (): ResponsePostType<ITestingResult> & {
       console.log(`values`, values,knowledgeBaseId);
       console.log(knowledgeBaseId);
       const { data } = await retrieval_test({
+        
+        //       const { data } = await kbService.retrieval_test({
+        //         ...values,
+        // kb_id: values.kb_id ?values.kb_id: knowledgeBaseId,
+
         knowledge_ids: values.kb_id ?values.kb_id: [knowledgeBaseId],
         query: values.question,
         keyword: false,
@@ -282,6 +288,7 @@ export const useTestChunkRetrieval = (): ResponsePostType<ITestingResult> & {
       });
       if (data.code === 0) {
         const res = data.data;
+        console.log(res)
         return {
           ...res,
           documents: res.doc_aggs,
@@ -320,6 +327,12 @@ export const useTestChunkAllRetrieval = (): ResponsePostType<ITestingResult> & {
     mutationFn: async (values: any) => {
       console.log(`values`, values,knowledgeBaseId);
       const { data } = await retrieval_test({
+   
+        //  const { data } = await kbService.retrieval_test({
+        //         ...values,
+        // kb_id: values.kb_id ?values.kb_id: knowledgeBaseId,
+        // doc_ids: [],
+
         knowledge_ids: values.kb_id ?values.kb_id: [knowledgeBaseId],
         query: values.question,
         keyword: false,
