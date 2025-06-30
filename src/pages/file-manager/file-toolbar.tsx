@@ -162,6 +162,21 @@ const FileToolbar = ({
     <div className={styles.filter}>
 
 
+        <div className='mb-5 flex items-center gap-3' style={{ width: 300 }}>
+          <Dropdown menu={{ items: actionItems }} trigger={['click']}>
+            <Button type="primary" icon={<PlusOutlined />}>
+              新增文件
+            </Button>
+          </Dropdown>
+
+          <Button type="primary" disabled={disabled} onClick={handleShowMoveFileModal}
+          // icon={<FolderInput className="size-4" />}
+          >批量移动</Button>
+
+          <Button type="primary" danger disabled={disabled} onClick={handleRemoveFile} style={{ flex: 'end' }}
+          // icon={<Trash2 className="size-4" />}
+          >批量删除</Button>
+        </div>
       <Flex justify="space-between" align="center" style={{ width: '100%' }}>
         <Form
           form={form}
@@ -202,7 +217,7 @@ const FileToolbar = ({
 
 
         </Form>
-        <div style={{ width: 200, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}  >
+        <div style={{ width: 160, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}  >
           <Space>
             <Button type="primary" icon={<SearchOutlined />} onClick={handleSearch} style={{ padding: '0 10px', marginRight: 8 }}>查询</Button>
             <Button style={{ padding: '0 10px' }} icon={<ReloadOutlined />} onClick={handleReset}>重置</Button>
@@ -211,26 +226,9 @@ const FileToolbar = ({
         </div>
       </Flex>
 
-      <Divider style={{ margin: '16px 0' }} />
-      <div className='w-full flex mt-5 justify-between items-center'>
-        <Breadcrumb items={breadcrumbItems} itemRender={itemRender} />
 
-        <div className='wjustify-between flex items-center gap-2' style={{width:300}}>
-          <Dropdown menu={{ items: actionItems }} trigger={['click']}>
-            <Button type="primary" icon={<PlusOutlined />}>
-              {t('addFile')}
-            </Button>
-          </Dropdown>
-          
-          <Button disabled={disabled} onClick={handleShowMoveFileModal}
-          // icon={<FolderInput className="size-4" />}
-          >批量移动</Button>
-
-          <Button disabled={disabled} onClick={handleRemoveFile} style={{flex:'end'}}
-          // icon={<Trash2 className="size-4" />}
-          >批量删除</Button>
-        </div>
-      </div>
+     
+      <Breadcrumb style={{ marginTop: '20px ' }} items={breadcrumbItems} itemRender={itemRender} />
     </div>
   );
 };

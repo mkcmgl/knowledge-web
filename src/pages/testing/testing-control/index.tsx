@@ -17,12 +17,13 @@ import { useFetchKnowledgeList } from '@/hooks/knowledge-hooks';
 
 
 
-loader.config({ paths: { vs: '/vs' } });
+// loader.config({ paths: { vs: '/vs' } });
 type FieldType = {
   similarity_threshold?: number;
   vector_similarity_weight?: number;
   question: string;
   meta?: string;
+  top_k?: string;
 };
 
 interface IProps {
@@ -83,12 +84,29 @@ const TestingControl = ({
     <section className={styles.testingControlWrapper}>
       <div>
         <Flex justify='center' align='center' >
-          <h3>{t('testing')}</h3>
+          <h3 style={{ color: '#1D2129', fontSize: "20px", fontWeight: 600, marginBottom: 16 }}>{t('testing')}</h3>
         </Flex>
       </div>
-      <p className={styles.testingDescription}>{t('testingDescription')}</p>
+      <Flex justify='center' align='center' >
+        <div className={styles.testingControlTip}>
+          <div>  <svg xmlns="http://www.w3.org/2000/svg"  fill="none" version="1.1" style={{ width: 20, height: 20,marginRight:8, }} viewBox="0 0 20 20">
+            <defs>
+              <clipPath id="master_svg0_2_7215">
+                <rect x="0" y="0" width="20" height="20" rx="0" style={{ width: 20, height: 20, }} />
+              </clipPath>
+            </defs>
+            <g clipPath="url(#master_svg0_2_7215)">
+              <g>
+                <path d="M10,1.25C14.8307,1.25,18.75,5.16387,18.75,10C18.75,14.8361,14.8361,18.75,10,18.75C5.16387,18.75,1.25,14.8361,1.25,10C1.25,5.16387,5.16934,1.25,10,1.25ZM11.09238,13.2826L8.90762,13.2826L8.90762,15.4674L11.09238,15.4674L11.09238,13.2826ZM11.09238,4.53262L8.90762,4.53262L8.90762,11.09238L11.09238,11.09238L11.09238,4.53262Z" fill="#F9CA06" fillOpacity="1" style={{ width: 20, height: 20, }} />
+              </g>
+            </g>
+          </svg></div>
+          <p className={styles.testingDescription}>{t('testingDescription')}</p>
+        </div>
+      </Flex>
 
-      <Divider></Divider>
+
+
       <section>
         <Form
           name="testing"
@@ -99,14 +117,14 @@ const TestingControl = ({
           labelCol={{ flex: '160px' }}
           labelWrap
           wrapperCol={{ flex: 1 }}
-          labelAlign="left"
+          labelAlign="right"
         >
           <div className={styles.formContent}>
 
             <Form.Item
               label="测试知识库"
               name={'test_kb_ids'}
-              tooltip={t('testKnowledgeBaseTip')}
+              tooltip={'请根据不同的Embedding模型选择知识库，不支持跨模型选择知识库。'}
               rules={[{ required: true, message: "请选择一个或多个知识库" }]}
             >
               <TreeSelect
@@ -281,6 +299,22 @@ const TestingControl = ({
                 )}
               </Form.List>
             </Form.Item>
+            <Form.Item<FieldType>
+              label={'topk设置'}
+              name={'top_k'}
+              tooltip={'设置返回切片数最大值，不设置默认全部返回'}
+              rules={[
+                { type: 'number', message: t('请输入数字') }
+              ]}
+            >
+              <InputNumber
+                min={1}
+
+                step={1}
+                precision={1}
+                style={{ width: '100%' }}
+              />
+            </Form.Item>
 
             <Button
               type="primary"
@@ -325,7 +359,7 @@ const TestingControl = ({
           ))}
         </Space>
       </section> */}
-    </section>
+    </section >
   );
 };
 

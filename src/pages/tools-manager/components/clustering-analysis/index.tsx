@@ -103,16 +103,15 @@ ${clusters.map((cluster, index) => `
   };
 
   return (
-    <div style={{ padding: '20px', display: 'flex', justifyContent: 'center' }}>
-      <div style={{ width: '800px' }}>
+    <div >
+      <div style={{ width: "100%", backgroundColor: '#fff', borderRadius: '4px',padding:'20px'  }}>
 
-
-        <Card style={{ marginBottom: '24px' }}>
           <Form form={form} layout="vertical" >
             <Form.Item
               label="阈值"
               name="threshold"
               initialValue={0.3}
+               layout="horizontal"
               rules={[{ required: true, message: '请设置阈值！' }]}
             >
               {/* <div style={{ padding: '0 16px' }}> */}
@@ -131,11 +130,11 @@ ${clusters.map((cluster, index) => `
                   <div key={index} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
                     <Form.Item
                       name={['textSegments', index]}
-                      rules={[{ required: true, message: '请输入文本段！' }]}
+                      rules={[{ required: true, message: '输入或粘贴您想要聚类的文本' }]}
                       style={{ flex: 1, marginBottom: 0 }}
                     >
                       <TextArea
-                        placeholder={`请输入文本段 ${index + 1}...`}
+                        placeholder={`输入或粘贴您想要聚类的文本...`}
                         style={{
                           height: '100px',
                           resize: 'none',
@@ -167,7 +166,6 @@ ${clusters.map((cluster, index) => `
               </Space>
             </Form.Item>
           </Form>
-        </Card>
 
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <Button
@@ -181,7 +179,7 @@ ${clusters.map((cluster, index) => `
           </Button>
         </div>
 
-        <Card>
+  
           <div style={{ marginBottom: '16px' }}>
             <Text strong style={{ fontSize: '16px' }}>分析结果</Text>
           </div>
@@ -201,7 +199,6 @@ ${clusters.map((cluster, index) => `
               readOnly
             />
           </div>
-        </Card>
       </div>
     </div>
   );

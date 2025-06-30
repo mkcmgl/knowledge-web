@@ -54,27 +54,27 @@ const ToolsSidebar = () => {
       getItem(
         toolsRouteMap[ToolsMenuRouteKey.OCR],
         ToolsMenuRouteKey.OCR,
-        <OCRIdentifyIcon size={16} />,
+        <OCRIdentifyIcon size={16} fill={activeKey === ToolsMenuRouteKey.OCR ? '#306EFD' : '#1D2129'} />,
       ),
       getItem(
         toolsRouteMap[ToolsMenuRouteKey.textSimilarity],
         ToolsMenuRouteKey.textSimilarity,
-        <TextSimilarityIcon size={16} />,
+        <TextSimilarityIcon size={16} fill={activeKey === ToolsMenuRouteKey.textSimilarity ? '#306EFD' : '#1D2129'} />,
       ),
       getItem(
         toolsRouteMap[ToolsMenuRouteKey.ClusteringAnalysis],
         ToolsMenuRouteKey.ClusteringAnalysis,
-        <TextClusterIcon size={16} />,
+        <TextClusterIcon size={16} fill={activeKey === ToolsMenuRouteKey.ClusteringAnalysis ? '#306EFD' : '#1D2129'} />,
       ),
       getItem(
         toolsRouteMap[ToolsMenuRouteKey.SensitiveWord],
         ToolsMenuRouteKey.SensitiveWord,
-        <SensitiveWordIcon size={16} />,
+        <SensitiveWordIcon size={16} fill={activeKey === ToolsMenuRouteKey.SensitiveWord ? '#306EFD' : '#1D2129'} />,
       ),
       getItem(
         toolsRouteMap[ToolsMenuRouteKey.KeywordExtraction],
         ToolsMenuRouteKey.KeywordExtraction,
-        <KeywordExtractIcon size={16} />,
+        <KeywordExtractIcon size={16} fill={activeKey === ToolsMenuRouteKey.KeywordExtraction ? '#306EFD' : '#1D2129'} />,
       ),
       getItem(
         toolsRouteMap[ToolsMenuRouteKey.SpeechToText],

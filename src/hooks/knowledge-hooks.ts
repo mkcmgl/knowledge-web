@@ -13,8 +13,8 @@ import kbService, {
   listTag,
   removeTag,
   renameTag,
- // retrieval_test,
- retrieval_test,
+  // retrieval_test,
+  retrieval_test,
 } from '@/services/knowledge-service';
 import {
   useInfiniteQuery,
@@ -253,25 +253,24 @@ export const useTestChunkRetrieval = (): ResponsePostType<ITestingResult> & {
     gcTime: 0,
 
     mutationFn: async (values: any) => {
-      console.log(`values`, values,knowledgeBaseId);
+      console.log(`values`, values, knowledgeBaseId);
       console.log(knowledgeBaseId);
       const { data } = await retrieval_test({
-        
         //       const { data } = await kbService.retrieval_test({
         //         ...values,
         // kb_id: values.kb_id ?values.kb_id: knowledgeBaseId,
 
-        knowledge_ids: values.kb_id ?values.kb_id: [knowledgeBaseId],
+        knowledge_ids: values.kb_id ? values.kb_id : [knowledgeBaseId],
         query: values.question,
         keyword: false,
         document_ids: [],
         highlight: false,
-         rerank_id:'',
+        rerank_id: '',
         similarity_threshold: values.similarity_threshold,
         chunk_deduplication_coefficient: 0,
         retrieval_setting: {
           score_threshold: 0,
-          top_k: 0,
+          ...(values.top_k ? { top_k: parseInt(values.top_k, 10) } : {}),
         },
         vector_similarity_weight: values.vector_similarity_weight,
         metadata_condition: {
@@ -288,7 +287,7 @@ export const useTestChunkRetrieval = (): ResponsePostType<ITestingResult> & {
       });
       if (data.code === 0) {
         const res = data.data;
-        console.log(res)
+        console.log(res);
         return {
           ...res,
           documents: res.doc_aggs,
@@ -325,25 +324,25 @@ export const useTestChunkAllRetrieval = (): ResponsePostType<ITestingResult> & {
     mutationKey: ['testChunkAll'], // This method is invalid
     gcTime: 0,
     mutationFn: async (values: any) => {
-      console.log(`values`, values,knowledgeBaseId);
+      console.log(`values`, values, knowledgeBaseId);
       const { data } = await retrieval_test({
-   
         //  const { data } = await kbService.retrieval_test({
         //         ...values,
         // kb_id: values.kb_id ?values.kb_id: knowledgeBaseId,
         // doc_ids: [],
 
-        knowledge_ids: values.kb_id ?values.kb_id: [knowledgeBaseId],
+        knowledge_ids: values.kb_id ? values.kb_id : [knowledgeBaseId],
         query: values.question,
         keyword: false,
         document_ids: [],
         highlight: false,
-         rerank_id:'',
+        rerank_id: '',
         similarity_threshold: values.similarity_threshold,
         chunk_deduplication_coefficient: 0,
         retrieval_setting: {
           score_threshold: 0,
-          top_k: 0,
+          top_k: 9,
+           ...(values.top_k ? { top_k: parseInt(values.top_k, 10) } : {}),
         },
         vector_similarity_weight: values.vector_similarity_weight,
         metadata_condition: {

@@ -100,10 +100,10 @@ const RagHeader = () => {
                   onClick={handleChange(item.path)}
                   className="cursor-pointer"
                 >
-                  {/* <item.icon
+                  <item.icon
                     className={styles.radioButtonIcon}
                     stroke={item.name === currentPath ? 'black' : 'white'}
-                  ></item.icon> */}
+                  ></item.icon>
                   {item.name}
                 </Flex>
               </a>

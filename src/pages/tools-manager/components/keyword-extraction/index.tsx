@@ -1,13 +1,13 @@
-import { 
-  Typography, 
-  Form, 
-  Input, 
-  Button, 
+import {
+  Typography,
+  Form,
+  Input,
+  Button,
   Card,
   message
 } from 'antd';
 import { useState } from 'react';
-
+import styles from './index.less';
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
@@ -19,7 +19,7 @@ const KeywordExtraction = () => {
   // 关键词提取处理
   const handleExtractKeywords = () => {
     const formData = form.getFieldsValue();
-    
+
     if (!formData.textSegment || formData.textSegment.trim() === '') {
       message.error('请输入文本段！');
       return;
@@ -29,26 +29,26 @@ const KeywordExtraction = () => {
     console.log('原始文本:', formData.textSegment);
     console.log('提取时间:', new Date().toLocaleString());
     console.log('========================');
-    
+
     setIsProcessing(true);
-    
+
     setTimeout(() => {
       const originalText = formData.textSegment;
-      
+
       // 模拟关键词提取算法
       const words = originalText.split(/[\s,，。！？；：""''（）【】、]+/).filter(word => word.length > 1);
       const wordCount: { [key: string]: number } = {};
-      
+
       // 统计词频
       words.forEach((word: string) => {
         wordCount[word] = (wordCount[word] || 0) + 1;
       });
-      
+
       // 按频率排序，取前10个作为关键词
       const sortedWords = Object.entries(wordCount)
-        .sort(([,a], [,b]) => b - a)
+        .sort(([, a], [, b]) => b - a)
         .slice(0, 10);
-      
+
       // 计算TF-IDF权重（简化版）
       const totalWords = words.length;
       const keywords = sortedWords.map(([word, count], index) => ({
@@ -57,7 +57,7 @@ const KeywordExtraction = () => {
         tf: count / totalWords,
         weight: (count / totalWords) * Math.log(10 / (index + 1))
       }));
-      
+
       const result = `
 关键词提取结果：
 
@@ -88,51 +88,77 @@ ${index + 1}. ${kw.word}
   };
 
   return (
-    <div style={{ padding: '20px', display: 'flex', justifyContent: 'center' }}>
-      <div style={{ width: '800px' }}>
-
-        
-        <Card style={{ marginBottom: '24px' }}>
-          <Form form={form} layout="vertical">
-            <Form.Item 
-              label="文本段" 
+    <div>
+      <div style={{ display: 'flex', gap: '20px' }}>
+        <div style={{
+          background: '#fff',
+          padding: '20px 0',
+          borderRadius: '8px',
+          height: '600px',
+          display: 'flex',
+          flexDirection: 'column',
+          flex: 1
+        }} >
+          <Form form={form} layout="vertical" labelCol={{ style: { width: '100%' } }} style={{ height: '520px' }} className={styles.myFulllabelForm}>
+            <Form.Item
+              label={
+                <div style={{ width: '100%', borderBottom: "1px solid #E5E6EB", paddingBottom: '12px', paddingLeft: '20px', boxSizing: 'border-box' }}>
+                  <span style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                    <i style={{ height: 20, borderLeft: '4px solid #0C7CFF', borderRadius: '4px', marginRight: 8 }}></i>
+                    <span style={{ fontSize: 16, fontWeight: 'bold' }}>文本段</span>
+                    <span style={{ color: 'red', marginLeft: 4 }}>*</span>
+                  </span>
+                </div>
+              }
               name="textSegment"
-              rules={[{ required: true, message: '请输入文本段！' }]}
+              rules={[{ message: '请输入文本段！' }]}
             >
-              <TextArea
-                placeholder="请输入需要提取关键词的文本..."
-                style={{ 
-                  height: '100px', 
-                  resize: 'none',
-                  fontSize: '14px',
-                  lineHeight: '1.6'
-                }}
-              />
+              <div style={{ padding: "10px 20px" }} >
+                <TextArea
+                  placeholder="请输入需要提取关键词的文本..."
+                  style={{
+                    height: '420px',
+                    resize: 'none',
+                    fontSize: '14px',
+                    lineHeight: '1.6'
+                  }}
+                />
+              </div>
+
             </Form.Item>
           </Form>
-        </Card>
 
-        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <Button 
-            type="primary" 
-            size="large"
-            onClick={handleExtractKeywords}
-            loading={isProcessing}
-            style={{ minWidth: '120px' }}
-          >
-            {isProcessing ? '提取中...' : '提取关键词'}
-          </Button>
-        </div>
-
-        <Card>
-          <div style={{ marginBottom: '16px' }}>
-            <Text strong style={{ fontSize: '16px' }}>关键词</Text>
+          <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+            <Button
+              type="primary"
+              size="large"
+              onClick={handleExtractKeywords}
+              loading={isProcessing}
+              style={{ minWidth: '120px' }}
+            >
+              {isProcessing ? '提取中...' : '提取关键词'}
+            </Button>
           </div>
-          <div style={{ width: '100%' }}>
+        </div>
+        <div style={{
+          background: '#fff',
+          padding: '20px 0',
+          borderRadius: '8px',
+          height: '600px',
+          display: 'flex',
+          flexDirection: 'column',
+          flex: 1
+        }} >
+
+          <div style={{ width: '100%', borderBottom: "1px solid #E5E6EB", paddingBottom: '12px', paddingLeft: '20px' }}>
+            <i style={{ height: '100%', borderLeft: "4px solid #0C7CFF", borderRadius: '4px' }}></i>
+            <span className='pl-2 text-[16px] font-bold'>关键词</span>
+          </div>
+          <div style={{ width: '100%', padding: "20px"  }}>
             <TextArea
               value={keywordsResult}
               placeholder="关键词提取结果将在这里显示..."
-              style={{ 
+              style={{
                 width: '100%',
                 minHeight: '300px',
                 resize: 'none',
@@ -144,7 +170,11 @@ ${index + 1}. ${kw.word}
               readOnly
             />
           </div>
-        </Card>
+        </div>
+
+
+
+
       </div>
     </div>
   );
