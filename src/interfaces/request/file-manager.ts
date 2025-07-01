@@ -9,6 +9,6 @@ interface BaseRequestBody {
 }
 
 export interface IConnectRequestBody {
-  fileIds: string[];
-  kbIds: string[];
+  file_ids: string[];
+  kb_ids: string[];
 }

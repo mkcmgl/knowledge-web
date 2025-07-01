@@ -141,8 +141,8 @@ const FileManager = () => {
       render(value) {
         return Array.isArray(value) ? (
           <Space wrap>
-            {value?.map((x) => (
-              <Tag color="blue" key={x.kb_id}>
+            {value?.map((x,index) => (
+              <Tag color={index % 2 === 1 ? "#52C41A" : "blue"} key={x.kb_id}>
                 {x.kb_name}
               </Tag>
             ))}

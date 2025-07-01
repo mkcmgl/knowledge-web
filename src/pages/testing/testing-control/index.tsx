@@ -1,17 +1,14 @@
 import Rerank from '@/components/rerank';
-import SimilaritySlider from '@/components/similarity-slider';
 import { useTranslate } from '@/hooks/common-hooks';
 import { useChunkIsTesting } from '@/hooks/knowledge-hooks';
-import { Button, Divider, Flex, Form, Input, InputNumber, Space, message, TreeSelect } from 'antd';
+import { Button, Flex, Form, Input, InputNumber, message, TreeSelect } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { LabelWordCloud } from './label-word-cloud';
 
-import { CrossLanguageItem } from '@/components/cross-language-item';
 import { UseKnowledgeGraphItem } from '@/components/use-knowledge-graph-item';
 import styles from './index.less';
 import DOMPurify from 'dompurify';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import Editor, { loader } from '@monaco-editor/react';
 import { useSelectLlmList } from '@/hooks/llm-hooks';
 import { useFetchKnowledgeList } from '@/hooks/knowledge-hooks';
 
@@ -37,15 +34,10 @@ const TestingControl = ({
   handleTesting,
   selectedDocumentIds,
 }: IProps) => {
-  const question = Form.useWatch('question', { form, preserve: true });
   const loading = useChunkIsTesting();
   const { t } = useTranslate('knowledgeDetails');
   const { myLlmList } = useSelectLlmList();
   const { list: knowledgeList } = useFetchKnowledgeList();
-
-  const buttonDisabled =
-    !question || (typeof question === 'string' && question.trim() === '');
-  console.log(`myLlmList,knowledgeList`, myLlmList, knowledgeList)
 
   // 构造树形结构数据（修正版）
   const treeData = myLlmList.flatMap((model) => {
@@ -57,6 +49,7 @@ const TestingControl = ({
           value: kb.id,
           key: kb.id,
           isLeaf: true,
+          parentKey: llmItem.name,
         }));
       return {
         title: <span style={{ paddingLeft: 4 }}>{llmItem.name}</span>,
@@ -67,7 +60,6 @@ const TestingControl = ({
       };
     }).filter((node) => node.children.length > 0);
   }).filter((node) => node.children && node.children.length > 0);
-  console.log(`treeData68`, treeData)
 
   const onClick = async () => {
     try {
@@ -130,16 +122,33 @@ const TestingControl = ({
               <TreeSelect
                 treeData={treeData}
                 value={form.getFieldValue('test_kb_ids') || []}
+                onSelect={(value: string, node: any) => {
+                  // 找到当前父目录
+                  const parentKey = node?.parentKey || node?.props?.parentKey || '';
+                  if (!parentKey) return;
+
+                  // 当前所有已选
+                  let selected: string[] = form.getFieldValue('test_kb_ids') || [];
+                  // 找到该父目录下所有child
+                  const parent = treeData.find((p) => p.key === parentKey);
+                  const allChildValues = parent?.children?.map((c: any) => c.value) || [];
+
+                  // 移除同父目录下的其他child，只保留当前选中的
+                  selected = selected.filter((v) => !allChildValues.includes(v));
+                  selected.push(value);
+
+                  form.setFieldsValue({ test_kb_ids: selected });
+                }}
                 onChange={(value: string[] | string) => {
-                  // 只允许选择叶子节点，且支持多选
+                  // 只允许每个父目录下选一个
                   let selected: string[] = Array.isArray(value) ? value : [value];
                   const leafValues: string[] = [];
                   for (const parent of treeData) {
                     if (parent.children) {
-                      for (const child of parent.children) {
-                        if (selected.includes(child.value)) {
-                          leafValues.push(child.value);
-                        }
+                      // 只保留第一个被选中的
+                      const selectedChild = parent.children.find(child => selected.includes(child.value));
+                      if (selectedChild) {
+                        leafValues.push(selectedChild.value);
                       }
                     }
                   }
@@ -177,7 +186,7 @@ const TestingControl = ({
 
             >
               <InputNumber
-                min={0}
+                min={0.1}
                 max={1}
                 step={0.1}
                 precision={1}
@@ -206,7 +215,7 @@ const TestingControl = ({
 
             >
               <InputNumber
-                min={0}
+                min={0.1}
                 max={1}
                 step={0.1}
                 precision={1}
@@ -309,7 +318,6 @@ const TestingControl = ({
             >
               <InputNumber
                 min={1}
-
                 step={1}
                 precision={1}
                 style={{ width: '100%' }}

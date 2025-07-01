@@ -91,7 +91,7 @@ const TestingControl = ({
 
             >
               <InputNumber
-                min={0}
+                min={0.1}
                 max={1}
                 step={0.1}
                 precision={1}
@@ -120,7 +120,7 @@ const TestingControl = ({
 
             >
               <InputNumber
-                min={0}
+                min={0.1}
                 max={1}
                 step={0.1}
                 precision={1}

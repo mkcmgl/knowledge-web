@@ -206,8 +206,8 @@ export const useHandleConnectToKnowledge = () => {
   const onConnectToKnowledgeOk = useCallback(
     async (knowledgeIds: string[]) => {
       const ret = await connectToKnowledge({
-        fileIds: [record.id],
-        kbIds: knowledgeIds,
+        file_ids: [record.id],
+        kb_ids: knowledgeIds,
       });
 
       if (ret === 0) {
