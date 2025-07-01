@@ -1,16 +1,19 @@
 .chatWrapper {
-  height: 100%;
   width: 100%;
+  height: 100%;
 
   .chatAppWrapper {
+    flex-direction: column;
     width: 288px;
     padding: 26px;
-
     .chatAppContent {
       overflow-y: auto;
       width: 100%;
     }
-
+    .chatAppLeft {
+      overflow: auto;
+      height: 50%;
+    }
     .chatAppCard {
       :global(.ant-card-body) {
         padding: 10px;
@@ -29,14 +32,15 @@
     }
     .chatAppCardSelectedDark {
       :global(.ant-card-body) {
-        background-color: rgba(255, 255, 255, 0.1);
+        background-color: rgba(255, 255, 255, .1);
         border-radius: 8px;
       }
     }
   }
   .chatTitleWrapper {
-    width: 220px;
-    padding: 26px 0;
+    overflow: auto;
+    height: 50%;
+    padding-top: 26px;
   }
 
   .chatTitle {
@@ -44,14 +48,15 @@
   }
 
   .chatTitleContent {
-    padding: 5px 10px;
     overflow: auto;
+    padding: 5px 10px;
   }
 
   .chatSpin {
     :global(.ant-spin-container) {
       display: flex;
       flex-direction: column;
+
       gap: 10px;
     }
   }
@@ -70,13 +75,13 @@
   }
   .chatTitleCardSelectedDark {
     :global(.ant-card-body) {
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: rgba(255, 255, 255, .1);
       border-radius: 8px;
     }
   }
 
   .divider {
-    margin: 0;
     height: 100%;
+    margin: 0;
   }
 }

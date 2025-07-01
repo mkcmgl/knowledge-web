@@ -100,44 +100,44 @@ const Chat = () => {
 
   const handleShowChatConfigurationModal =
     (dialogId?: string): any =>
-    (info: any) => {
-      info?.domEvent?.preventDefault();
-      info?.domEvent?.stopPropagation();
-      showDialogEditModal(dialogId);
-    };
+      (info: any) => {
+        info?.domEvent?.preventDefault();
+        info?.domEvent?.stopPropagation();
+        showDialogEditModal(dialogId);
+      };
 
   const handleRemoveDialog =
     (dialogId: string): MenuItemProps['onClick'] =>
-    ({ domEvent }) => {
-      domEvent.preventDefault();
-      domEvent.stopPropagation();
-      onRemoveDialog([dialogId]);
-    };
+      ({ domEvent }) => {
+        domEvent.preventDefault();
+        domEvent.stopPropagation();
+        onRemoveDialog([dialogId]);
+      };
 
   const handleShowOverviewModal =
     (dialog: IDialog): any =>
-    (info: any) => {
-      info?.domEvent?.preventDefault();
-      info?.domEvent?.stopPropagation();
-      setRecord(dialog);
-      showEmbedModal();
-    };
+      (info: any) => {
+        info?.domEvent?.preventDefault();
+        info?.domEvent?.stopPropagation();
+        setRecord(dialog);
+        showEmbedModal();
+      };
 
   const handleRemoveConversation =
     (conversationId: string): MenuItemProps['onClick'] =>
-    ({ domEvent }) => {
-      domEvent.preventDefault();
-      domEvent.stopPropagation();
-      onRemoveConversation([conversationId]);
-    };
+      ({ domEvent }) => {
+        domEvent.preventDefault();
+        domEvent.stopPropagation();
+        onRemoveConversation([conversationId]);
+      };
 
   const handleShowConversationRenameModal =
     (conversationId: string): MenuItemProps['onClick'] =>
-    ({ domEvent }) => {
-      domEvent.preventDefault();
-      domEvent.stopPropagation();
-      showConversationRenameModal(conversationId);
-    };
+      ({ domEvent }) => {
+        domEvent.preventDefault();
+        domEvent.stopPropagation();
+        showConversationRenameModal(conversationId);
+      };
 
   const handleDialogCardClick = useCallback(
     (dialogId: string) => () => {
@@ -234,7 +234,7 @@ const Chat = () => {
   return (
     <Flex className={styles.chatWrapper}>
       <Flex className={styles.chatAppWrapper}>
-        <Flex flex={1} vertical>
+        <Flex flex={1} vertical className={styles.chatAppLeft}>
           <Button type="primary" onClick={handleShowChatConfigurationModal()}>
             {t('createAssistant')}
           </Button>
@@ -284,77 +284,78 @@ const Chat = () => {
             </Spin>
           </Flex>
         </Flex>
-      </Flex>
-      <Divider type={'vertical'} className={styles.divider}></Divider>
-      <Flex className={styles.chatTitleWrapper}>
-        <Flex flex={1} vertical>
-          <Flex
-            justify={'space-between'}
-            align="center"
-            className={styles.chatTitle}
-          >
-            <Space>
-              <b>{t('chat')}</b>
-              <Tag>{conversationList.length}</Tag>
-            </Space>
-            <Tooltip title={t('newChat')}>
-              <div>
-                <SvgIcon
-                  name="plus-circle-fill"
-                  width={20}
-                  onClick={handleCreateTemporaryConversation}
-                ></SvgIcon>
-              </div>
-            </Tooltip>
-          </Flex>
-          <Divider></Divider>
-          <Flex vertical gap={10} className={styles.chatTitleContent}>
-            <Spin
-              spinning={conversationLoading}
-              wrapperClassName={styles.chatSpin}
+        <Flex className={styles.chatTitleWrapper}>
+          <Flex flex={1} vertical>
+            <Flex
+              justify={'space-between'}
+              align="center"
+              className={styles.chatTitle}
             >
-              {conversationList.map((x) => (
-                <Card
-                  key={x.id}
-                  hoverable
-                  onClick={handleConversationCardClick(x.id, x.is_new)}
-                  onMouseEnter={handleConversationCardEnter(x.id)}
-                  onMouseLeave={handleConversationItemLeave}
-                  className={classNames(styles.chatTitleCard, {
-                    [theme === 'dark'
-                      ? styles.chatTitleCardSelectedDark
-                      : styles.chatTitleCardSelected]: x.id === conversationId,
-                  })}
-                >
-                  <Flex justify="space-between" align="center">
-                    <div>
-                      <Text
-                        ellipsis={{ tooltip: x.name }}
-                        style={{ width: 150 }}
-                      >
-                        {x.name}
-                      </Text>
-                    </div>
-                    {conversationActivated === x.id &&
-                      x.id !== '' &&
-                      !x.is_new && (
-                        <section>
-                          <Dropdown
-                            menu={{ items: buildConversationItems(x.id) }}
-                          >
-                            <ChatAppCube
-                              className={styles.cubeIcon}
-                            ></ChatAppCube>
-                          </Dropdown>
-                        </section>
-                      )}
-                  </Flex>
-                </Card>
-              ))}
-            </Spin>
+              <Space>
+                <b>{t('chat')}</b>
+                <Tag>{conversationList.length}</Tag>
+              </Space>
+              <Tooltip title={t('newChat')}>
+                <div>
+                  <SvgIcon
+                    name="plus-circle-fill"
+                    width={20}
+                    onClick={handleCreateTemporaryConversation}
+                  ></SvgIcon>
+                </div>
+              </Tooltip>
+            </Flex>
+            <Divider></Divider>
+            <Flex vertical gap={10} className={styles.chatTitleContent}>
+              <Spin
+                spinning={conversationLoading}
+                wrapperClassName={styles.chatSpin}
+              >
+                {conversationList.map((x) => (
+                  <Card
+                    key={x.id}
+                    hoverable
+                    onClick={handleConversationCardClick(x.id, x.is_new)}
+                    onMouseEnter={handleConversationCardEnter(x.id)}
+                    onMouseLeave={handleConversationItemLeave}
+                    className={classNames(styles.chatTitleCard, {
+                      [theme === 'dark'
+                        ? styles.chatTitleCardSelectedDark
+                        : styles.chatTitleCardSelected]: x.id === conversationId,
+                    })}
+                  >
+                    <Flex justify="space-between" align="center">
+                      <div>
+                        <Text
+                          ellipsis={{ tooltip: x.name }}
+                          style={{ width: 150 }}
+                        >
+                          {x.name}
+                        </Text>
+                      </div>
+                      {conversationActivated === x.id &&
+                        x.id !== '' &&
+                        !x.is_new && (
+                          <section>
+                            <Dropdown
+                              menu={{ items: buildConversationItems(x.id) }}
+                            >
+                              <ChatAppCube
+                                className={styles.cubeIcon}
+                              ></ChatAppCube>
+                            </Dropdown>
+                          </section>
+                        )}
+                    </Flex>
+                  </Card>
+                ))}
+              </Spin>
+            </Flex>
           </Flex>
         </Flex>
       </Flex>
+      <Divider type={'vertical'} className={styles.divider}></Divider>
+
       <Divider type={'vertical'} className={styles.divider}></Divider>
       <ChatContainer controller={controller}></ChatContainer>
       {dialogEditVisible && (
