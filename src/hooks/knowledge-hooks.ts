@@ -285,9 +285,8 @@ export const useTestChunkRetrieval = (): ResponsePostType<ITestingResult> & {
         page,
         page_size: pageSize,
       });
-      if (data.records ) {
-        const res = data
-        console.log(`chunks`,res);
+      if (data.code === 0 ) {
+        const res = data.data
         // 转换 records 为 chunks
         const chunks = res.records.map((item: any) => ({
           chunk_id: item.id,
@@ -375,9 +374,8 @@ export const useTestChunkAllRetrieval = (): ResponsePostType<ITestingResult> & {
         page,
         page_size: pageSize,
       });
-      if (data.records ) {
-        const res = data
-        console.log(`chunks`,res);
+      if (data.code=== 0) {
+        const res = data.data
         // 转换 records 为 chunks
         const chunks = res.records.map((item: any) => ({
           chunk_id: item.id,
