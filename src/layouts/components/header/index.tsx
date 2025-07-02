@@ -28,13 +28,13 @@ const RagHeader = () => {
   const tagsData = useMemo(
     () => [
       { path: '/knowledge', name: t('knowledgeBase'), icon: KnowledgeBaseIcon },
+      { path: '/chat', name: '智能聊天', icon: MessageOutlined },
       
       // { path: '/search', name: t('search'), icon: SearchOutlined },
       // { path: '/flow', name: t('flow'), icon: GraphIcon },
       { path: '/file', name: t('fileManager'), icon: FileIcon },
       { path: '/trial', name: t('trial'), icon: TrialIcon },
       { path: '/tools', name: t('tools'), icon: ToolsIcon },
-      { path: '/chat', name: t('chat'), icon: MessageOutlined },
     ],
     [t],
   );

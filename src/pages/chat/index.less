@@ -1,18 +1,36 @@
 .chatWrapper {
   width: 100%;
   height: 100%;
+  :global(.ant-card) {
+    background: none !important;
+    border-radius: 8px;
+  }
+  :global(.ant-card-hoverable:hover) {
+    box-shadow: 0 4px 10px 0 rgba(190, 214, 255, .4);
+  }
 
   .chatAppWrapper {
     flex-direction: column;
     width: 288px;
-    padding: 26px;
+    padding: 20px;
+    background-image: url("@/assets/imgs/chatLeft.png");
+    background-position: center;
+    background-size: cover;
     .chatAppContent {
       overflow-y: auto;
       width: 100%;
+      &::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      // 滚动条轨道颜色
+      &::-webkit-scrollbar-track {
+        background: #ebf2fa;
+      }
     }
     .chatAppLeft {
       overflow: auto;
-      height: 50%;
+      height: 40%;
     }
     .chatAppCard {
       :global(.ant-card-body) {
@@ -24,9 +42,11 @@
         }
       }
     }
+
     .chatAppCardSelected {
       :global(.ant-card-body) {
-        background-color: @gray11;
+        background-color: #fff;
+        box-shadow: 0 4px 10px 0 rgba(190, 214, 255, .4);
         border-radius: 8px;
       }
     }
@@ -36,10 +56,18 @@
         border-radius: 8px;
       }
     }
+    .chatTitleCardSelected {
+      :global(.ant-card-body) {
+        background-color: #fff;
+        box-shadow: 0 4px 10px 0 rgba(190, 214, 255, .4);
+        border-radius: 8px;
+      }
+    }
   }
+
   .chatTitleWrapper {
     overflow: auto;
-    height: 50%;
+    height: 60%;
     padding-top: 26px;
   }
 
@@ -50,6 +78,14 @@
   .chatTitleContent {
     overflow: auto;
     padding: 5px 10px;
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    // 滚动条轨道颜色
+    &::-webkit-scrollbar-track {
+      background: #ebf2fa;
+    }
   }
 
   .chatSpin {

@@ -45,6 +45,7 @@ import { useSetSelectedRecord } from '@/hooks/logic-hooks';
 import { IDialog } from '@/interfaces/database/chat';
 import { PictureInPicture2 } from 'lucide-react';
 import styles from './index.less';
+import { ReactComponent as Robot } from '@/assets/svg/chat/robot.svg';
 
 const { Text } = Typography;
 
@@ -170,7 +171,18 @@ const Chat = () => {
         onClick: handleShowChatConfigurationModal(dialogId),
         label: (
           <Space>
-            <EditOutlined />
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" version="1.1" width="14" height="14" viewBox="0 0 14 14">
+              <defs>
+                <clipPath id="master_svg0_76_05869">
+                  <rect x="0" y="0" width="14" height="14" rx="0" />
+                </clipPath>
+              </defs>
+              <g clipPath="url(#master_svg0_76_05869)">
+                <g>
+                  <path d="M2.3493075,13.033775L11.6837875,13.033775C12.4321875,13.033775,13.0408875,12.424975,13.0408875,11.676675L13.0408875,5.706945C13.0408875,5.411825,12.8017875,5.172645,12.5066875,5.172645C12.2117875,5.172645,11.9723875,5.411825,11.9723875,5.706945L11.9723875,11.675975C11.9723875,11.835075,11.8428875,11.964575,11.6837875,11.964575L2.3493075,11.964575C2.1902775,11.964575,2.0607875,11.835075,2.0607875,11.675975L2.0607875,2.341495C2.0607875,2.182465,2.1902775,2.052975,2.3489875,2.052975L7.8104675,2.053285C8.1055875,2.053285,8.3447675,1.81411,8.3447675,1.518988C8.3447675,1.223867,8.1055875,0.984689293,7.8104675,0.984689293L2.3489875,0.984375C1.6009735,0.984375,0.9921875,1.593161,0.9921875,2.341805L0.9921875,11.676275C0.9921875,12.424975,1.6009735,13.033775,2.3493075,13.033775ZM6.1775175,7.742065C6.2818575,7.846405,6.4185775,7.898585,6.5552975,7.898585C6.6970275,7.898755,6.8329875,7.842425,6.9330775,7.742065L12.7493875,1.925751C12.9580875,1.717375,12.9580875,1.378881,12.7493875,1.17019C12.5406875,0.9614992,12.2024875,0.9614992,11.9937875,1.17019L6.1775175,6.986505C5.9688275,7.194875,5.9688275,7.533375,6.1775175,7.742065Z" fillRule="evenodd" fill="#2C2C2C" fillOpacity="1" style={{ mixBlendMode: "passthrough" }} />
+                </g>
+              </g>
+            </svg>
             {t('edit', { keyPrefix: 'common' })}
           </Space>
         ),
@@ -178,26 +190,38 @@ const Chat = () => {
       { type: 'divider' },
       {
         key: '2',
-        onClick: handleRemoveDialog(dialogId),
+        onClick: handleShowOverviewModal(dialog),
         label: (
           <Space>
+            {/* <KeyOutlined /> */}
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" version="1.1" width="14" height="14" viewBox="0 0 14 14">
+              <defs>
+                <clipPath id="master_svg0_76_05855">
+                  <rect x="0" y="0" width="14" height="14" rx="0" />
+                </clipPath>
+              </defs>
+              <g clipPath="url(#master_svg0_76_05855)">
+                <g>
+                  <path d="M1.8125,1.98046875C1.225697,1.98046875,0.75,2.45616575,0.75,3.04296875L0.75,11.54296875C0.75,12.12976875,1.225698,12.60546875,1.8125,12.60546875L12.1875,12.60546875C12.7743,12.60546875,13.25,12.12976875,13.25,11.54296875L13.25,3.04296875C13.25,2.45616575,12.7743,1.98046875,12.1875,1.98046875L1.8125,1.98046875ZM12.1875,3.04296875L12.1875,4.63622875L1.8125,4.63622875L1.8125,3.04296875L12.1875,3.04296875ZM1.8125,5.57372875L12.1875,5.57372875L12.1875,11.54296875L1.8125,11.54296875L1.8125,5.57372875ZM7.76556,6.78950875C7.83369,6.53957875,7.68617,6.28178875,7.43619,6.21387875C7.18627,6.14575875,6.92847,6.29326875,6.86056,6.54325875L5.92306,9.98075875C5.85492,10.23071875,6.00238,10.48857875,6.25238,10.55659875C6.50237,10.62462875,6.76016,10.47703875,6.82806,10.22700875L7.76556,6.78950875ZM9.16932,9.147628749999999C8.98653,9.33063875,8.98653,9.627118750000001,9.16932,9.81012875C9.35233,9.99291875,9.6488,9.99291875,9.83182,9.81012875L11.0818,8.56012875C11.2646,8.377118750000001,11.2646,8.08063875,11.0818,7.89762875L9.83182,6.64762875C9.65091,6.45347875,9.34505,6.44807875,9.15741,6.63572875C8.96976,6.82336875,8.97516,7.12922875,9.16932,7.31012875L10.08807,8.22887875L9.16932,9.147628749999999ZM4.83181,7.31012875C5.0146,7.12711875,5.0146,6.83063875,4.83181,6.64762875C4.6488,6.46484875,4.35233,6.46484875,4.169309999999999,6.64762875L2.91931,7.89762875C2.73653,8.08063875,2.73653,8.377118750000001,2.91931,8.56012875L4.169309999999999,9.81012875C4.35022,10.00427875,4.65607,10.00967875,4.84372,9.82203875C5.03136,9.63438875,5.02597,9.32853875,4.83181,9.147628749999999L3.91306,8.22887875L4.83181,7.31012875Z" fillRule="evenodd" fill="#2C2C2C" fillOpacity="1" style={{ mixBlendMode: "passthrough" }} />
+                </g>
+              </g>
+            </svg>
+            {t('embedIntoSite', { keyPrefix: 'common' })}
+          </Space>
+        ),
+      },
+      {
+        key: '3',
+        onClick: handleRemoveDialog(dialogId),
+        label: (
+          <Space style={{ color: '#F56C6C' }}>
             <DeleteOutlined />
             {t('delete', { keyPrefix: 'common' })}
           </Space>
         ),
       },
       { type: 'divider' },
-      {
-        key: '3',
-        onClick: handleShowOverviewModal(dialog),
-        label: (
-          <Space>
-            {/* <KeyOutlined /> */}
-            <PictureInPicture2 className="size-4" />
-            {t('embedIntoSite', { keyPrefix: 'common' })}
-          </Space>
-        ),
-      },
+
     ];
 
     return appItems;
@@ -210,7 +234,18 @@ const Chat = () => {
         onClick: handleShowConversationRenameModal(conversationId),
         label: (
           <Space>
-            <EditOutlined />
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" version="1.1" width="14" height="14" viewBox="0 0 14 14">
+              <defs>
+                <clipPath id="master_svg0_76_05869">
+                  <rect x="0" y="0" width="14" height="14" rx="0" />
+                </clipPath>
+              </defs>
+              <g clipPath="url(#master_svg0_76_05869)">
+                <g>
+                  <path d="M2.3493075,13.033775L11.6837875,13.033775C12.4321875,13.033775,13.0408875,12.424975,13.0408875,11.676675L13.0408875,5.706945C13.0408875,5.411825,12.8017875,5.172645,12.5066875,5.172645C12.2117875,5.172645,11.9723875,5.411825,11.9723875,5.706945L11.9723875,11.675975C11.9723875,11.835075,11.8428875,11.964575,11.6837875,11.964575L2.3493075,11.964575C2.1902775,11.964575,2.0607875,11.835075,2.0607875,11.675975L2.0607875,2.341495C2.0607875,2.182465,2.1902775,2.052975,2.3489875,2.052975L7.8104675,2.053285C8.1055875,2.053285,8.3447675,1.81411,8.3447675,1.518988C8.3447675,1.223867,8.1055875,0.984689293,7.8104675,0.984689293L2.3489875,0.984375C1.6009735,0.984375,0.9921875,1.593161,0.9921875,2.341805L0.9921875,11.676275C0.9921875,12.424975,1.6009735,13.033775,2.3493075,13.033775ZM6.1775175,7.742065C6.2818575,7.846405,6.4185775,7.898585,6.5552975,7.898585C6.6970275,7.898755,6.8329875,7.842425,6.9330775,7.742065L12.7493875,1.925751C12.9580875,1.717375,12.9580875,1.378881,12.7493875,1.17019C12.5406875,0.9614992,12.2024875,0.9614992,11.9937875,1.17019L6.1775175,6.986505C5.9688275,7.194875,5.9688275,7.533375,6.1775175,7.742065Z" fillRule="evenodd" fill="#2C2C2C" fillOpacity="1" style={{ mixBlendMode: "passthrough" }} />
+                </g>
+              </g>
+            </svg>
             {t('rename', { keyPrefix: 'common' })}
           </Space>
         ),
@@ -220,7 +255,7 @@ const Chat = () => {
         key: '2',
         onClick: handleRemoveConversation(conversationId),
         label: (
-          <Space>
+          <Space style={{color:'#F56C6C'}}>
             <DeleteOutlined />
             {t('delete', { keyPrefix: 'common' })}
           </Space>
@@ -235,10 +270,31 @@ const Chat = () => {
     <Flex className={styles.chatWrapper}>
       <Flex className={styles.chatAppWrapper}>
         <Flex flex={1} vertical className={styles.chatAppLeft}>
-          <Button type="primary" onClick={handleShowChatConfigurationModal()}>
+          <Button type="primary" style={{
+            borderRadius: '60px',
+            background: 'linear-gradient(80deg, #55C9FF 0%, #306EFD 100%)',
+            width: '216px',
+            height: 40,
+            fontSize: 16,
+            lineHeight: 20,
+            marginBottom: 20
+          }}
+            onClick={handleShowChatConfigurationModal()}>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" version="1.1" width="20" height="20" viewBox="0 0 20 20">
+              <defs>
+                <clipPath id="master_svg0_76_03204">
+                  <rect x="0" y="0" width="20" height="20" rx="0" />
+                </clipPath>
+              </defs>
+              <g clipPath="url(#master_svg0_76_03204)">
+                <g>
+                  <path d="M16.875,8.75L10,8.75L10,1.875C10,1.525,9.725,1.25,9.375,1.25C9.025,1.25,8.75,1.525,8.75,1.875L8.75,8.75L1.875,8.75C1.525,8.75,1.25,9.025,1.25,9.375C1.25,9.725,1.525,10,1.875,10L8.75,10L8.75,16.875C8.75,17.225,9.025,17.5,9.375,17.5C9.725,17.5,10,17.225,10,16.875L10,10L16.875,10C17.225,10,17.5,9.725,17.5,9.375C17.5,9.025,17.225,8.75,16.875,8.75Z" fill="#FFFFFF" fillOpacity="1" style={{ mixBlendMode: "passthrough" }} />
+                </g>
+              </g>
+            </svg>
             {t('createAssistant')}
+            <Robot />
           </Button>
-          <Divider></Divider>
           <Flex className={styles.chatAppContent} vertical gap={10}>
             <Spin spinning={dialogLoading} wrapperClassName={styles.chatSpin}>
               {dialogList.map((x) => (
@@ -286,7 +342,7 @@ const Chat = () => {
         </Flex>
         <Flex className={styles.chatTitleWrapper}>
           <Flex flex={1} vertical>
-            <Flex
+            {/* <Flex
               justify={'space-between'}
               align="center"
               className={styles.chatTitle}
@@ -304,8 +360,31 @@ const Chat = () => {
                   ></SvgIcon>
                 </div>
               </Tooltip>
-            </Flex>
-            <Divider></Divider>
+            </Flex> */}
+            <Button type="primary" style={{
+              borderRadius: '60px',
+              background: 'linear-gradient(80deg, #55C9FF 0%, #306EFD 100%)',
+              width: '216px',
+              height: 40,
+              fontSize: 16,
+              lineHeight: 20,
+              marginBottom: 20
+            }}
+              onClick={handleCreateTemporaryConversation}>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" version="1.1" width="20" height="20" viewBox="0 0 20 20">
+                <defs>
+                  <clipPath id="master_svg0_76_03204">
+                    <rect x="0" y="0" width="20" height="20" rx="0" />
+                  </clipPath>
+                </defs>
+                <g clipPath="url(#master_svg0_76_03204)">
+                  <g>
+                    <path d="M16.875,8.75L10,8.75L10,1.875C10,1.525,9.725,1.25,9.375,1.25C9.025,1.25,8.75,1.525,8.75,1.875L8.75,8.75L1.875,8.75C1.525,8.75,1.25,9.025,1.25,9.375C1.25,9.725,1.525,10,1.875,10L8.75,10L8.75,16.875C8.75,17.225,9.025,17.5,9.375,17.5C9.725,17.5,10,17.225,10,16.875L10,10L16.875,10C17.225,10,17.5,9.725,17.5,9.375C17.5,9.025,17.225,8.75,16.875,8.75Z" fill="#FFFFFF" fillOpacity="1" style={{ mixBlendMode: "passthrough" }} />
+                  </g>
+                </g>
+              </svg>
+              新增聊天
+            </Button>
             <Flex vertical gap={10} className={styles.chatTitleContent}>
               <Spin
                 spinning={conversationLoading}
