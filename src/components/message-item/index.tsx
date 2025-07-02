@@ -1,4 +1,4 @@
-import { ReactComponent as AssistantIcon } from '@/assets/svg/assistant.svg';
+import { ReactComponent as RobotMsg } from '@/assets/svg/chat/robotMsg.svg';
 import { MessageType } from '@/constants/chat';
 import { useSetModalState } from '@/hooks/common-hooks';
 import { IReference, IReferenceChunk } from '@/interfaces/database/chat';
@@ -25,6 +25,7 @@ const { Text } = Typography;
 
 interface IProps extends Partial<IRemoveMessageById>, IRegenerateMessage {
   item: IMessage;
+  hasMessages?:boolean;
   reference: IReference;
   loading?: boolean;
   sendLoading?: boolean;
@@ -113,7 +114,7 @@ const MessageItem = ({
             ) : avatarDialog ? (
               <Avatar size={40} src={avatarDialog} />
             ) : (
-              <AssistantIcon />
+              <RobotMsg />
             ))}
 
           <Flex vertical gap={8} flex={1}>

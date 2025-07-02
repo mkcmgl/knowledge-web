@@ -239,6 +239,7 @@ const MessageInput = ({
           boxShadow: 'none',
           padding: '0px 10px',
           marginTop: 10,
+          backgroundColor: '#fff',
         }}
         autoSize={{ minRows: 2, maxRows: 10 }}
         onKeyDown={handleKeyDown}
@@ -329,7 +330,9 @@ const MessageInput = ({
           justify="flex-end"
           style={{
             paddingRight: 10,
+            paddingLeft: 10,
             paddingBottom: 10,
+            justifyContent: 'space-between',
             width: fileList.length > 0 ? '50%' : '100%',
           }}
         >
@@ -344,8 +347,20 @@ const MessageInput = ({
                 return false;
               }}
             >
-              <Button type={'primary'} disabled={disabled}>
-                <Paperclip className="size-4" />
+              <Button type="link" disabled={disabled}  >
+                <svg className="size-4" xmlns="http://www.w3.org/2000/svg" fill="none" version="1.1" width="16" height="16" viewBox="0 0 16 16">
+                  <defs>
+                    <clipPath id="master_svg0_76_03249">
+                      <rect x="0" y="0" width="16" height="16" rx="0" />
+                    </clipPath>
+                  </defs>
+                  <g clipPath="url(#master_svg0_76_03249)">
+                    <g>
+                      <path d="M6.88411,15.7979L14.476,8.11735C17.1873,5.42243,15.6961,2.59276,14.476,1.51479C13.2558,0.302073,10.4089,-1.18014,7.69753,1.51479L1.05466,8.11735C-0.843304,10.0038,0.241245,12.025,1.05466,12.8335C1.86807,13.6419,3.9016,14.7199,5.79956,12.8335L12.4424,6.2309C12.9847,5.69192,13.1203,5.15293,13.1203,4.88344C13.1203,4.07497,12.578,3.53598,12.4424,3.40123C11.9002,2.86225,10.68,2.32327,9.59549,3.40123L2.95262,10.0038C2.68148,10.2733,2.68148,10.6775,2.95262,10.947C3.22376,11.2165,3.63046,11.2165,3.9016,10.947L10.5445,4.34446C10.9512,3.94022,11.2223,4.07497,11.4935,4.34446Q12.0357,4.7487,11.4935,5.28768L4.85058,11.8902C3.4949,13.2377,2.27478,12.1597,2.00364,11.8902C1.7325,11.6207,0.647952,10.408,2.00364,9.06057L8.64651,2.45801C10.9512,0.167327,13.2558,2.18852,13.3914,2.45801C13.6626,2.7275,15.6961,4.88344,13.3914,7.17413L5.93513,14.8547C5.664,15.1242,5.664,15.5284,5.93513,15.7979C6.20627,16.0674,6.61298,16.0674,6.88411,15.7979Z" fill="#313131" fillOpacity="0.5" />
+                    </g>
+                  </g>
+                </svg>
+              
               </Button>
             </Upload>
           )}
@@ -355,12 +370,34 @@ const MessageInput = ({
             </Button>
           ) : (
             <Button
+              className={styles.btnBlue}
               type="primary"
               onClick={handlePressEnter}
               loading={sendLoading}
               disabled={sendDisabled || isUploadingFile || sendLoading}
+              style={{
+                width: 30,
+                height: 30,
+                borderRadius: '50%',
+                padding: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
             >
-              <SendHorizontal className="size-5" />
+              <svg className="size-4" xmlns="http://www.w3.org/2000/svg" fill="none" version="1.1" width="16" height="16" viewBox="0 0 16 16">
+                <defs>
+                  <clipPath id="master_svg0_76_06085">
+                    <rect x="0" y="0" width="16" height="16" rx="0" />
+                  </clipPath>
+                </defs>
+                <g clipPath="url(#master_svg0_76_06085)">
+                  <g>
+                    <path d="M0.760485,7.41125L4.17651,9.82363C4.53679,10.0769,5.03051,10.0369,5.33742,9.73033L10.2479,4.82561C10.5015,4.57238,10.9285,4.57238,11.182,4.82561C11.4356,5.07884,11.4356,5.50534,11.182,5.75857L6.27149,10.6633C5.96458,10.9698,5.9112,11.463,6.17808,11.8228L8.59331,15.2348C9.44732,16.4477,11.3155,16.1678,11.7825,14.755L15.9057,2.38658C16.3728,0.973805,15.025,-0.372328,13.6106,0.0941539L1.24086,4.22585C-0.173586,4.69233,-0.440462,6.55826,0.760485,7.41125Z"
+                      fill="#FFFFFF" fillOpacity="1" />
+                  </g>
+                </g>
+              </svg>
             </Button>
           )}
         </Flex>

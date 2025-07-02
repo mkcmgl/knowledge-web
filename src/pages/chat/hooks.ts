@@ -121,8 +121,8 @@ export const useDeleteDialog = () => {
 
   const { removeDialog } = useRemoveNextDialog();
 
-  const onRemoveDialog = (dialogIds: Array<string>) => {
-    showDeleteConfirm({ onOk: () => removeDialog(dialogIds) });
+  const onRemoveDialog = (dialog_ids: Array<string>) => {
+    showDeleteConfirm({ onOk: () => removeDialog(dialog_ids) });
   };
 
   return { onRemoveDialog };

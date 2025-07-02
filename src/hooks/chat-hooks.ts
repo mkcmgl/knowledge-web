@@ -222,8 +222,8 @@ export const useRemoveNextDialog = () => {
     mutateAsync,
   } = useMutation({
     mutationKey: ['removeDialog'],
-    mutationFn: async (dialogIds: string[]) => {
-      const { data } = await chatService.removeDialog({ dialogIds });
+    mutationFn: async (dialog_ids: string[]) => {
+      const { data } = await chatService.removeDialog({ dialog_ids });
       if (data.code === 0) {
         queryClient.invalidateQueries({ queryKey: ['fetchDialogList'] });
 

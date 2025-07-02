@@ -255,7 +255,7 @@ const Chat = () => {
         key: '2',
         onClick: handleRemoveConversation(conversationId),
         label: (
-          <Space style={{color:'#F56C6C'}}>
+          <Space style={{ color: '#F56C6C' }}>
             <DeleteOutlined />
             {t('delete', { keyPrefix: 'common' })}
           </Space>
@@ -277,7 +277,9 @@ const Chat = () => {
             height: 40,
             fontSize: 16,
             lineHeight: 20,
-            marginBottom: 20
+            marginBottom: 20,
+            border: 'none',
+            position: 'relative',
           }}
             onClick={handleShowChatConfigurationModal()}>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" version="1.1" width="20" height="20" viewBox="0 0 20 20">
@@ -293,7 +295,7 @@ const Chat = () => {
               </g>
             </svg>
             {t('createAssistant')}
-            <Robot />
+            <Robot style={{ position: 'absolute', right: 8 }} />
           </Button>
           <Flex className={styles.chatAppContent} vertical gap={10}>
             <Spin spinning={dialogLoading} wrapperClassName={styles.chatSpin}>
@@ -361,15 +363,7 @@ const Chat = () => {
                 </div>
               </Tooltip>
             </Flex> */}
-            <Button type="primary" style={{
-              borderRadius: '60px',
-              background: 'linear-gradient(80deg, #55C9FF 0%, #306EFD 100%)',
-              width: '216px',
-              height: 40,
-              fontSize: 16,
-              lineHeight: 20,
-              marginBottom: 20
-            }}
+            <Button type="primary" className={styles.newChatBtn}
               onClick={handleCreateTemporaryConversation}>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" version="1.1" width="20" height="20" viewBox="0 0 20 20">
                 <defs>

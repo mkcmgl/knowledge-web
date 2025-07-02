@@ -24,6 +24,7 @@ export interface VariableTableDataType {
 export type IPromptConfigParameters = Omit<VariableTableDataType, 'variable'>;
 
 export interface IMessage extends Message {
+  hasMessages?: boolean;
   id: string;
   reference?: IReference; // the latest news has reference
 }

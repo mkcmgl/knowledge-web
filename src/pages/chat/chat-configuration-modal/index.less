@@ -13,10 +13,11 @@
   }
 
   .variableIcon {
-    margin-inline-start: 4px;
-    color: rgba(0, 0, 0, 0.45);
+    color: rgba(0, 0, 0, .45);
     cursor: help;
     writing-mode: horizontal-tb;
+
+    margin-inline-start: 4px;
   }
 
   .variableTable {
@@ -28,9 +29,9 @@
     }
 
     :global(.editable-cell-value-wrap) {
+      height: 22px !important;
       padding: 5px 12px;
       cursor: pointer;
-      height: 22px !important;
     }
     &:hover {
       :global(.editable-cell-value-wrap) {
@@ -43,10 +44,10 @@
 }
 
 .segmentedHidden {
-  opacity: 0;
-  height: 0;
   width: 0;
+  height: 0;
   margin: 0;
+  opacity: 0;
 }
 
 .sliderInputNumber {
@@ -54,4 +55,29 @@
 }
 .variableSlider {
   width: 100%;
+}
+.dialogRight {
+  :global(.ant-modal-content) {
+    padding: 20px 0 !important;
+    border-radius: 0 !important;
+    :global(.ant-modal-body) {
+      padding: 0 24px !important;
+    }
+    :global(.ant-modal-footer) {
+      text-align: center;
+    }
+  }
+}
+.dialogRightSegmented {
+  display: inline-block !important;
+  padding: 0;
+  color: #1d2129;
+  background-color: #fff;
+  :global(.ant-segmented-item-selected) {
+    color: #306efd;
+    font-weight: 500;
+    background: rgba(48, 110, 253, .08);
+    border-bottom: 2px solid #306efd;
+    border-radius: 2px 2px 0 0 !important;
+  }
 }

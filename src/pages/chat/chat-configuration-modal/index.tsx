@@ -110,15 +110,10 @@ const ChatConfigurationModal = ({
   };
 
   const title = (
-    <Flex gap={16}>
-      <ChatConfigurationAtom></ChatConfigurationAtom>
-      <div>
-        <b>{t('chatConfiguration')}</b>
-        <div className={styles.chatConfigurationDescription}>
-          {t('chatConfigurationDescription')}
-        </div>
+      <div style={{ width: '100%',background: '#F7F9FF', borderBottom: "1px solid #E5E6EB", paddingBottom: '12px', paddingLeft: '20px' }}>
+        <i style={{ height: '100%', borderLeft: "4px solid #0C7CFF", borderRadius: '4px' }}></i>
+        <span className='pl-2 text-[16px] font-bold'>助理配置</span>
       </div>
-    </Flex>
   );
 
   useEffect(() => {
@@ -157,16 +152,19 @@ const ChatConfigurationModal = ({
   return (
     <Modal
       title={title}
+      style={{ right: 0, top: 0, position: 'absolute' }}
       width={688}
       open={visible}
       onOk={handleOk}
       onCancel={hideModal}
       confirmLoading={loading}
       destroyOnClose
+      className={styles.dialogRight}
       afterClose={handleModalAfterClose}
     >
       <Segmented
         size={'large'}
+        className={styles.dialogRightSegmented}
         value={value}
         onChange={handleSegmentedChange}
         options={Object.values(ConfigurationSegmented).map((x) => ({
@@ -175,12 +173,11 @@ const ChatConfigurationModal = ({
         }))}
         block
       />
-      <Divider></Divider>
       <Form
         {...layout}
         name="nest-messages"
         form={form}
-        style={{ maxWidth: 600 }}
+        style={{ maxWidth: 600 ,margin:'20px 0'}}
         validateMessages={validateMessages}
         colon={false}
         onKeyDown={handleKeyDown}

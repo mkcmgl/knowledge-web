@@ -22,7 +22,7 @@ import { useFetchUserInfo } from '@/hooks/user-setting-hooks';
 import { buildMessageUuidWithRole } from '@/utils/chat';
 import { memo } from 'react';
 import styles from './index.less';
-
+import { ReactComponent as Robot } from '@/assets/svg/chat/robot.svg';
 interface IProps {
   controller: AbortController;
 }
@@ -31,7 +31,7 @@ const ChatContainer = ({ controller }: IProps) => {
   const { conversationId } = useGetChatSearchParams();
   const { data: conversation } = useFetchNextConversation();
   const { data: currentDialog } = useFetchNextDialog();
-    
+
 
   const {
     value,
@@ -55,14 +55,25 @@ const ChatContainer = ({ controller }: IProps) => {
   const { createConversationBeforeUploadDocument } =
     useCreateConversationBeforeUploadDocument();
 
+  // 判断是否有消息
+  const hasMessages = derivedMessages && derivedMessages.length > 0;
+
   return (
     <>
-      <Flex flex={1} className={styles.chatContainer} vertical>
-        <Flex flex={1} vertical className={styles.messageContainer}>
-          <div>
-            <Spin spinning={loading}>
-              {derivedMessages?.map((message, i) => {
-                return (
+      <Flex
+        flex={1}
+        className={hasMessages ? styles.chatContainer : `${styles.chatContainer} ${styles.centeredChatContainer}`}
+        vertical
+      >
+        <Flex
+          flex={hasMessages ? 1 : 'unset'}
+          vertical
+          className={hasMessages ? styles.messageContainer : styles.messageContainerNoData}
+        >
+          {hasMessages ? (
+            <div>
+              <Spin spinning={loading}>
+                {derivedMessages?.map((message, i) => (
                   <MessageItem
                     loading={
                       message.role === MessageType.Assistant &&
@@ -86,11 +97,21 @@ const ChatContainer = ({ controller }: IProps) => {
                     removeMessageById={removeMessageById}
                     regenerateMessage={regenerateMessage}
                     sendLoading={sendLoading}
-                  ></MessageItem>
-                );
-              })}
-            </Spin>
-          </div>
+                  />
+                ))}
+              </Spin>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center" style={{
+              marginBottom: 50, width: '100%', height: '100%',
+              fontSize: 28,
+              fontWeight: 600,
+              color: ' #333333'
+            }}>
+              <Robot style={{marginRight:12}} />
+              我是您的个人助理，有什么可以帮忙的吗
+            </div>
+          )}
           <div ref={ref} />
         </Flex>
         <MessageInput

@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none"
+    version="1.1" width="216" height="40" viewBox="0 0 216 40">
+    <defs>
+        <linearGradient x1="0" y1="1" x2="1.033078603030451" y2="0.9645720643679532"
+            id="master_svg0_76_00927">
+            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1" />
+            <stop offset="100%" stop-color="#FFFFFF" stop-opacity="1" />
+        </linearGradient>
+        <mask id="master_svg1_76_04154" style="mask-type:alpha" maskUnits="objectBoundingBox">
+            <g>
+                <rect x="0" y="0" width="216" height="40" rx="20" fill="url(#master_svg0_76_00927)"
+                    fill-opacity="1" />
+            </g>
+        </mask>
+        <linearGradient x1="0.2551020383834839" y1="0.06632652878761292" x2="0.6479591727256775"
+            y2="0.6020408272743225" id="master_svg2_76_00924">
+            <stop offset="0%" stop-color="#56E3FF" stop-opacity="1" />
+            <stop offset="100%" stop-color="#6256FF" stop-opacity="0" />
+        </linearGradient>
+        <linearGradient x1="0.1875" y1="0" x2="0.6973684430122375" y2="1" id="master_svg3_76_00933">
+            <stop offset="0%" stop-color="#6256FF" stop-opacity="0" />
+            <stop offset="100%" stop-color="#FFFFFF" stop-opacity="1" />
+        </linearGradient>
+        <linearGradient x1="0.5" y1="0.6776315569877625" x2="0.6973684430122375" y2="1"
+            id="master_svg4_76_00930">
+            <stop offset="0%" stop-color="#6256FF" stop-opacity="0" />
+            <stop offset="100%" stop-color="#FFFFFF" stop-opacity="1" />
+        </linearGradient>
+    </defs>
+    <g mask="url(#master_svg1_76_04154)">
+        <g style="mix-blend-mode:screen">
+            <ellipse cx="195.5" cy="38.5" rx="24.5" ry="24.5" fill="url(#master_svg2_76_00924)"
+                fill-opacity="0.20000000298023224" style="mix-blend-mode:screen" />
+        </g>
+        <g style="mix-blend-mode:screen">
+            <ellipse cx="34" cy="6" rx="3" ry="3" fill="url(#master_svg3_76_00933)"
+                fill-opacity="0.20000000298023224" style="mix-blend-mode:screen" />
+        </g>
+        <g style="mix-blend-mode:screen">
+            <ellipse cx="16" cy="-4" rx="19" ry="19" fill="url(#master_svg4_76_00930)"
+                fill-opacity="0.20000000298023224" style="mix-blend-mode:screen" />
+        </g>
+    </g>
+</svg>

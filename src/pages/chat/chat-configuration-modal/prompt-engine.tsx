@@ -1,5 +1,6 @@
 import SimilaritySlider from '@/components/similarity-slider';
 import { DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { ReactComponent as CromptEngine } from '@/assets/svg/chat/promptEngine.svg';
 import {
   Button,
   Col,
@@ -116,7 +117,7 @@ const PromptEngine = (
       title: t('optional'),
       dataIndex: 'optional',
       key: 'optional',
-      width: 40,
+      width: 80,
       align: 'center',
       render(text, record) {
         return (
@@ -131,11 +132,12 @@ const PromptEngine = (
     {
       title: t('operation'),
       dataIndex: 'operation',
-      width: 30,
+      width: 80,
       key: 'operation',
       align: 'center',
+      fixed: 'right',
       render(_, record) {
-        return <DeleteOutlined onClick={handleRemove(record.key)} />;
+        return <CromptEngine onClick={handleRemove(record.key)} />;
       },
     },
   ];
@@ -194,7 +196,20 @@ const PromptEngine = (
             </label>
           </Col>
           <Col span={15} className={styles.variableAlign}>
-            <Button size="small" onClick={handleAdd}>
+            <Button size="small" type="primary" onClick={handleAdd}>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" version="1.1" width="12" height="12" viewBox="0 0 12 12">
+                <defs>
+                  <clipPath id="master_svg0_76_05007">
+                    <rect x="0" y="0" width="12" height="12" rx="0" />
+                  </clipPath>
+                </defs>
+                <g clipPath="url(#master_svg0_76_05007)">
+                  <g>
+                    <path d="M6,1.5C6.27614,1.5,6.5,1.723858,6.5,2L6.5,5.5L10,5.5C10.27614,5.5,10.5,5.72386,10.5,6C10.5,6.27614,10.27614,6.5,10,6.5L6.5,6.5L6.5,10C6.5,10.27614,6.27614,10.5,6,10.5C5.72386,10.5,5.5,10.27614,5.5,10L5.5,6.5L2,6.5C1.723858,6.5,1.5,6.27614,1.5,6C1.5,5.72386,1.723858,5.5,2,5.5L5.5,5.5L5.5,2C5.5,1.723858,5.72386,1.5,6,1.5Z"
+                      fill="#FFFFFF" fillOpacity="1" />
+                  </g>
+                </g>
+              </svg>
               {t('add')}
             </Button>
           </Col>
@@ -209,6 +224,7 @@ const PromptEngine = (
                 rowKey={'key'}
                 className={styles.variableTable}
                 components={components}
+                style={{ overflowX: 'auto' }}
                 rowClassName={() => styles.editableRow}
               />
             </Col>
