@@ -8,8 +8,26 @@ import {
 } from 'antd';
 import { useState } from 'react';
 import styles from './index.less';
+import WordCloud from './word-cloud';
 const { Title, Text } = Typography;
 const { TextArea } = Input;
+const testData = [
+  { name: "React", value: 100 },
+  { name: "TypeScript", value: 85 },
+  { name: "JavaScript", value: 90 },
+  { name: "前端开发", value: 78 },
+  { name: "组件化", value: 65 },
+  { name: "Hooks", value: 70 },
+  { name: "ECharts", value: 60 },
+  { name: "数据可视化", value: 75 },
+  { name: "CSS", value: 55 },
+  { name: "响应式设计", value: 50 },
+  { name: "Webpack", value: 45 },
+  { name: "Node.js", value: 40 },
+  { name: "性能优化", value: 35 },
+  { name: "虚拟DOM", value: 30 },
+  { name: "状态管理", value: 25 }
+];
 
 const KeywordExtraction = () => {
   const [form] = Form.useForm();
@@ -171,9 +189,9 @@ ${index + 1}. ${kw.word}
             />
           </div>
         </div>
+        <WordCloud data={testData} />
 
-
-
+              
 
       </div>
     </div>
