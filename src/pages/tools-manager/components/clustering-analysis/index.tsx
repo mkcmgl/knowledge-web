@@ -11,9 +11,31 @@ import {
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import SimilaritySlider from '@/components/similarity-slider';
-
+import ScatterChart from './scatter-chart';
 const { Title, Text } = Typography;
 const { TextArea } = Input;
+
+interface ScatterData {
+  x: number;
+  y: number;
+  color: string;
+}
+
+
+
+export const sampleData: ScatterData[] = [
+  { x: 0.5, y: 1.0, color: "#ff7f0e" },
+  { x: 1.0, y: 1.5, color: "#1f77b4" },
+  { x: 1.5, y: 2.0, color: "#2ca02c" },
+  { x: 2.0, y: 2.5, color: "#d62728" },
+  { x: 2.5, y: 3.0, color: "#9467bd" },
+  { x: 3.0, y: 3.5, color: "#8c564b" },
+  { x: 0.8, y: 3.2, color: "#e377c2" },
+  { x: 1.2, y: 2.8, color: "#7f7f7f" },
+  { x: 2.3, y: 1.7, color: "#bcbd22" },
+  { x: 1.7, y: 1.2, color: "#17becf" }
+];
+
 
 const ClusteringAnalysis = () => {
   const [form] = Form.useForm();
@@ -104,68 +126,68 @@ ${clusters.map((cluster, index) => `
 
   return (
     <div >
-      <div style={{ width: "100%", backgroundColor: '#fff', borderRadius: '4px',padding:'20px'  }}>
+      <div style={{ width: "100%", backgroundColor: '#fff', borderRadius: '4px', padding: '20px' }}>
 
-          <Form form={form} layout="vertical" >
-            <Form.Item
-              label="阈值"
-              name="threshold"
-              initialValue={0.3}
-               layout="horizontal"
-              rules={[{ required: true, message: '请设置阈值！' }]}
-            >
-              {/* <div style={{ padding: '0 16px' }}> */}
+        <Form form={form} layout="vertical" >
+          <Form.Item
+            label="阈值"
+            name="threshold"
+            initialValue={0.3}
+            layout="horizontal"
+            rules={[{ required: true, message: '请设置阈值！' }]}
+          >
+            {/* <div style={{ padding: '0 16px' }}> */}
 
-                <Slider max={1} step={0.1} min={0} />
-              {/* </div> */}
-            </Form.Item>
+            <Slider max={1} step={0.1} min={0} />
+            {/* </div> */}
+          </Form.Item>
 
-            <Form.Item
-              label="文本段"
-              required
-              style={{ marginBottom: '16px' }}
-            >
-              <Space direction="vertical" style={{ width: '100%' }}>
-                {textSegments.map((_, index) => (
-                  <div key={index} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                    <Form.Item
-                      name={['textSegments', index]}
-                      rules={[{ required: true, message: '输入或粘贴您想要聚类的文本' }]}
-                      style={{ flex: 1, marginBottom: 0 }}
-                    >
-                      <TextArea
-                        placeholder={`输入或粘贴您想要聚类的文本...`}
-                        style={{
-                          height: '100px',
-                          resize: 'none',
-                          fontSize: '14px',
-                          lineHeight: '1.6'
-                        }}
-                      />
-                    </Form.Item>
-                    {textSegments.length > 2 && (
-                      <Button
-                        type="text"
-                        danger
-                        icon={<DeleteOutlined />}
-                        onClick={() => handleDeleteTextSegment(index)}
-                        style={{ marginTop: '8px' }}
-                      />
-                    )}
-                  </div>
-                ))}
+          <Form.Item
+            label="文本段"
+            required
+            style={{ marginBottom: '16px' }}
+          >
+            <Space direction="vertical" style={{ width: '100%' }}>
+              {textSegments.map((_, index) => (
+                <div key={index} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                  <Form.Item
+                    name={['textSegments', index]}
+                    rules={[{ required: true, message: '输入或粘贴您想要聚类的文本' }]}
+                    style={{ flex: 1, marginBottom: 0 }}
+                  >
+                    <TextArea
+                      placeholder={`输入或粘贴您想要聚类的文本...`}
+                      style={{
+                        height: '100px',
+                        resize: 'none',
+                        fontSize: '14px',
+                        lineHeight: '1.6'
+                      }}
+                    />
+                  </Form.Item>
+                  {textSegments.length > 2 && (
+                    <Button
+                      type="text"
+                      danger
+                      icon={<DeleteOutlined />}
+                      onClick={() => handleDeleteTextSegment(index)}
+                      style={{ marginTop: '8px' }}
+                    />
+                  )}
+                </div>
+              ))}
 
-                <Button
-                  type="dashed"
-                  icon={<PlusOutlined />}
-                  onClick={handleAddTextSegment}
-                  style={{ width: '100%' }}
-                >
-                  添加文本段
-                </Button>
-              </Space>
-            </Form.Item>
-          </Form>
+              <Button
+                type="dashed"
+                icon={<PlusOutlined />}
+                onClick={handleAddTextSegment}
+                style={{ width: '100%' }}
+              >
+                添加文本段
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
 
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <Button
@@ -179,26 +201,27 @@ ${clusters.map((cluster, index) => `
           </Button>
         </div>
 
-  
-          <div style={{ marginBottom: '16px' }}>
-            <Text strong style={{ fontSize: '16px' }}>分析结果</Text>
-          </div>
-          <div style={{ width: '100%' }}>
-            <TextArea
-              value={analysisResult}
-              placeholder="分析结果将在这里显示..."
-              style={{
-                width: '100%',
-                minHeight: '300px',
-                resize: 'none',
-                fontSize: '14px',
-                lineHeight: '1.6',
-                border: 'none',
-                background: 'transparent'
-              }}
-              readOnly
-            />
-          </div>
+
+        <div style={{ marginBottom: '16px' }}>
+          <Text strong style={{ fontSize: '16px' }}>分析结果</Text>
+        </div>
+        <div style={{ width: '100%' }}>
+          <TextArea
+            value={analysisResult}
+            placeholder="分析结果将在这里显示..."
+            style={{
+              width: '100%',
+              minHeight: '300px',
+              resize: 'none',
+              fontSize: '14px',
+              lineHeight: '1.6',
+              border: 'none',
+              background: 'transparent'
+            }}
+            readOnly
+          />
+          <ScatterChart  data={sampleData} />
+        </div>
       </div>
     </div>
   );
