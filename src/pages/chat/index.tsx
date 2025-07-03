@@ -314,7 +314,7 @@ const Chat = () => {
                 >
                   <Flex justify="space-between" align="center">
                     <Space size={15}>
-                      <Avatar src={x.icon} shape={'square'} />
+                      {/* <Avatar src={x.icon} shape={'square'} /> */}
                       <section>
                         <b>
                           <Text
@@ -342,6 +342,7 @@ const Chat = () => {
             </Spin>
           </Flex>
         </Flex>
+         <Divider  className={styles.divider}></Divider>
         <Flex className={styles.chatTitleWrapper}>
           <Flex flex={1} vertical>
             {/* <Flex
@@ -427,9 +428,8 @@ const Chat = () => {
           </Flex>
         </Flex>
       </Flex>
-      <Divider type={'vertical'} className={styles.divider}></Divider>
 
-      <Divider type={'vertical'} className={styles.divider}></Divider>
+     
       <ChatContainer controller={controller}></ChatContainer>
       {dialogEditVisible && (
         <ChatConfigurationModal

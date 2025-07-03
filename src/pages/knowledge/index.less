@@ -8,7 +8,7 @@
 }
 
 .topWrapper {
-  padding: 0 40px 20px;
+  padding-bottom: 24px;
 
   .title {
     color: var(--ant-color-info);
@@ -41,18 +41,32 @@
   }
 }
 .topUsrNum {
-  padding: 0 40px;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   .topNumContent {
     display: flex;
     width: 100%;
-    padding: 20px 0;
-    border: 1px solid #eee;
+    .knowledgeList {
+      display: flex;
+      padding-right: 25px;
+      padding-left: 35px;
+      margin-right: 20px;
+      background-image: url("@/assets/imgs/knowledgeBg.png");
+      background-position: center;
+      background-size: cover;
+      .responsiveImg {
+        width: 120px;
+        height: 120px;
+      }
+      @media (max-width: 1350px) {
+        .responsiveImg {
+          width: 100px;
+          height: 100px;
+        }
+      }
+    }
   }
 }
 .knowledgeCardContainer {
-  overflow: auto;
-  padding: 0 30px;
   .knowledgeEmpty {
     width: 100%;
   }

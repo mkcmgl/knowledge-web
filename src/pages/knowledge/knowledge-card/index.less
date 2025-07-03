@@ -11,7 +11,7 @@
   .content {
     display: flex;
     justify-content: space-between;
-
+    padding: 0 16px;
     .context {
       flex: 1;
     }
@@ -22,8 +22,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 30px;
+    height: 48px;
     padding-top: 3px;
+    background: #f7f9ff;
   }
   .footerTop {
     padding-bottom: 2px;
@@ -33,9 +34,7 @@
     position: relative;
     flex: 1;
     overflow: hidden;
-    padding: 16px 0;
-    border-bottom: 1px solid #aaa;
-
+    padding: 16px 16px 0 16px;
     .title {
       display: -webkit-box;
       overflow: hidden;
@@ -88,11 +87,10 @@
 }
 
 .card {
-  width: 250px !important;
-  padding: 18px;
+  width: 300px !important;
+  padding-top: 20px;
   background-color: rgba(255, 255, 255, .1);
-  box-shadow: 0 1px 2px 0 rgba(16, 24, 40, .05);
-  border: 1px solid rgba(0, 0, 0, .3);
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, .12);
   border-radius: 12px;
   cursor: pointer;
 
@@ -135,11 +133,12 @@
     vertical-align: middle;
   }
   .time {
-    position: absolute;
-    bottom: 4px;
-    font-size: 12px;
-    font-weight: 600;
-    vertical-align: middle;
+    color: #86909c;
+    font-family: Alibaba PuHuiTi 3;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 22px;
+    letter-spacing: normal;
   }
 }
 
