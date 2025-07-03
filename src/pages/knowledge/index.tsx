@@ -237,9 +237,10 @@ const KnowledgeList = () => {
         </div>
       </div>
       <Spin spinning={loading}>
-        <div style={{ padding: '0 16px' }}>
+        <div >
           <Flex
-            gap={'large'}
+            gap={'20px'}
+            justify="center"
             wrap="wrap"
             className={styles.knowledgeCardContainer}
           >
@@ -262,7 +263,7 @@ const KnowledgeList = () => {
               pageSize={pageSize}
               total={total}
               showSizeChanger
-              showQuickJumper={{ goButton: '跳转' }}
+              showQuickJumper
               itemRender={itemRender}
               // itemRender={(page, type, originalElement) => {
               //   if (type === 'prev') {

@@ -61,7 +61,8 @@ const RagHeader = () => {
   return (
     <Header
       style={{
-        padding: '0 16px',
+        paddingLeft: 16,
+        paddingRight: 40,
         background: "#EAF0FE",
         display: 'flex',
         justifyContent: 'space-between',
