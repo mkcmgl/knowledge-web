@@ -84,7 +84,7 @@ const ChunkCreatingModal: React.FC<IModalProps<any> & kFProps> = ({
       onOk={handleOk}
       onCancel={hideModal}
       okButtonProps={{ loading }}
-      destroyOnClose
+      destroyOnHidden
     >
       <Form form={form} autoComplete="off" layout={'vertical'}>
         <Form.Item<FieldType>

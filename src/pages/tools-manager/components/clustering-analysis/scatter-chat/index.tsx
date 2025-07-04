@@ -78,7 +78,7 @@ const ScatterChart: React.FC<ScatterChartProps> = ({ scatterData }) => {
           type: 'value',
           scale: true,
           axisLabel: {
-            formatter: '{value} m',
+            formatter: '{value} x',
           },
           nameTextStyle: {
             color: '#3259B8',

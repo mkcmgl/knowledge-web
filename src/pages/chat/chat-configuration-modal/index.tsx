@@ -158,7 +158,7 @@ const ChatConfigurationModal = ({
       onOk={handleOk}
       onCancel={hideModal}
       confirmLoading={loading}
-      destroyOnClose
+      destroyOnHidden
       className={styles.dialogRight}
       afterClose={handleModalAfterClose}
     >

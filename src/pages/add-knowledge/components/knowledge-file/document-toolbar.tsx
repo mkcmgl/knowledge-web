@@ -261,7 +261,7 @@ const DocumentToolbar = ({
             </Form.Item>
           </Space>
         </Form>
-        <div style={{ width: 200, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+        <div style={{ width: 160, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
           <Space>
             <Button style={{ padding: '0 10px' }} type="primary" onClick={handleSearch} icon={<SearchOutlined />}>
               {t('search')}

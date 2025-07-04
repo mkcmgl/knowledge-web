@@ -174,6 +174,7 @@ const ParsingActionCell = ({
           disabled={isRunning}
           onClick={onRmDocument}
           className={styles.iconButton}
+          style={{color: '#F56C6C'}}
         >
           {t('delete', { keyPrefix: 'common' })}
         </Button>

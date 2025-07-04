@@ -53,7 +53,6 @@ import { useMemo, useState, useCallback, useEffect } from 'react';
 import styles from './index.less';
 import { SetMetaModal } from './set-meta-modal';
 import Editor from '@monaco-editor/react';
-
 const { Text } = Typography;
 
 const KnowledgeFile = () => {
@@ -279,10 +278,7 @@ const KnowledgeFile = () => {
   return (
     <div className={styles.datasetWrapper}>
       <div className={styles.topFex}>
-        <div>
-          <h3>{t('dataset')}</h3>
-          <p>{t('datasetDescription')}</p>
-        </div>
+
 
         <Dropdown menu={{ items: actionItems }} trigger={['click']}>
           <Button type="primary" icon={<PlusOutlined />}>
@@ -291,7 +287,6 @@ const KnowledgeFile = () => {
         </Dropdown>
       </div>
 
-      <Divider></Divider>
       <DocumentToolbar
         selectedRowKeys={rowSelection.selectedRowKeys as string[]}
         showCreateModal={showCreateModal}
@@ -303,12 +298,38 @@ const KnowledgeFile = () => {
         parserList={parserList}
         onFilteredDocumentsChange={setFilteredDocuments}
       ></DocumentToolbar>
-      <Divider></Divider>
+      <div className={styles.testingControlTip}>
+        <div>  <svg xmlns="http://www.w3.org/2000/svg" fill="none" version="1.1" style={{ width: 20, height: 20, marginRight: 8, }} viewBox="0 0 20 20">
+          <defs>
+            <clipPath id="master_svg0_2_7215">
+              <rect x="0" y="0" width="20" height="20" rx="0" style={{ width: 20, height: 20, }} />
+            </clipPath>
+          </defs>
+          <g clipPath="url(#master_svg0_2_7215)">
+            <g>
+              <path d="M10,1.25C14.8307,1.25,18.75,5.16387,18.75,10C18.75,14.8361,14.8361,18.75,10,18.75C5.16387,18.75,1.25,14.8361,1.25,10C1.25,5.16387,5.16934,1.25,10,1.25ZM11.09238,13.2826L8.90762,13.2826L8.90762,15.4674L11.09238,15.4674L11.09238,13.2826ZM11.09238,4.53262L8.90762,4.53262L8.90762,11.09238L11.09238,11.09238L11.09238,4.53262Z" fill="#F9CA06" fillOpacity="1" style={{ width: 20, height: 20, }} />
+            </g>
+          </g>
+        </svg></div>
+        <p className={styles.testingDescription}>特别提醒:解析成功后才能问答哦。</p>
+      </div>
       <Table
         rowKey="id"
         columns={finalColumns}
         dataSource={filteredDocuments}
-        pagination={pagination}
+        pagination={{
+          ...pagination,
+          itemRender: (page, type, originalElement) => {
+            if (type === 'prev') {
+              return <a>上一页</a>;
+            }
+            if (type === 'next') {
+              return <a>下一页</a>;
+            }
+            return originalElement;
+          },
+          showTotal: (total) => `总共${total}条`,
+        }}
         className={styles.documentTable}
         scroll={{ scrollToFirstRowOnChange: true, x: 1300 }}
         loading={loading}
