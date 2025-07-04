@@ -15,7 +15,7 @@ const testData = [
   { name: "React", value: 100 },
   { name: "TypeScript", value: 85 },
   { name: "JavaScript", value: 90 },
-  { name: "前端开发", value: 78 },
+  { name: "mgl", value: 78 },
   { name: "组件化", value: 65 },
   { name: "Hooks", value: 70 },
   { name: "ECharts", value: 60 },
@@ -172,7 +172,7 @@ ${index + 1}. ${kw.word}
             <i style={{ height: '100%', borderLeft: "4px solid #0C7CFF", borderRadius: '4px' }}></i>
             <span className='pl-2 text-[16px] font-bold'>关键词</span>
           </div>
-          <div style={{ width: '100%', padding: "20px"  }}>
+          <div style={{ width: '100%', padding: "20px" }}>
             <TextArea
               value={keywordsResult}
               placeholder="关键词提取结果将在这里显示..."
@@ -189,11 +189,12 @@ ${index + 1}. ${kw.word}
             />
           </div>
         </div>
-        <WordCloud data={testData} />
 
-              
+
+
 
       </div>
+      <WordCloud data={testData} />
     </div>
   );
 };
