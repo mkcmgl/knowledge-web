@@ -55,5 +55,5 @@ export function LabelWordCloud() {
     };
   }, [renderWordCloud]);
 
-  return <div ref={domRef} className="w-full h-[13vh]"></div>;
+  return <div ref={domRef} className="w-full "></div>;
 }

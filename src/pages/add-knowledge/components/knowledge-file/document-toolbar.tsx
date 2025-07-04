@@ -204,14 +204,14 @@ const DocumentToolbar = ({
             <Form.Item name="keywords" label={t('fileName')}>
               <Input
                 placeholder={t('pleaseInputFileName')}
-                style={{ width: 190  }}
+                style={{ width: 190 }}
                 allowClear
               />
             </Form.Item>
             <Form.Item name="parser_id" label={t('chunkMethod')}>
               <Select
                 placeholder={"请选择切片方法"}
-                style={{ width: 190  }}
+                style={{ width: 190 }}
                 allowClear
                 options={parserList}
               />
@@ -219,7 +219,7 @@ const DocumentToolbar = ({
             <Form.Item name="status" label='启用状态'>
               <Select
                 placeholder={"请选择启用状态"}
-                style={{ width: 190  }}
+                style={{ width: 190 }}
                 allowClear
                 options={[
                   { label: t('enabled'), value: '1' },
@@ -230,7 +230,7 @@ const DocumentToolbar = ({
             <Form.Item name="run" label={t('parsingStatus')}>
               <Select
                 placeholder="请选择解析状态"
-                style={{ width: 190  }}
+                style={{ width: 190 }}
                 allowClear
                 options={Object.entries(RunningStatus).map(([, value]) => ({
                   label: t(`runningStatus${value}`),
@@ -241,14 +241,14 @@ const DocumentToolbar = ({
             <Form.Item name="key" label="元数据名">
               <Input
                 placeholder="请输入元数据字段名"
-                style={{ width: 190  }}
+                style={{ width: 190 }}
                 allowClear
               />
             </Form.Item>
             <Form.Item name="value" label="元数据值">
               <Input
                 placeholder="请输入元数据值"
-                style={{ width: 190  }}
+                style={{ width: 190 }}
                 allowClear
               />
             </Form.Item>
@@ -259,18 +259,21 @@ const DocumentToolbar = ({
                 allowClear
               />
             </Form.Item>
+            <div style={{ width: 160, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+              <Space>
+                <Button style={{ padding: '0 10px' }} type="primary" onClick={handleSearch} icon={<SearchOutlined />}>
+                  {t('search')}
+                </Button>
+                <Button style={{ padding: '0 10px' }} onClick={handleReset} icon={<ReloadOutlined />}>
+                  {t('reset')}
+                </Button>
+              </Space>
+            </div>
           </Space>
+
+
         </Form>
-        <div style={{ width: 160, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-          <Space>
-            <Button style={{ padding: '0 10px' }} type="primary" onClick={handleSearch} icon={<SearchOutlined />}>
-              {t('search')}
-            </Button>
-            <Button style={{ padding: '0 10px' }} onClick={handleReset} icon={<ReloadOutlined />}>
-              {t('reset')}
-            </Button>
-          </Space>
-        </div>
+
       </Flex>
       {/* 批量 */}
       {/* <Dropdown

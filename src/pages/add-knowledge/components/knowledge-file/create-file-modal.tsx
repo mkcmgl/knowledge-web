@@ -22,7 +22,7 @@ const FileCreatingModal: React.FC<IProps> = ({ visible, hideModal, onOk }) => {
 
   return (
     <Modal
-      title="File Name"
+      title="文件名"
       open={visible}
       onOk={handleOk}
       onCancel={hideModal}
@@ -36,7 +36,7 @@ const FileCreatingModal: React.FC<IProps> = ({ visible, hideModal, onOk }) => {
         autoComplete="off"
       >
         <Form.Item<FieldType>
-          label="File Name"
+          label="文件名"
           name="name"
           rules={[{ required: true, message: 'Please input name!' }]}
         >

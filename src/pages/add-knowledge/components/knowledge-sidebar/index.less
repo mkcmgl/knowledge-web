@@ -1,7 +1,7 @@
 .sidebarWrapper {
   z-index: 9;
   flex-direction: column;
-  max-width: 200px;
+  width: 220px;
   box-shadow: 0 0 12px 0 rgba(0, 0, 0, .12);
   // padding: 32px  0;
 
@@ -35,24 +35,30 @@
   }
 
   .menuWrapper {
-    padding-top: 10px;
+    padding-top: 16px;
 
     .menu {
-      font-size: @fontSize16;
-      font-weight: @fontWeight600;
+      font-size: @fontSize14;
       border: none;
       :global(.ant-menu-item) {
         display: flex;
         align-items: center;
+        width: 100%;
+        margin: 0;
+        border-radius: 0 !important;
+      }
+      :global(.ant-menu-item-selected) {
+        background-color: rgba(48, 110, 253, .1) !important;
       }
     }
 
     .defaultWidth {
-      width: 180px;
+      width: 220px;
+      padding: 0 10px;
     }
 
     .minWidth {
-      width: 50px;
+      width: 180px;
     }
 
     .menuText {
