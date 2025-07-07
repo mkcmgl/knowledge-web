@@ -124,7 +124,12 @@ const ChunkMethodModal: React.FC<IProps> = ({
   const afterClose = () => {
     form.resetFields();
   };
-
+  const title = (
+    <div style={{ width: '100%',background: '#F7F9FF', borderBottom: "1px solid #E5E6EB", paddingBottom: '12px',paddingTop: '20px', paddingLeft: '20px' }}>
+      <i style={{ height: '100%', borderLeft: "4px solid #0C7CFF", borderRadius: '4px' }}></i>
+      <span className='pl-2 text-[16px] font-bold'>切片方法</span>
+    </div>
+);
   useEffect(() => {
     if (visible) {
       const pages =
@@ -153,25 +158,27 @@ const ChunkMethodModal: React.FC<IProps> = ({
 
   return (
     <Modal
-      title={t('chunkMethod')}
+
+     title={title}
+      style={{ right: 0, top: 0, position: 'absolute' }}
       open={visible}
       onOk={handleOk}
       onCancel={hideModal}
       afterClose={afterClose}
       confirmLoading={loading}
+      className={styles.dialogRight}
       width={700}
     >
       <Space size={[0, 8]} wrap>
         <Form.Item label={t('chunkMethod')} className={styles.chunkMethod}>
           <Select
-            style={{ width: 160 }}
+            style={{ width: 360 ,marginBottom: 20}}
             onChange={handleChange}
             value={selectedTag}
             options={parserList}
           />
         </Form.Item>
       </Space>
-      <Divider></Divider>
       <Form
         name="dynamic_form_nest_item"
         autoComplete="off"

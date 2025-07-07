@@ -28,7 +28,7 @@ const PreviewModal = ({ visible, hideModal, docId }: IProps) => {
     } = useFetchNextChunkList({
         enabled: visible && !!docId // 只在弹窗打开且有 docId 时调用接口
     });
-    
+
     console.log('documentInfo:', documentInfo);
     console.log('docId:', docId);
     const isPdf = documentInfo?.type === 'pdf';
@@ -38,7 +38,12 @@ const PreviewModal = ({ visible, hideModal, docId }: IProps) => {
 
     return (
         <Modal
-            title={<div style={{ textAlign: 'center', fontSize: '16px' }}>预览</div>}
+            title={
+                <div style={{ width: '100%', borderBottom: "1px solid #E5E6EB", paddingBottom: '12px', paddingLeft: '20px' }}>
+                    <i style={{ height: '100%', borderLeft: "4px solid #0C7CFF", borderRadius: '4px' }}></i>
+                    <span className='pl-2 text-[16px] font-bold'> 预览</span>
+                </div>
+            }
             open={visible}
             onCancel={hideModal}
             width={800}

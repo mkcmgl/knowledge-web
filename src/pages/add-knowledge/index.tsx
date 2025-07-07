@@ -37,12 +37,17 @@ const KnowledgeAdding = () => {
       {
         title: datasetActiveKey ? (
           <Link
+
             to={`/knowledge/${KnowledgeRouteKey.Dataset}?id=${knowledgeBaseId}`}
           >
-            {t(`knowledgeDetails.${activeKey}`)}
+            <span style={{ color: '#306EFD' }}>
+              {t(`knowledgeDetails.${activeKey}`)}
+            </span>
           </Link>
         ) : (
-          t(`knowledgeDetails.${activeKey}`)
+          <span style={{ color: '#306EFD' }}>
+            {t(`knowledgeDetails.${activeKey}`)}
+          </span>
         ),
       },
     ];
@@ -61,7 +66,7 @@ const KnowledgeAdding = () => {
       <div className={styles.container}>
         <Siderbar></Siderbar>
         <div className={styles.contentWrapper}>
-          <Breadcrumb items={breadcrumbItems}  className={styles.contentBreadcrumb} />
+          <Breadcrumb items={breadcrumbItems} className={styles.contentBreadcrumb} />
           <div className={styles.content}>
             <Outlet></Outlet>
           </div>

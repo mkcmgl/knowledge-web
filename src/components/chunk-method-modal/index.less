@@ -3,12 +3,25 @@
 }
 
 .questionIcon {
-  margin-inline-start: 4px;
-  color: rgba(0, 0, 0, 0.45);
+  color: rgba(0, 0, 0, .45);
   cursor: help;
   writing-mode: horizontal-tb;
+
+  margin-inline-start: 4px;
 }
 
 .chunkMethod {
   margin-bottom: 0;
+}
+.dialogRight {
+  :global(.ant-modal-content) {
+    padding: 0 0 20px 0 !important;
+    border-radius: 0 !important;
+    :global(.ant-modal-body) {
+      padding: 0 24px !important;
+    }
+    :global(.ant-modal-footer) {
+      text-align: center;
+    }
+  }
 }

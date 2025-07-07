@@ -3,13 +3,14 @@
 
   .popoverContentItem {
     display: flex;
+
     gap: 10px;
   }
 
   .popoverContentText {
-    white-space: pre-line;
-    max-height: 50vh;
     overflow: auto;
+    max-height: 50vh;
+    white-space: pre-line;
     .popoverContentErrorLabel {
       color: red;
     }
@@ -17,8 +18,8 @@
 }
 
 .operationIcon {
-  text-align: center;
   display: flex;
+  text-align: center;
   &:hover {
     cursor: pointer;
   }
@@ -33,4 +34,29 @@
       transform: rotate(360deg);
     }
   }
+}
+.tagText {
+  font-size: 14px;
+
+  padding-inline: 0 !important;
+}
+.successTag {
+  color: #4caf50 !important;
+  background: transparent !important;
+  border-color: transparent !important;
+}
+.cancelTag {
+  color: #999 !important;
+  background: transparent !important;
+  border-color: transparent !important;
+}
+.failTag {
+  color: #f44336 !important;
+  background: transparent !important;
+  border-color: transparent !important;
+}
+.waitTag {
+  color: #306efd !important;
+  background: transparent !important;
+  border-color: transparent !important;
 }

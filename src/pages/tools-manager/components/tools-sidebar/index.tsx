@@ -5,7 +5,7 @@ import { getWidth } from '@/utils';
 import { Menu, MenuProps } from 'antd';
 import classNames from 'classnames';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate} from 'umi';
+import { useNavigate } from 'umi';
 import { ToolsMenuRouteKey, toolsRouteMap } from '../../constant';
 import styles from './index.less';
 import {
@@ -81,6 +81,16 @@ const ToolsSidebar = () => {
         ToolsMenuRouteKey.SpeechToText,
         <SpeechToTextIcon size={16} />,
       ),
+      getItem(
+        toolsRouteMap[ToolsMenuRouteKey.ImgUnderstand],
+        ToolsMenuRouteKey.ImgUnderstand,
+        <SpeechToTextIcon size={16} />,
+      ), getItem(
+        toolsRouteMap[ToolsMenuRouteKey.VideoUnderstand],
+        ToolsMenuRouteKey.VideoUnderstand,
+        <SpeechToTextIcon size={16} />,
+      ),
+
     ];
   }, [getItem]);
 

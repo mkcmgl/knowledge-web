@@ -154,6 +154,14 @@ const routes = [
             path: '/tools/speech-to-text',
             component: '@/pages/tools-manager/components/speech-to-text',
           },
+          {
+            path: '/tools/img-understand',
+            component: '@/pages/tools-manager/components/img-understand',
+          },
+          {
+            path: '/tools/video-understand',
+            component: '@/pages/tools-manager/components/video-understand',
+          },
         ],
       },
       {

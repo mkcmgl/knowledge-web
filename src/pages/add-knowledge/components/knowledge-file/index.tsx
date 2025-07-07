@@ -51,7 +51,7 @@ import { formatDate } from '@/utils/date';
 import { CircleHelp } from 'lucide-react';
 import { useMemo, useState, useCallback, useEffect } from 'react';
 import styles from './index.less';
-import { SetMetaModal } from './set-meta-modal';
+import SetMetaModal from './set-meta-modal';
 import Editor from '@monaco-editor/react';
 const { Text } = Typography;
 
@@ -109,9 +109,21 @@ const KnowledgeFile = () => {
     showSetMetaModal,
     hideSetMetaModal,
     setMetaVisible,
-    setMetaLoading,
     onSetMetaModalOk,
   } = useShowMetaModal(currentRecord.id);
+
+  // 本地loading状态用于SetMetaModal
+  const [metaLoading, setMetaLoading] = useState(false);
+
+  // SetMetaModal确定按钮处理
+  const handleSetMetaModalOk = async (meta: string) => {
+    setMetaLoading(true);
+    try {
+      await onSetMetaModalOk(meta); // hooks里的接口
+    } finally {
+      setMetaLoading(false);
+    }
+  };
 
   const rowSelection = useGetRowSelection();
 
@@ -181,18 +193,36 @@ const KnowledgeFile = () => {
       title: '元数据',
       dataIndex: 'meta_fields',
       key: 'meta_fields',
-      render: (meta, record) => (
-        <a
-          style={{ cursor: 'pointer' }}
-          onClick={e => {
-            e.stopPropagation();
-            setViewMetaData(record.meta_fields);
-            setViewMetaVisible(true);
-          }}
-        >
-          {typeof record.meta_fields === 'object' ? JSON.stringify(record.meta_fields) : record.meta_fields}
-        </a>
-      ),
+      ellipsis: true,
+      render: (meta, record) => {
+        const text = typeof record.meta_fields === 'object'
+          ? JSON.stringify(record.meta_fields)
+          : String(record.meta_fields ?? '');
+        return (
+          <Tooltip placement="topLeft" title={text}>
+            <div
+              style={{
+                maxWidth: 200, // 可根据实际列宽调整
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                display: 'block',
+              }}
+            >
+              <a
+                style={{ cursor: 'pointer' }}
+                onClick={e => {
+                  e.stopPropagation();
+                  setViewMetaData(record.meta_fields);
+                  setViewMetaVisible(true);
+                }}
+              >
+                {text}
+              </a>
+            </div>
+          </Tooltip>
+        );
+      },
     },
     {
       title: '启用状态',
@@ -359,7 +389,11 @@ const KnowledgeFile = () => {
             }
             return originalElement;
           },
-          showTotal: (total) => `总共${total}条`,
+          showTotal: (total) => <span
+            style={{
+              color: '#86909C',
+              lineHeight: '32px', marginRight: 16,
+            }}>{`总共${total}条`}</span>,
         }}
         className={styles.documentTable}
         scroll={{ scrollToFirstRowOnChange: true, x: 1300 }}
@@ -408,8 +442,8 @@ const KnowledgeFile = () => {
         <SetMetaModal
           visible={setMetaVisible}
           hideModal={hideSetMetaModal}
-          onOk={onSetMetaModalOk}
-          loading={setMetaLoading}
+          onOk={handleSetMetaModalOk}
+          loading={metaLoading}
           initialMetaData={currentRecord.meta_fields}
         ></SetMetaModal>
       )}

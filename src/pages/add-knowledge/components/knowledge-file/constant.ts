@@ -9,9 +9,9 @@ export const RunningStatusMap = {
     label: 'Parsing',
     color: 'blue',
   },
-  [RunningStatus.CANCEL]: { label: 'CANCEL', color: 'orange' },
-  [RunningStatus.DONE]: { label: 'SUCCESS', color: 'geekblue' },
-  [RunningStatus.FAIL]: { label: 'FAIL', color: 'red' },
+  [RunningStatus.CANCEL]: { label: 'CANCEL', color: '#999999' },
+  [RunningStatus.DONE]: { label: 'SUCCESS', color: '#4CAF50' },
+  [RunningStatus.FAIL]: { label: 'FAIL', color: '#F44336' },
 };
 
 export * from '@/constants/knowledge';

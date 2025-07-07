@@ -7,6 +7,8 @@ export enum ToolsMenuRouteKey {
   SensitiveWord = 'sensitive-word',
   KeywordExtraction = 'keyword-extraction',
   SpeechToText = 'speech-to-text',
+  ImgUnderstand = 'img-understand',
+  VideoUnderstand = 'video-understand',
 }
 
 export const toolsRouteMap = {
@@ -16,6 +18,8 @@ export const toolsRouteMap = {
   [ToolsMenuRouteKey.SensitiveWord]: '敏感词处理',
   [ToolsMenuRouteKey.KeywordExtraction]: '关键词提取',
   [ToolsMenuRouteKey.SpeechToText]: '语言转文字',
+  [ToolsMenuRouteKey.ImgUnderstand]: '图片理解',
+  [ToolsMenuRouteKey.VideoUnderstand]: '视频理解',
 };
 
 export const routeMap = {

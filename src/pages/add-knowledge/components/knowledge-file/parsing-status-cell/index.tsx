@@ -107,9 +107,14 @@ export const ParsingStatusCell = ({ record }: IProps) => {
   return record.type === DocumentType.Virtual ? null : (
     <Flex justify={'space-between'} align="center">
       <Popover content={<PopoverContent record={record}></PopoverContent>}>
-        <Tag color={runningStatus.color}>
+        <Tag color={runningStatus.color}  className={`${styles.tagText} 
+          ${runningStatus.label === 'SUCCESS' ? styles.successTag :
+          runningStatus.label==='CANCEL'?styles.cancelTag :
+           runningStatus.label==='FAIL'?styles.failTag:
+           isRunning?styles.waitTag:
+           ''}`}>
           {isRunning ? (
-            <Space>
+            <Space >
               <Badge color={runningStatus.color} />
               {label}
               <span>{(record.progress * 100).toFixed(2)}%</span>

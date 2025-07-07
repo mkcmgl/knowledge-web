@@ -1,96 +1,125 @@
-import { IModalProps } from '@/interfaces/common';
-import { IDocumentInfo } from '@/interfaces/database/document';
-import Editor from '@monaco-editor/react';
+import { Form, Input, Button, Modal, message, Flex } from 'antd';
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { useEffect } from 'react';
+import styles from './index.less';
+interface SetMetaModalProps {
+  visible: boolean;
+  onOk: (meta: string) => void;
+  hideModal: () => void;
+  initialMetaData?: Record<string, string>;
+  loading?: boolean;
+}
 
-import { Form, Modal } from 'antd';
-import DOMPurify from 'dompurify';
-import { useCallback, useEffect } from 'react';
+interface MetaItem {
+  key: string;
+  value: string;
+}
 
-
-type FieldType = {
-  meta?: string;
-};
-
-export function SetMetaModal({
-  visible,
-  hideModal,
-  onOk,
-  initialMetaData,
-}: IModalProps<any> & { initialMetaData?: IDocumentInfo['meta_fields'] }) {
+const SetMetaModal = ({ visible, onOk, hideModal, initialMetaData = {}, loading = false }: SetMetaModalProps) => {
   const [form] = Form.useForm();
 
-  const handleOk = useCallback(async () => {
-    const values = await form.validateFields();
-    onOk?.(values.meta);
-  }, [form, onOk]);
+  // 将initialMetaData对象转为key-value数组
+  const metaListInit: MetaItem[] = Object.entries(initialMetaData).map(([key, value]) => ({ key, value }));
 
+  // 打开时设置初始值
   useEffect(() => {
-    form.setFieldValue('meta', JSON.stringify(initialMetaData, null, 4));
-  }, [form, initialMetaData]);
+    form.setFieldsValue({ metaList: metaListInit.length ? metaListInit : [{ key: '', value: '' }] });
+  }, [initialMetaData, visible]);
+
+  // 提交处理
+  const handleOk = async () => {
+    try {
+      const values = await form.validateFields();
+      // 转为对象
+      const metaObj: Record<string, string> = {};
+      (values.metaList || []).forEach((item: MetaItem) => {
+        if (item.key) metaObj[item.key] = item.value;
+      });
+      // 序列化
+      const metaStr = JSON.stringify(metaObj, null, 4);
+      onOk(metaStr); // 传给父组件
+    } catch (e) {
+      // 校验失败
+    }
+  };
 
   return (
     <Modal
-      title='设置元数据'
       open={visible}
       onOk={handleOk}
       onCancel={hideModal}
+      title={
+        <div style={{ width: '100%', borderBottom: "1px solid #E5E6EB", paddingBottom: '12px', paddingLeft: '20px' }}>
+          <i style={{ height: '100%', borderLeft: "4px solid #0C7CFF", borderRadius: '4px' }}></i>
+          <span className='pl-2 text-[16px] font-bold'> 设置元数据</span>
+        </div>
+      }
+      okButtonProps={{ loading }}
+      destroyOnHidden
+      width={700}
+      className={styles.myModal}
     >
-      <Form
-        name="basic"
-        initialValues={{ remember: true }}
-        autoComplete="off"
-        layout={'vertical'}
-        form={form}
-      >
-        <Form.Item<FieldType>
-          label='元数据'
-          name="meta"
-          rules={[
-            {
-              required: true,
-              validator(rule, value) {
-                try {
-                  JSON.parse(value);
-                  return Promise.resolve();
-                } catch (error) {
-                  return Promise.reject(
-                    new Error('请输入JSON'),
-                  );
-                }
-              },
-            },
-          ]}
-          tooltip={
-            <div
-              dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(
-                  `<p>元数据为 Json 格式（不可搜索）。如果提示中包含此文档的任何块，它将被添加到 LLM 的提示中。</p>
-<p>示例：</p>
-<b>元数据为：</b><br>
-<code>
-{
-“作者”：“mengguolin”，
-“日期”：“2024-11-12”
-}
-</code><br>
-<b>提示将为：</b><br>
-<p>文档：the_name_of_document</p>
-<p>作者：mengguolin</p>
-<p>日期：2024-11-12</p>
-<p>相关片段如下：</p>
-<ul>
-<li> 这是块内容....</li>
-<li> 这是块内容....</li>
-</ul>
-`
-                ),
-              }}
-            ></div>
-          }
-        >
-          <Editor height={200} defaultLanguage="json" theme="vs-dark" />
-        </Form.Item>
+      <Form form={form} layout="horizontal">
+        <Form.List name="metaList">
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map(({ key, name, ...restField }) => (
+                <Flex key={key} style={{ marginBottom: 8, width: '100%' }} align="center" gap={8}>
+                  <Form.Item
+                    label="字段名"
+                    {...restField}
+                    name={[name, 'key']}
+                    rules={[
+                      { pattern: /^[a-zA-Z]*$/, message: '字段名只能输入英文字母' }
+                    ]}
+                    style={{ flex: 1, marginBottom: 0 }}
+                    labelCol={{ span: 6 }}
+                    wrapperCol={{ span: 18 }}
+                  >
+                    <Input placeholder="请输入字段名" allowClear />
+                  </Form.Item>
+                  <Form.Item
+                    {...restField}
+                    label="数据"
+                    name={[name, 'value']}
+                    rules={[{ message: '请输入数据' }]}
+                    style={{ flex: 1, marginBottom: 0 }}
+                    labelCol={{ span: 6 }}
+                    wrapperCol={{ span: 18 }}
+                  >
+                    <Input placeholder="请输入数据" allowClear />
+                  </Form.Item>
+                  <MinusCircleOutlined
+                    onClick={() => remove(name)}
+                    style={{ cursor: 'pointer', color: '#ff4d4f' }}
+                  />
+                </Flex>
+              ))}
+              <Form.Item>
+                <div className='text-center mt-4'>
+                  <Button
+                    type="dashed"
+                    style={{ width: 120, }}
+                    onClick={() => {
+                      if (fields.length < 50) {
+                        add();
+                      } else {
+                        message.warning('最多只能添加50行数据');
+                      }
+                    }}
+                    block
+                    icon={<PlusOutlined />}
+                  >
+                    添加元数据
+                  </Button>
+                </div>
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
       </Form>
     </Modal>
   );
-}
+};
+
+export default SetMetaModal;

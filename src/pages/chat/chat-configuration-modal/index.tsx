@@ -110,7 +110,7 @@ const ChatConfigurationModal = ({
   };
 
   const title = (
-      <div style={{ width: '100%',background: '#F7F9FF', borderBottom: "1px solid #E5E6EB", paddingBottom: '12px', paddingLeft: '20px' }}>
+      <div style={{ width: '100%',background: '#F7F9FF', borderBottom: "1px solid #E5E6EB", paddingBottom: '12px',paddingTop: '20px', paddingLeft: '20px' }}>
         <i style={{ height: '100%', borderLeft: "4px solid #0C7CFF", borderRadius: '4px' }}></i>
         <span className='pl-2 text-[16px] font-bold'>助理配置</span>
       </div>
