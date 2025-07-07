@@ -1,7 +1,7 @@
 import { useFetchFileList } from '@/hooks/file-manager-hooks';
 import { IFile } from '@/interfaces/database/file-manager';
 import { formatDate } from '@/utils/date';
-import { Button, Flex, Space, Table, Tag, Typography } from 'antd';
+import { Button, Flex, Space, Table, Tag, Tooltip, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import ActionCell from './action-cell';
 import FileToolbar from './file-toolbar';
@@ -139,16 +139,36 @@ const FileManager = () => {
       dataIndex: 'kbs_info',
       key: 'kbs_info',
       render(value) {
-        return Array.isArray(value) ? (
-          <Space wrap>
-            {value?.map((x,index) => (
-              <Tag color={index % 2 === 1 ? "#52C41A" : "blue"} key={x.kb_id}>
-                {x.kb_name}
-              </Tag>
-            ))}
-          </Space>
-        ) : (
-          ''
+        if (!Array.isArray(value)) return '';
+        const tags = value.map((x, index) => (
+          <Tag
+            color={index % 2 === 1 ? "#52C41A" : "blue"}
+            key={x.kb_id}
+            style={{ marginRight: 4 }}
+          >
+            {x.kb_name}
+          </Tag>
+        ));
+        const tooltipContent = (
+          <div style={{ maxWidth: 400, whiteSpace: 'normal', wordBreak: 'break-all',backgroundColor:'#fff' }}>
+            {tags}
+          </div>
+        );
+        return (
+          <Tooltip title={tooltipContent} color={'#FFF'}>
+            <div
+              style={{
+                maxWidth: 180,
+                maxHeight: 50, // 可根据实际表格宽度调整
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                display: 'block',
+              }}
+            >
+              {tags}
+            </div>
+          </Tooltip>
         );
       },
     },
