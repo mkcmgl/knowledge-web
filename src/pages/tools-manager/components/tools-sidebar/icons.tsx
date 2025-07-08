@@ -12,6 +12,8 @@ import { ReactComponent as DeleteIconSvg } from '@/assets/svg/tool-manager/del.s
 import { ReactComponent as QuestionCircleIconSvg } from '@/assets/svg/tool-manager/question-circle.svg';
 import { ReactComponent as ToolIconSvg } from '@/assets/svg/tool-manager/tool.svg';
 import { ReactComponent as TestIconSvg } from '@/assets/svg/tool-manager/test.svg';
+import { ReactComponent as ImgUnderstandSvg } from '@/assets/svg/tool-manager/img-understand.svg';
+import { ReactComponent as VideoUnderstandSvg } from '@/assets/svg/tool-manager/video-understand.svg';
 
 interface IconProps {
   size?: number;
@@ -41,6 +43,13 @@ export const KeywordExtractIcon: React.FC<IconProps> = ({ size = 16, className, 
 
 export const SpeechToTextIcon: React.FC<IconProps> = ({ size = 16, className, fill = '#1D2129' }) => (
   <SpeechToTextIconSvg style={{ width: size, height: size }} className={className} fill={fill} />
+);
+
+export const ImgUnderstandIcon: React.FC<IconProps> = ({ size = 16, className, fill = '#1D2129' }) => (
+  <ImgUnderstandSvg style={{ width: size, height: size }} className={className} fill={fill} />
+);
+export const VideoUnderstandIcon: React.FC<IconProps> = ({ size = 16, className, fill = '#1D2129' }) => (
+  <VideoUnderstandSvg style={{ width: size, height: size }} className={className} fill={fill} />
 );
 
 // 其他图标组件

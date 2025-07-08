@@ -15,6 +15,8 @@ import {
   SensitiveWordIcon,
   KeywordExtractIcon,
   SpeechToTextIcon,
+  VideoUnderstandIcon,
+  ImgUnderstandIcon
 } from './icons';
 
 const ToolsSidebar = () => {
@@ -84,11 +86,11 @@ const ToolsSidebar = () => {
       getItem(
         toolsRouteMap[ToolsMenuRouteKey.ImgUnderstand],
         ToolsMenuRouteKey.ImgUnderstand,
-        <SpeechToTextIcon size={16} />,
+        <ImgUnderstandIcon size={16} />,
       ), getItem(
         toolsRouteMap[ToolsMenuRouteKey.VideoUnderstand],
         ToolsMenuRouteKey.VideoUnderstand,
-        <SpeechToTextIcon size={16} />,
+        <VideoUnderstandIcon size={16} />,
       ),
 
     ];
