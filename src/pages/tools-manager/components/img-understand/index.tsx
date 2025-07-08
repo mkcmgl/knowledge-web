@@ -200,7 +200,7 @@ ${formData.question}
               label='输入问题:'
               name="question"
               rules={[{ required: true, message: '请输入问题！' }]}
-              style={{ marginTop: 24, paddingLeft: 20, }}
+              style={{padding: 20 }}
             >
               <TextArea
                 placeholder="请输入您想了解的问题，例如：这张图片里有什么？图片中的主要对象是什么？..."

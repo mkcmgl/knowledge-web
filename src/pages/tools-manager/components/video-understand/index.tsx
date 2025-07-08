@@ -113,7 +113,7 @@ ${formData.question}
           </div>
           <Form form={form} className={styles.myFulllabelForm} layout="vertical" style={{ height: '100%' }}>
             {/* 上传视频 */}
-            <Form.Item label={<span>上传视频<span style={{ color: 'red', marginLeft: 4 }}>*</span></span>} style={{ padding: 20 }}>
+            <Form.Item label='上传视频:' name='video' rules={[{ required: true, message: '请上传视频！' }]}  style={{ padding: 20 }}>
               <Space direction="vertical" style={{ width: '100%' }}>
                 <Upload className={styles.myFullUpload} {...uploadProps}>
                   <Button
@@ -186,7 +186,7 @@ ${formData.question}
               label='输入问题:'
               name="question"
               rules={[{ required: true, message: '请输入问题！' }]}
-              style={{ marginTop: 24, paddingLeft: 20, }}
+              style={{ padding: 20 }}
             >
               <TextArea
                 placeholder="请输入您想了解的问题，例如：这个视频讲了什么？视频的主要内容是什么？..."
