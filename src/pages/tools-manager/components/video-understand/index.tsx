@@ -10,7 +10,7 @@ import {
 import { useState } from 'react';
 import { DeleteOutlined } from '@ant-design/icons';
 import styles from './index.less';
-
+import noData from "@/assets/svg/noData.svg"
 const { Text } = Typography;
 const { TextArea } = Input;
 
@@ -228,8 +228,13 @@ ${formData.question}
             <i style={{ height: '100%', borderLeft: "4px solid #0C7CFF", borderRadius: '4px' }}></i>
             <span className='pl-2 text-[16px] font-bold'>理解结果</span>
           </div>
-          <div style={{ width: '100%', flex: 1 }}>
-            <TextArea
+          <div style={{ width: '100%', flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            {uploadedFiles.length === 0 ? (
+              <div style={{ textAlign: 'center', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+               <img src={noData} alt="无数据" style={{ width: 100, marginBottom: 16 }}/>
+                <div style={{ color: 'rgba(29, 33, 41, 0.55)', fontSize: 14 }}>拖入或粘贴视频进行转换后，显示相关结果</div>
+              </div>
+            ) : ( <TextArea
               value={analysisResult}
               placeholder="理解结果将在这里显示..."
               style={{
@@ -243,6 +248,7 @@ ${formData.question}
               }}
               readOnly
             />
+            )}
           </div>
         </div>
       </div>
