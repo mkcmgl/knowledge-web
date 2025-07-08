@@ -14,6 +14,7 @@ import SimilaritySlider from '@/components/similarity-slider';
 import ScatterChart2 from './scatter-chart1';
 import ScatterChart from './scatter-chat';
 import sampleDataList from "./data.json"
+import ClusterVisualization from './cluster-visualization';
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
@@ -37,7 +38,7 @@ export const sampleData: ScatterData[] = [
   { x: 2.3, y: 1.7, color: "#bcbd22" },
   { x: 1.7, y: 1.2, color: "#17becf" }
 ];
-const sampleData2=sampleDataList
+const sampleData2 = sampleDataList
 // const sampleData2 =
 //   [
 //     { "value": [399.48, 75098], "itemStyle": { "color": "#3259B8" } },
@@ -182,8 +183,33 @@ const sampleData2=sampleDataList
 //     { "value": [257.35, 95202], "itemStyle": { "color": "#3259B8" } },
 //     { "value": [256.87, 101219], "itemStyle": { "color": "#3259B8" } }
 //   ]
+const sampleDataTest = [
+  { x: 1, y: 2, cluster: 0 },
+  { x: 2, y: 3, cluster: 0 },
+  { x: 3, y: 1, cluster: 0 },
+  { x: 8, y: 7, cluster: 1 },
+  { x: 9, y: 8, cluster: 1 },
+  { x: 7, y: 9, cluster: 1 },
+  { x: -5, y: -4, cluster: 2 },
+  { x: -6, y: -5, cluster: 2 }
+];
+const generateData = () => {
+  const clusters = [
+    { x: 3, y: 3, count: 10, id: 0 },
+    { x: 8, y: 8, count: 10, id: 1 },
+    { x: 15, y: 15, count: 10, id: 2 }
+  ];
 
-
+  return clusters.flatMap(cluster =>
+    Array.from({ length: cluster.count }, (_, idx) => ({
+      x: +(cluster.x + (Math.random() * 2 - 1)).toFixed(2),
+      y: +(cluster.y + (Math.random() * 2 - 1)).toFixed(2),
+      cluster: cluster.id,
+      label: `点${cluster.id + 1}-${idx + 1}`,
+      value: (Math.random() * 100).toFixed(2)
+    }))
+  );
+};
 const ClusteringAnalysis = () => {
   const [form] = Form.useForm();
   const [analysisResult, setAnalysisResult] = useState('');
@@ -270,7 +296,7 @@ ${clusters.map((cluster, index) => `
       message.success('聚类分析完成！');
     }, 3000);
   };
-
+  const [clusterData] = useState(generateData());
   return (
     <div >
       <div style={{ width: "100%", backgroundColor: '#fff', borderRadius: '4px', padding: '20px' }}>
@@ -370,6 +396,8 @@ ${clusters.map((cluster, index) => `
           {/* <ScatterChart2  data={sampleData} /> */}
           {/* 修复类型错误，确保传递给ScatterChart的数据格式正确 */}
           {/* <ScatterChart scatterData={sampleData2 as { value: [number, number]; itemStyle?: { color: string } }[]} /> */}
+          <ClusterVisualization data={clusterData} />
+
           <ScatterChart scatterData={sampleData2 as [number, number][]} />
         </div>
       </div>

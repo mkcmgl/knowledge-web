@@ -1,18 +1,18 @@
 import {
-  Form,
-  Input,
-  Button,
+    Form,
+    Input,
+    Button,
   message,
   Upload,
   Space,
   Typography
-} from 'antd';
+  } from 'antd';
   import { useState } from 'react';
   import { DeleteOutlined } from '@ant-design/icons';
   import styles from './index.less';
 
-const { Text } = Typography;
-const { TextArea } = Input;
+  const { Text } = Typography;
+  const { TextArea } = Input;
   
   const ImageUnderstanding = () => {
     const [form] = Form.useForm();
@@ -74,7 +74,7 @@ const { TextArea } = Input;
       setTimeout(() => {
         const result = `
 图片理解分析结果：
-
+  
 上传图片：
 ${uploadedFiles.map(f => `• ${f.name} (${(f.size / 1024 / 1024).toFixed(2)} MB)`).join('\n')}
 
@@ -150,7 +150,7 @@ ${formData.question}
                         <p style={{ fontSize: '12px', color: '#999' }}>
                           图片大小不超过 10MB
                         </p>
-                      </div>
+                  </div>
                     </Button>
                   </Upload>
   
@@ -161,7 +161,7 @@ ${formData.question}
                       {uploadedFiles.map((file, index) => (
                         <div
                           key={index}
-                          style={{
+                    style={{
                             border: '1px dashed #d9d9d9',
                             borderRadius: '6px',
                             padding: '12px',
@@ -188,7 +188,7 @@ ${formData.question}
                           </div>
                         </div>
                       ))}
-                    </div>
+                </div>
                   )}
                 </Space>
               </Form.Item>
