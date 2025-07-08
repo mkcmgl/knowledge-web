@@ -30,7 +30,7 @@ export const useSaveKnowledge = () => {
       if (ret?.code === 0) {
         hideModal();
         navigate(
-          `/knowledge/${KnowledgeRouteKey.Configuration}?id=${ret.data.kb_id}`,
+          `/knowledge/${KnowledgeRouteKey.Configuration}?id=${ret.data}`,
         );
       }
     },

@@ -195,7 +195,7 @@ export const useDeleteKnowledge = () => {
   } = useMutation({
     mutationKey: [KnowledgeApiAction.DeleteKnowledge],
     mutationFn: async (id: string) => {
-      const { data } = await kbService.rmKb({ kb_id: id });
+      const { data } = await kbService.rmKb({ ids: [id]});
       if (data.code === 0) {
         message.success(i18n.t(`message.deleted`));
         queryClient.invalidateQueries({
@@ -220,7 +220,7 @@ export const useUpdateKnowledge = (shouldFetchList = false) => {
     mutationKey: [KnowledgeApiAction.SaveKnowledge],
     mutationFn: async (params: Record<string, any>) => {
       const { data = {} } = await kbService.updateKb({
-        kb_id: params?.kb_id ? params?.kb_id : knowledgeBaseId,
+       id: params?.kb_id ? params?.kb_id : knowledgeBaseId,
         ...params,
       });
       if (data.code === 0) {
@@ -249,7 +249,7 @@ export const useFetchKnowledgeBaseConfiguration = () => {
     gcTime: 0,
     queryFn: async () => {
       const { data } = await kbService.get_kb_detail({
-        kb_id: id,
+        datasetId: id,
       });
       return data?.data ?? {};
     },

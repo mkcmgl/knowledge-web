@@ -84,6 +84,11 @@ const KnowledgeList = () => {
   };
   const nextList = list || [];
 
+  // 新增：刷新列表方法
+  const refreshList = () => {
+    setSearchFilters({ ...searchFilters });
+  };
+
   return (
     <section className={styles.knowledge}>
       <div className={styles.topWrapper}>
@@ -250,6 +255,7 @@ const KnowledgeList = () => {
                   <KnowledgeCard
                     item={item}
                     key={`${item?.name}-${index}`}
+                    onDeleted={refreshList}
                   ></KnowledgeCard>
                 );
               })

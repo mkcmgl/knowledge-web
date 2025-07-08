@@ -46,7 +46,7 @@ export const useFetchKnowledgeBaseConfiguration = () => {
     gcTime: 0,
     queryFn: async () => {
       const { data } = await kbService.get_kb_detail({
-        kb_id: knowledgeBaseId,
+        datasetId: knowledgeBaseId,
       });
       return data?.data ?? {};
     },
@@ -187,7 +187,7 @@ export const useDeleteKnowledge = () => {
   } = useMutation({
     mutationKey: ['deleteKnowledge'],
     mutationFn: async (id: string) => {
-      const { data } = await kbService.rmKb({ kb_id: id });
+      const { data } = await kbService.rmKb({ ids: [id] });
       if (data.code === 0) {
         message.success(i18n.t(`message.deleted`));
         queryClient.invalidateQueries({
@@ -214,7 +214,7 @@ export const useUpdateKnowledge = (shouldFetchList = false) => {
     mutationKey: ['saveKnowledge'],
     mutationFn: async (params: Record<string, any>) => {
       const { data = {} } = await kbService.updateKb({
-        kb_id: params?.kb_id ? params?.kb_id : knowledgeBaseId,
+        id: params?.kb_id ? params?.kb_id : knowledgeBaseId,
         ...params,
       });
       if (data.code === 0) {
@@ -255,7 +255,7 @@ export const useTestChunkRetrieval = (): ResponsePostType<ITestingResult> & {
     mutationFn: async (values: any) => {
       console.log(`values`, values, knowledgeBaseId);
       console.log(knowledgeBaseId);
-      const data  = await retrieval_test({
+      const data = await retrieval_test({
         //       const { data } = await kbService.retrieval_test({
         //         ...values,
         // kb_id: values.kb_id ?values.kb_id: knowledgeBaseId,
@@ -285,8 +285,8 @@ export const useTestChunkRetrieval = (): ResponsePostType<ITestingResult> & {
         page,
         page_size: pageSize,
       });
-      if (data.code === 0 ) {
-        const res = data.data
+      if (data.code === 0) {
+        const res = data.data;
         // 转换 records 为 chunks
         const chunks = res.records.map((item: any) => ({
           chunk_id: item.id,
@@ -299,15 +299,15 @@ export const useTestChunkRetrieval = (): ResponsePostType<ITestingResult> & {
           kb_id: item.metadata.dataset_id,
           positions: item.metadata.positions,
           similarity: item.score,
-          ...item
+          ...item,
           // 你可以根据需要添加其他字段
         }));
-        console.log(`chunks`,chunks,res);
+        console.log(`chunks`, chunks, res);
         return {
           ...res,
           chunks,
           documents: res.doc_aggs,
-          total:chunks.length
+          total: chunks.length,
         };
       }
       return (
@@ -359,7 +359,7 @@ export const useTestChunkAllRetrieval = (): ResponsePostType<ITestingResult> & {
         retrieval_setting: {
           score_threshold: 0,
           top_k: 9,
-           ...(values.top_k ? { top_k: parseInt(values.top_k, 10) } : {}),
+          ...(values.top_k ? { top_k: parseInt(values.top_k, 10) } : {}),
         },
         vector_similarity_weight: values.vector_similarity_weight,
         metadata_condition: {
@@ -374,8 +374,8 @@ export const useTestChunkAllRetrieval = (): ResponsePostType<ITestingResult> & {
         page,
         page_size: pageSize,
       });
-      if (data.code=== 0) {
-        const res = data.data
+      if (data.code === 0) {
+        const res = data.data;
         // 转换 records 为 chunks
         const chunks = res.records.map((item: any) => ({
           chunk_id: item.id,
@@ -388,15 +388,15 @@ export const useTestChunkAllRetrieval = (): ResponsePostType<ITestingResult> & {
           kb_id: item.metadata.dataset_id,
           positions: item.metadata.positions,
           similarity: item.score,
-          ...item
+          ...item,
           // 你可以根据需要添加其他字段
         }));
-        console.log(`chunks`,chunks,res);
+        console.log(`chunks`, chunks, res);
         return {
           ...res,
           chunks,
           documents: res.doc_aggs,
-          total:chunks.length
+          total: chunks.length,
         };
       }
       return (
@@ -424,8 +424,8 @@ export const useSelectTestingResult = (): ITestingResult => {
   const data = useMutationState({
     filters: { mutationKey: ['testChunk'] },
     select: (mutation) => {
-      console.log( ` mutation.state.data;testChunk`,mutation.state.data);
-      
+      console.log(` mutation.state.data;testChunk`, mutation.state.data);
+
       return mutation.state.data;
     },
   });
@@ -441,7 +441,7 @@ export const useSelectIsTestingSuccess = () => {
   const status = useMutationState({
     filters: { mutationKey: ['testChunk'] },
     select: (mutation) => {
-      console.log( ` mutation.state.status;testChunk`,mutation.state.status);
+      console.log(` mutation.state.status;testChunk`, mutation.state.status);
 
       return mutation.state.status;
     },
@@ -453,7 +453,7 @@ export const useAllTestingSuccess = () => {
   const status = useMutationState({
     filters: { mutationKey: ['testChunkAll'] },
     select: (mutation) => {
-      console.log( ` mutation.state.status;`,mutation.state.status);
+      console.log(` mutation.state.status;`, mutation.state.status);
 
       return mutation.state.status;
     },
@@ -465,7 +465,7 @@ export const useAllTestingResult = (): ITestingResult => {
   const data = useMutationState({
     filters: { mutationKey: ['testChunkAll'] },
     select: (mutation) => {
-      console.log( ` mutation.state.data;`,mutation.state.data);
+      console.log(` mutation.state.data;`, mutation.state.data);
       return mutation.state.data;
     },
   });

@@ -37,10 +37,10 @@ export default {
 
   // knowledge base
   kb_list: `${api_rag_host}/dataset/list`,
-  create_kb: `${api_host}/kb/create`,
-  update_kb: `${api_host}/kb/update`,
-  rm_kb: `${api_host}/kb/rm`,
-  get_kb_detail: `${api_host}/kb/detail`,
+  create_kb: `${api_rag_host}/dataset/create`,
+  update_kb: `${api_rag_host}/dataset/update`,
+  rm_kb: `${api_rag_host}/dataset/delete`,
+  get_kb_detail: `${api_rag_host}/dataset/detail`,
   getKnowledgeGraph: (knowledgeId: string) =>
     `${api_host}/kb/${knowledgeId}/knowledge_graph`,
 
