@@ -46,12 +46,14 @@ const KnowledgeList = () => {
     model: string;
     dateRange: [string, string] | null;
   }>({ name: '', model: '', dateRange: null });
+  const [refreshFlag, setRefreshFlag] = useState(0);
   const { list, total, loading } = useFetchKnowledgeList(
     page,
     pageSize,
     searchFilters.name,
     searchFilters.model,
     searchFilters.dateRange,
+    refreshFlag
   );
 
   const handleSearch = () => {
@@ -86,7 +88,7 @@ const KnowledgeList = () => {
 
   // 新增：刷新列表方法
   const refreshList = () => {
-    setSearchFilters({ ...searchFilters });
+    setRefreshFlag(f => f + 1);
   };
 
   return (

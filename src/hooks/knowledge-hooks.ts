@@ -61,6 +61,7 @@ export const useFetchKnowledgeList = (
   keywords: string = '',
   model: string = '',
   dateRange: [string, string] | null = null,
+  refreshFlag: number = 0,
 ): { list: IKnowledge[]; total: number; loading: boolean } => {
   const { data, isFetching: loading } = useQuery({
     queryKey: [
@@ -70,6 +71,7 @@ export const useFetchKnowledgeList = (
       keywords,
       model,
       dateRange,
+      refreshFlag,
     ],
     initialData: { kbs: [], total: 0 },
     gcTime: 0,
