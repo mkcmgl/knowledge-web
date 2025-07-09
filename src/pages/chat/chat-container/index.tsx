@@ -56,7 +56,7 @@ const ChatContainer = ({ controller }: IProps) => {
     useCreateConversationBeforeUploadDocument();
 
   // 判断是否有消息
-  const hasMessages = derivedMessages && derivedMessages.length > 0;
+  const hasMessages = derivedMessages && derivedMessages.length > 1;
 
   return (
     <>
@@ -108,8 +108,9 @@ const ChatContainer = ({ controller }: IProps) => {
               fontWeight: 600,
               color: ' #333333'
             }}>
-              <Robot style={{marginRight:12}} />
-              我是您的个人助理，有什么可以帮忙的吗
+              <Robot style={{ marginRight: 12 }} />
+              <span>我是您的个人助理，有什么可以帮忙的吗?</span>
+
             </div>
           )}
           <div ref={ref} />

@@ -7,7 +7,6 @@ import api from '@/utils/api';
 import registerServer from '@/utils/register-server';
 import request, { post } from '@/utils/request';
 
-
 const {
   create_kb,
   update_kb,
@@ -72,10 +71,7 @@ const methods = {
     url: document_change_status,
     method: 'post',
   },
-  document_rm: {
-    url: document_rm,
-    method: 'post',
-  },
+
   document_rename: {
     url: document_rename,
     method: 'post',
@@ -86,6 +82,10 @@ const methods = {
   },
   document_run: {
     url: document_run,
+    method: 'post',
+  },
+  document_rm: {
+    url: document_rm,
     method: 'post',
   },
   document_change_parser: {
@@ -161,16 +161,14 @@ const methods = {
 };
 
 const kbService = registerServer<keyof typeof methods>(methods, request);
-export const retrieval_test = (
-  body?: IFetchKnowledgeListRequestParams,
-) => {
-  return request.post(api.retrieval_test, {data:body});
+export const retrieval_test = (body?: IFetchKnowledgeListRequestParams) => {
+  return request.post(api.retrieval_test, { data: body });
 };
 
-  // retrieval_test: {
-  //   url: retrieval_test,
-  //   method: 'post',
-  // },
+// retrieval_test: {
+//   url: retrieval_test,
+//   method: 'post',
+// },
 export const listTag = (knowledgeId: string) =>
   request.get(api.listTag(knowledgeId));
 
@@ -182,6 +180,11 @@ export const renameTag = (
   { fromTag, toTag }: IRenameTag,
 ) => post(api.renameTag(knowledgeId), { fromTag, toTag });
 
+export const documentRm = (
+  knowledgeId: string,
+  { fromTag, toTag }: IRenameTag,
+) => post(api.documentRm(knowledgeId), { fromTag, toTag });
+
 export function getKnowledgeGraph(knowledgeId: string) {
   return request.get(api.getKnowledgeGraph(knowledgeId));
 }
@@ -190,11 +193,8 @@ export function deleteKnowledgeGraph(knowledgeId: string) {
   return request.delete(api.getKnowledgeGraph(knowledgeId));
 }
 
-export const listDataset = (
-  body?: IFetchKnowledgeListRequestParams,
-) => {
-  return request.post(api.kb_list, {data:body})
-   
+export const listDataset = (body?: IFetchKnowledgeListRequestParams) => {
+  return request.post(api.kb_list, { data: body });
 };
 
 export const listDocument = (

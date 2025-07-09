@@ -66,6 +66,7 @@ export default {
   get_document_list: `${api_host}/document/list`,
   document_change_status: `${api_host}/document/change_status`,
   document_rm: `${api_host}/document/rm`,
+  documentRm: (dataset_id: string) =>`${api_rag_host}/file/deleteDoc/${dataset_id}`,
   document_delete: `${api_host}/api/document`,
   document_rename: `${api_host}/document/rename`,
   document_create: `${api_host}/document/create`,
@@ -147,4 +148,6 @@ export default {
 
   // tools
   speechToText: `${api_rag_host}/tools/speechToText`,
+  ocrRecognition: `${api_rag_host}/tools/ocrRecognition`,
+  textSimilarity: `${api_rag_host}/tools/textSimilarity`, // 新增
 };

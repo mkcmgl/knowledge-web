@@ -14,3 +14,28 @@ export const speechToText = (file: File) => {
     body: formData,
   });
 };
+
+export const ocrRecognition = (file: File, isFormatting?: number, isHtml?: number) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  if (typeof isFormatting !== 'undefined') {
+    formData.append('isFormatting', String(isFormatting));
+  }
+  if (typeof isHtml !== 'undefined') {
+    formData.append('isHtml', String(isHtml));
+  }
+  return request(api.ocrRecognition, {
+    method: 'POST',
+    body: formData,
+  });
+};
+
+export const textSimilarity = (sourceFile: string, targetFile: string) => {
+  return request(api.textSimilarity, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ sourceFile, targetFile }),
+  });
+};

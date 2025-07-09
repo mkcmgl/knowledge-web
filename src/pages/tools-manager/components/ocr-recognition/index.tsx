@@ -9,9 +9,10 @@ import {
     Form,
     CheckboxProps
 } from 'antd';
-import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';
 import noData from "@/assets/svg/noData.svg"
+import { useOCRRecognition } from '@/hooks/tools-hooks';
 const { Text } = Typography;
 const { TextArea } = Input;
 
@@ -19,7 +20,7 @@ const OCR = () => {
     const [form] = Form.useForm();
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
     const [recognitionResult, setRecognitionResult] = useState('');
-    const [isProcessing, setIsProcessing] = useState(false);
+    const { mutateAsync: ocrRecognition, isPending: isProcessing } = useOCRRecognition();
 
     // 全选相关逻辑
     const outputOptions = [
@@ -105,8 +106,7 @@ const OCR = () => {
     };
 
     // OCR识别处理
-    const handleOCRRecognition = () => {
-        console.log('当前表单所有值:', form.getFieldsValue());
+    const handleOCRRecognition = async () => {
         if (uploadedFiles.length === 0) {
             message.error('请先上传图片！');
             return;
@@ -114,47 +114,23 @@ const OCR = () => {
 
         // 获取表单数据
         const formData = form.getFieldsValue();
+        const isFormatting = formData.formatOutput ? 1 : 0;
+        const isHtml = formData.textOutputHtml ? 1 : 0;
 
-        // 控制台输出配置信息
-        console.log('=== OCR识别配置信息 ===');
-        console.log('表单数据:', formData);
-        console.log('格式化输出:', formData.formatOutput);
-        console.log('文本输出HTML:', formData.textOutputHtml);
-        console.log('上传文件信息:', uploadedFiles.map(file => ({
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            lastModified: file.lastModified
-        })));
-        console.log('识别时间:', new Date().toLocaleString());
-        console.log('========================');
+        setRecognitionResult('');
 
-        setIsProcessing(true);
-
-        // 模拟OCR识别过程
-        setTimeout(() => {
-            const filesInfo = uploadedFiles.map(file =>
-                `- 文件名：${file.name}，大小：${(file.size / 1024 / 1024).toFixed(2)} MB`
-            ).join('\n');
-
-            const configInfo = `
-识别配置信息：
-- 格式化输出：${formData.formatOutput ? '是' : '否'}
-- 文本输出HTML：${formData.textOutputHtml ? '是' : '否'}
-
-上传图片信息：
-${filesInfo}
-
-识别结果示例：
-这是一个示例的OCR识别结果。
-支持中文和英文混合识别。
-
-识别时间：${new Date().toLocaleString()}`;
-
-            setRecognitionResult(configInfo);
-            setIsProcessing(false);
+        try {
+            // 这里只处理第一个文件，如需多文件可自行扩展
+            const result = await ocrRecognition({
+                file: uploadedFiles[0],
+                isFormatting,
+                isHtml,
+            });
+            setRecognitionResult(result?.data || result || '无识别结果');
             message.success('OCR识别完成！');
-        }, 2000);
+        } catch (error: any) {
+            message.error(error.message || '识别失败');
+        }
     };
 
     return (
@@ -222,7 +198,7 @@ ${filesInfo}
                                             style={{ width: '300px', height: '200px', borderStyle: 'dashed' }}
                                         >
                                             <div style={{ textAlign: 'center', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                                <svg xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1" width="48" height="48" viewBox="0 0 48 48">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" version="1.1" width="48" height="48" viewBox="0 0 48 48">
                                                     <defs>
                                                         <clipPath id="master_svg0_23_8218">
                                                             <rect x="0" y="0" width="48" height="48" rx="0" />
@@ -230,10 +206,10 @@ ${filesInfo}
                                                     </defs>
                                                     <g clipPath="url(#master_svg0_23_8218)">
                                                         <g>
-                                                            <path d="M15.72000244140625,20.64041015625C17.52000244140625,20.64041015625,19.08000244140625,19.20041015625,19.08000244140625,17.28041015625C19.08000244140625,15.48041015625,17.64000244140625,13.92041015625,15.72000244140625,13.92041015625C13.92000244140625,13.92041015625,12.36000244140625,15.36041015625,12.36000244140625,17.28041015625C12.48000244140625,19.20041015625,13.92000244140625,20.64041015625,15.72000244140625,20.64041015625ZM30.60000244140625,18.60041015625L20.880002441406248,32.400410156250004L15.84000244140625,25.32041015625L7.44000244140625,37.20041015625L40.44000244140625,37.20041015625L30.60000244140625,18.60041015625Z" fill="#0689FF" fillOpacity="1" style={{ mixBlendMode: "passthrough" }} />
+                                                            <path d="M15.72000244140625,20.64041015625C17.52000244140625,20.64041015625,19.08000244140625,19.20041015625,19.08000244140625,17.28041015625C19.08000244140625,15.48041015625,17.64000244140625,13.92041015625,15.72000244140625,13.92041015625C13.92000244140625,13.92041015625,12.36000244140625,15.36041015625,12.36000244140625,17.28041015625C12.48000244140625,19.20041015625,13.92000244140625,20.64041015625,15.72000244140625,20.64041015625ZM30.60000244140625,18.60041015625L20.880002441406248,32.400410156250004L15.84000244140625,25.32041015625L7.44000244140625,37.20041015625L40.44000244140625,37.20041015625L30.60000244140625,18.60041015625Z" fill="#0689FF" fillOpacity="1" style={{ mixBlendMode: "normal" }} />
                                                         </g>
                                                         <g>
-                                                            <path d="M43.799989013671876,5.0400390625L4.199989013671875,5.0400390625C3.2399890136718748,5.0400390625,2.519989013671875,5.7600390625,2.519989013671875,6.7200390625L2.519989013671875,41.4000390625C2.519989013671875,42.3600390625,3.2399890136718748,43.0800390625,4.199989013671875,43.0800390625L43.799989013671876,43.0800390625C44.75998901367188,43.0800390625,45.479989013671876,42.3600390625,45.479989013671876,41.4000390625L45.479989013671876,6.7200390625C45.479989013671876,5.7600390625,44.75998901367188,5.0400390625,43.799989013671876,5.0400390625ZM42.119989013671876,39.7200390625L5.879989013671874,39.7200390625L5.879989013671874,8.2800390625L42.239989013671874,8.2800390625L42.239989013671874,39.7200390625L42.119989013671876,39.7200390625Z" fill="#0689FF" fillOpacity="1" style={{ mixBlendMode: "passthrough" }} />
+                                                            <path d="M43.799989013671876,5.0400390625L4.199989013671875,5.0400390625C3.2399890136718748,5.0400390625,2.519989013671875,5.7600390625,2.519989013671875,6.7200390625L2.519989013671875,41.4000390625C2.519989013671875,42.3600390625,3.2399890136718748,43.0800390625,4.199989013671875,43.0800390625L43.799989013671876,43.0800390625C44.75998901367188,43.0800390625,45.479989013671876,42.3600390625,45.479989013671876,41.4000390625L45.479989013671876,6.7200390625C45.479989013671876,5.7600390625,44.75998901367188,5.0400390625,43.799989013671876,5.0400390625ZM42.119989013671876,39.7200390625L5.879989013671874,39.7200390625L5.879989013671874,8.2800390625L42.239989013671874,8.2800390625L42.239989013671874,39.7200390625L42.119989013671876,39.7200390625Z" fill="#0689FF" fillOpacity="1" style={{ mixBlendMode: "normal" }} />
                                                         </g>
                                                     </g>
                                                 </svg>

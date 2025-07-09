@@ -1,74 +1,39 @@
 import {
-  Typography,
   Form,
   Input,
   Button,
   message
 } from 'antd';
 import { useState } from 'react';
+import { useTextSimilarity } from '@/hooks/tools-hooks';
 import styles from './index.less';
-const { Text } = Typography;
 const { TextArea } = Input;
 
-const textSimilarity = () => {
+const TextSimilarity = () => {
   const [form] = Form.useForm();
   const [analysisResult, setAnalysisResult] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
+  const { mutateAsync: calcSimilarity, isPending: isProcessing } = useTextSimilarity();
 
   // 文本相似度计算处理
-  const handleSimilarityCalculation = () => {
-    // 获取表单数据
+  const handleSimilarityCalculation = async () => {
     const formData = form.getFieldsValue();
-
     if (!formData.originalText || !formData.compareText) {
       message.error('请填写原始文本和比对文本！');
       return;
     }
-
-    // 控制台输出配置信息
-    console.log('=== 文本相似度计算信息 ===');
-    console.log('原始文本:', formData.originalText);
-    console.log('比对文本:', formData.compareText);
-    console.log('计算时间:', new Date().toLocaleString());
-    console.log('========================');
-
-    setIsProcessing(true);
-
-    // 模拟相似度计算过程
-    setTimeout(() => {
-      // 简单的相似度计算示例（这里只是演示）
-      const originalWords = formData.originalText.split(/\s+/).filter((word: string) => word.length > 0);
-      const compareWords = formData.compareText.split(/\s+/).filter((word: string) => word.length > 0);
-
-      const intersection = originalWords.filter((word: string) => compareWords.includes(word));
-      const union = [...new Set([...originalWords, ...compareWords])];
-
-      const jaccardSimilarity = intersection.length / union.length;
-      const cosineSimilarity = intersection.length / Math.sqrt(originalWords.length * compareWords.length);
-
-      const result = `
-文本相似度分析结果：
-
-原始文本：
-${formData.originalText}
-
-比对文本：
-${formData.compareText}
-
-分析结果：
-• Jaccard相似度：${(jaccardSimilarity * 100).toFixed(2)}%
-• 余弦相似度：${(cosineSimilarity * 100).toFixed(2)}%
-• 共同词汇数量：${intersection.length}
-• 原始文本词汇数：${originalWords.length}
-• 比对文本词汇数：${compareWords.length}
-• 词汇交集：${intersection.join(', ')}
-
-计算时间：${new Date().toLocaleString()}`;
-
-      setAnalysisResult(result);
-      setIsProcessing(false);
-      message.success('相似度计算完成！');
-    }, 2000);
+    try {
+      setAnalysisResult('');
+      const result = await calcSimilarity({ sourceFile: formData.originalText, targetFile: formData.compareText });
+      if (result) {
+        const res = `文本相似度分析结果：\n\n原始文本：\n${formData.originalText}\n\n比对文本：\n${formData.compareText}\n\n分析结果：\n• Jaccard相似度：${(result.jaccardSimilarity * 100).toFixed(2)}%\n• 余弦相似度：${(result.cosineSimilarity * 100).toFixed(2)}%\n• 共同词汇数量：${result.commonWordCount}\n• 原始文本词汇数：${result.originalWordCount}\n• 比对文本词汇数：${result.compareWordCount}\n• 词汇交集：${(result.commonWords || []).join(', ')}\n\n计算时间：${new Date().toLocaleString()}`;
+        setAnalysisResult(res);
+        message.success('相似度计算完成！');
+      } else {
+        setAnalysisResult('无分析结果');
+      }
+    } catch (err: any) {
+      message.error(err.message || '相似度计算失败！');
+    }
   };
 
   return (
@@ -213,4 +178,4 @@ ${formData.compareText}
   );
 };
 
-export default textSimilarity; 
+export default TextSimilarity; 
