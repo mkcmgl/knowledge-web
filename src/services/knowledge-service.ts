@@ -1,7 +1,6 @@
 import { IRenameTag } from '@/interfaces/database/knowledge';
 import {
   IFetchDocumentListRequestBody,
-  IFetchKnowledgeListRequestBody,
   IFetchKnowledgeListRequestParams,
 } from '@/interfaces/request/knowledge';
 import api from '@/utils/api';
@@ -15,6 +14,7 @@ const {
   rm_kb,
   get_kb_detail,
   kb_list,
+
   get_document_list,
   document_change_status,
   document_rm,
@@ -62,6 +62,7 @@ const methods = {
     url: kb_list,
     method: 'post',
   },
+
   // document manager
   get_document_list: {
     url: get_document_list,
@@ -200,5 +201,9 @@ export const listDocument = (
   params?: IFetchKnowledgeListRequestParams,
   body?: IFetchDocumentListRequestBody,
 ) => request.post(api.get_document_list, { data: body || {}, params });
+
+export const getCount = () => {
+  return request.get('/api/dataset/getCount');
+};
 
 export default kbService;

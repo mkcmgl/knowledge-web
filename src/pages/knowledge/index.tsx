@@ -21,7 +21,7 @@ import KnowledgeCard from './knowledge-card';
 import knowledgeListImg from '@/assets/imgs/knowledgeList.png';
 import knowledgeFileImg from '@/assets/imgs/knowledgeFile.png';
 import knowledgeModelImg from '@/assets/imgs/knowledgeModel.png';
-import { useFetchKnowledgeList } from '@/hooks/knowledge-hooks';
+import { useFetchKnowledgeList, useFetchKnowledgeCount } from '@/hooks/knowledge-hooks';
 import classNames from 'classnames';
 import { useState } from 'react';
 import styles from './index.less';
@@ -55,6 +55,7 @@ const KnowledgeList = () => {
     searchFilters.dateRange,
     refreshFlag
   );
+  const { kbCount, docCount, embdCount, loading: countLoading, refetch: refetchCount } = useFetchKnowledgeCount();
 
   const handleSearch = () => {
     const values = form.getFieldsValue();
@@ -89,6 +90,13 @@ const KnowledgeList = () => {
   // 新增：刷新列表方法
   const refreshList = () => {
     setRefreshFlag(f => f + 1);
+    refetchCount();
+  };
+
+  // 新增知识库成功后也刷新统计
+  const handleCreateOk = async (name: string) => {
+    await onCreateOk(name);
+    refetchCount();
   };
 
   return (
@@ -189,7 +197,7 @@ const KnowledgeList = () => {
               </div>
               <div>
                 <span className="font-semibold text-[18px]">
-                  {Number(1999).toLocaleString()}
+                  {countLoading ? '--' : Number(kbCount).toLocaleString()}
                 </span>
                 <span className="text-xs">个</span>
               </div>
@@ -209,7 +217,7 @@ const KnowledgeList = () => {
               </div>
               <div>
                 <span className="font-semibold text-[18px]">
-                  {Number(1999).toLocaleString()}
+                  {countLoading ? '--' : Number(docCount).toLocaleString()}
                 </span>
                 <span className="text-xs">个</span>
               </div>
@@ -229,7 +237,7 @@ const KnowledgeList = () => {
               </div>
               <div>
                 <span className="font-semibold text-[18px]">
-                  {Number(1999).toLocaleString()}
+                  {countLoading ? '--' : Number(embdCount).toLocaleString()}
                 </span>
                 <span className="text-xs">个</span>
               </div>
@@ -327,7 +335,7 @@ const KnowledgeList = () => {
         loading={creatingLoading}
         visible={visible}
         hideModal={hideModal}
-        onOk={onCreateOk}
+        onOk={handleCreateOk}
       ></KnowledgeCreatingModal>
       {/* <span className={styles.title}>
         {t('welcome')}, {userInfo?.nickname}

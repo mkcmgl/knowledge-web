@@ -80,9 +80,13 @@ request.interceptors.request.use((url: string, options: any) => {
   const data = url.includes('/api/')
     ? options.data
     : convertTheKeysOfTheObjectToSnake(options.data);
-  const params =  url.includes('/api/')?options.params:convertTheKeysOfTheObjectToSnake(options.params);
+  const params = url.includes('/api/')
+    ? options.params
+    : convertTheKeysOfTheObjectToSnake(options.params);
   const token = getAuthorization();
-  if (url.includes('/api/')) {
+  if (url.includes('user/login') || url.includes('user/register')) {
+    delete options.headers.Authorization;
+  } else if (url.includes('/api/')) {
     options.headers.Authorization = 'Bearer ragflow-' + token;
   } else {
     options.headers.Authorization = 'Bearer ' + token;

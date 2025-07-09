@@ -15,6 +15,7 @@ import kbService, {
   renameTag,
   // retrieval_test,
   retrieval_test,
+  getCount,
 } from '@/services/knowledge-service';
 import {
   useInfiniteQuery,
@@ -614,4 +615,17 @@ export const useRemoveKnowledgeGraph = () => {
   });
 
   return { data, loading, removeKnowledgeGraph: mutateAsync };
+};
+
+export const useFetchKnowledgeCount = () => {
+  const { data, isFetching: loading, refetch } = useQuery({
+    queryKey: ['fetchKnowledgeCount'],
+    queryFn: async () => {
+      const { data } = await getCount();
+      return data?.data || { kbCount: 0, docCount: 0, embdCount: 0 };
+    },
+    gcTime: 0,
+    initialData: { kbCount: 0, docCount: 0, embdCount: 0 },
+  });
+  return { ...data, loading, refetch };
 };

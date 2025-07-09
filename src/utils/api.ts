@@ -4,12 +4,12 @@ export { api_host };
 export { api_rag_host }
 export default {
   // user
-  login: `${api_host}/user/login`,
+  login: `${api_rag_host}/user/login`,
   logout: `${api_host}/user/logout`,
-  register: `${api_host}/user/register`,
+  register: `${api_rag_host}/user/register`,
   setting: `${api_host}/user/setting`,
-  user_info: `${api_host}/user/info`,
-  tenant_info: `${api_host}/user/tenant_info`,
+  user_info: `${api_rag_host}/user/info`,
+  tenant_info: `${api_rag_host}/user/tenantInfo`,
   set_tenant_info: `${api_host}/user/set_tenant_info`,
   login_channels: `${api_host}/user/login/channels`,
   login_channel: (channel: string) => `${api_host}/user/login/${channel}`,
@@ -20,7 +20,7 @@ export default {
     `${api_host}/tenant/${tenantId}/user/list`,
   deleteTenantUser: (tenantId: string, userId: string) =>
     `${api_host}/tenant/${tenantId}/user/${userId}`,
-  listTenant: `${api_host}/tenant/list`,
+  listTenant: `${api_rag_host}/user/tenant/list`,
   agreeTenant: (tenantId: string) => `${api_host}/tenant/agree/${tenantId}`,
 
   // llm model
