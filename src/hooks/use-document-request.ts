@@ -5,7 +5,7 @@ import {
   IDocumentMetaRequestBody,
 } from '@/interfaces/request/document';
 import i18n from '@/locales/config';
-import kbService, { listDocument } from '@/services/knowledge-service';
+import kbService, { documentRm, listDocument } from '@/services/knowledge-service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDebounce } from 'ahooks';
 import { message } from 'antd';
@@ -264,6 +264,7 @@ export const useRemoveDocument = () => {
 
   return { data, loading, removeDocument: mutateAsync };
 };
+
 
 export const useSaveDocumentName = () => {
   const queryClient = useQueryClient();

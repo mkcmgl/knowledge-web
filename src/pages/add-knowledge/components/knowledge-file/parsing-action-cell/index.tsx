@@ -1,16 +1,13 @@
 import { useShowDeleteConfirm, useTranslate } from '@/hooks/common-hooks';
-import { useRemoveNextDocument } from '@/hooks/document-hooks';
+import { useRemoveNextDocumentKb } from '@/hooks/document-hooks';
 import { IDocumentInfo } from '@/interfaces/database/document';
 import { downloadDocument } from '@/utils/file-util';
 
-import { Button, Dropdown, MenuProps, Space, Tooltip } from 'antd';
+import { Button, Dropdown, MenuProps, Space } from 'antd';
 import { isParserRunning } from '../utils';
-import { useNavigate } from 'umi';
 import { useCallback, useState } from 'react';
 import { DocumentType } from '../constant';
 import styles from './index.less';
-import { KnowledgeRouteKey } from '../constant';
-import { useGetKnowledgeSearchParams } from '@/hooks/route-hook';
 import PreviewModal from '../preview-modal/index';
 
 interface IProps {
@@ -19,6 +16,7 @@ interface IProps {
   showRenameModal: () => void;
   showChangeParserModal: () => void;
   showSetMetaModal: () => void;
+  knowledgeId: string;
 }
 
 const ParsingActionCell = ({
@@ -27,11 +25,12 @@ const ParsingActionCell = ({
   showRenameModal,
   showChangeParserModal,
   showSetMetaModal,
+  knowledgeId,
 }: IProps) => {
   const documentId = record.id;
   const isRunning = isParserRunning(record.run);
   const { t } = useTranslate('knowledgeDetails');
-  const { removeDocument } = useRemoveNextDocument();
+  const { removeDocument } = useRemoveNextDocumentKb();
   const showDeleteConfirm = useShowDeleteConfirm();
   const isVirtualDocument = record.type === DocumentType.Virtual;
   const [previewVisible, setPreviewVisible] = useState(false);
@@ -39,8 +38,9 @@ const ParsingActionCell = ({
 
   const onRmDocument = () => {
     if (!isRunning) {
+      console.log(`knowledgeId`,knowledgeId);
       showDeleteConfirm({
-        onOk: () => removeDocument([documentId]),
+        onOk: () => removeDocument({ documentIds: [documentId], knowledgeId }),
         content: record?.parser_config?.graphrag?.use_graphrag
           ? t('deleteDocumentConfirmContent')
           : '',
@@ -83,27 +83,6 @@ const ParsingActionCell = ({
     setPreviewDocId('');
   };
 
-  const useNavigateToOtherPage = () => {
-    const navigate = useNavigate();
-    const { knowledgeId } = useGetKnowledgeSearchParams();
-
-    const linkToUploadPage = useCallback(() => {
-      navigate(`/knowledge/dataset/upload?id=${knowledgeId}`);
-    }, [navigate, knowledgeId]);
-
-    const toChunk = useCallback(
-      (id: string) => {
-        navigate(
-          `/knowledge/${KnowledgeRouteKey.Dataset}/chunk?id=${knowledgeId}&doc_id=${id}`,
-        );
-      },
-      [navigate, knowledgeId],
-    );
-
-    return { linkToUploadPage, toChunk };
-  };
-
-  const { toChunk } = useNavigateToOtherPage();
   const chunkItems: MenuProps['items'] = [
     {
       key: '1',

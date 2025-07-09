@@ -77,6 +77,7 @@ const OCR = () => {
     const uploadProps = {
         accept: '.jpg,.jpeg,.png,.bmp',
         maxSize: 10 * 1024 * 1024, // 10MB
+        multiple: false, // 只允许单文件
         beforeUpload: (file: File) => {
             const isValidFormat = /\.(jpg|jpeg|png|bmp)$/i.test(file.name);
             const isValidSize = file.size <= 10 * 1024 * 1024;
@@ -91,14 +92,8 @@ const OCR = () => {
                 return false;
             }
 
-            // 检查是否已存在同名文件
-            const isDuplicate = uploadedFiles.some(f => f.name === file.name);
-            if (isDuplicate) {
-                message.error('文件已存在，请选择其他文件！');
-                return false;
-            }
-
-            setUploadedFiles(prev => [...prev, file]);
+            // 只保留当前上传的文件
+            setUploadedFiles([file]);
             message.success('图片上传成功！');
             return false; // 阻止自动上传
         },

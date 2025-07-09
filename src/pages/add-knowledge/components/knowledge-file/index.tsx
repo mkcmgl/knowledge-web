@@ -53,6 +53,7 @@ import { useMemo, useState, useCallback, useEffect } from 'react';
 import styles from './index.less';
 import SetMetaModal from './set-meta-modal';
 import Editor from '@monaco-editor/react';
+import { useGetKnowledgeSearchParams } from '@/hooks/route-hook';
 const { Text } = Typography;
 
 const KnowledgeFile = () => {
@@ -124,6 +125,8 @@ const KnowledgeFile = () => {
       setMetaLoading(false);
     }
   };
+
+  const { knowledgeId } = useGetKnowledgeSearchParams();
 
   const rowSelection = useGetRowSelection();
 
@@ -258,7 +261,8 @@ const KnowledgeFile = () => {
           showChangeParserModal={showChangeParserModal}
           showSetMetaModal={showSetMetaModal}
           record={record}
-        ></ParsingActionCell>
+          knowledgeId={knowledgeId}
+        />
       ),
     },
   ];

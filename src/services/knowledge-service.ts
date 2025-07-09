@@ -182,8 +182,8 @@ export const renameTag = (
 
 export const documentRm = (
   knowledgeId: string,
-  { fromTag, toTag }: IRenameTag,
-) => post(api.documentRm(knowledgeId), { fromTag, toTag });
+  body?: IFetchKnowledgeListRequestParams
+) => post(api.documentRm(knowledgeId), {data:body});
 
 export function getKnowledgeGraph(knowledgeId: string) {
   return request.get(api.getKnowledgeGraph(knowledgeId));

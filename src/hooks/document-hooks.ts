@@ -7,7 +7,7 @@ import {
 } from '@/interfaces/request/document';
 import i18n from '@/locales/config';
 import chatService from '@/services/chat-service';
-import kbService, { listDocument } from '@/services/knowledge-service';
+import kbService, { documentRm, listDocument } from '@/services/knowledge-service';
 import api, { api_host } from '@/utils/api';
 import { buildChunkHighlights } from '@/utils/document-util';
 import { post } from '@/utils/request';
@@ -459,7 +459,27 @@ export const useRemoveNextDocument = () => {
 
   return { data, loading, removeDocument: mutateAsync };
 };
+export const useRemoveNextDocumentKb = () => {
+  const queryClient = useQueryClient();
+  const {
+    data,
+    isPending: loading,
+    mutateAsync,
+  } = useMutation({
+    mutationKey: ['removeDocumentKb'],
+    mutationFn: async ({ documentIds, knowledgeId }: { documentIds: string[]; knowledgeId: string }) => {
+      console.log(`knowledgeId,  documentIds`,knowledgeId,  documentIds);
+      const { data } = await documentRm(knowledgeId, {  ids: documentIds  } as any);
+      if (data.code === 0) {
+        message.success(i18n.t('message.deleted'));
+        queryClient.invalidateQueries({ queryKey: ['fetchDocumentList'] });
+      }
+      return data.code;
+    },
+  });
 
+  return { data, loading, removeDocument: mutateAsync };
+};
 export const useDeleteDocument = () => {
   const {
     data,
