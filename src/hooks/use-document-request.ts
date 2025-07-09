@@ -46,7 +46,7 @@ export const useUploadNextDocument = () => {
     mutationKey: [DocumentApiAction.UploadDocument],
     mutationFn: async (fileList: File[]) => {
       const formData = new FormData();
-      formData.append('kb_id', id!);
+      formData.append('datasetId', id!);
       fileList.forEach((file: any) => {
         formData.append('file', file);
       });

@@ -4,7 +4,7 @@ export { api_host };
 export { api_rag_host }
 export default {
   // user
-  login: `${api_rag_host}/user/login`,
+  login: `${api_host}/user/login`,
   logout: `${api_host}/user/logout`,
   register: `${api_rag_host}/user/register`,
   setting: `${api_host}/user/setting`,
@@ -73,7 +73,7 @@ export default {
   document_change_parser: `${api_host}/document/change_parser`,
   document_thumbnails: `${api_host}/document/thumbnails`,
   get_document_file: `${api_host}/document/get`,
-  document_upload: `${api_host}/document/upload`,
+  document_upload: `${api_rag_host}/file/uploadFile`,
   web_crawl: `${api_host}/document/web_crawl`,
   document_infos: `${api_host}/document/infos`,
   upload_and_parse: `${api_host}/document/upload_and_parse`,

@@ -18,17 +18,23 @@ import styles from './index.less';
 
 const { Dragger } = Upload;
 
+interface FileUploadProps {
+  directory: boolean;
+  fileList: UploadFile[];
+  setFileList: Dispatch<SetStateAction<UploadFile[]>>;
+  uploadProgress?: number;
+  accept?: string;
+  uploadLimitTip?: string;
+}
+
 const FileUpload = ({
   directory,
   fileList,
   setFileList,
   uploadProgress,
-}: {
-  directory: boolean;
-  fileList: UploadFile[];
-  setFileList: Dispatch<SetStateAction<UploadFile[]>>;
-  uploadProgress?: number;
-}) => {
+  accept,
+  uploadLimitTip,
+}: FileUploadProps) => {
   const { t } = useTranslate('fileManager');
   const props: UploadProps = {
     multiple: true,
@@ -42,7 +48,6 @@ const FileUpload = ({
       setFileList((pre) => {
         return [...pre, file];
       });
-
       return false;
     },
     directory,
@@ -50,6 +55,7 @@ const FileUpload = ({
     progress: {
       strokeWidth: 2,
     },
+    accept, // 使用 accept
   };
 
   return (
@@ -60,7 +66,7 @@ const FileUpload = ({
           <InboxOutlined />
         </p>
         <p className="ant-upload-text">{t('uploadTitle')}</p>
-        <p className="ant-upload-hint">{t('uploadDescription')}</p>
+        <p className="ant-upload-hint">{t('uploadDescription')+uploadLimitTip}</p>
         {false && <p className={styles.uploadLimit}>{t('uploadLimit')}</p>}
       </Dragger>
     </>
@@ -88,7 +94,7 @@ const FileUploadModal = ({
   setUploadProgress,
 }: IFileUploadModalProps) => {
   const { t } = useTranslate('fileManager');
-  const [value, setValue] = useState<string | number>('local');
+  const [value] = useState<string | number>('local');
   const [parseOnCreation, setParseOnCreation] = useState(false);
   const [currentFileList, setCurrentFileList] = useState<UploadFile[]>([]);
   const [directoryFileList, setDirectoryFileList] = useState<UploadFile[]>([]);
@@ -131,6 +137,8 @@ const FileUploadModal = ({
           fileList={fileList ? fileList : currentFileList}
           setFileList={setFileList ? setFileList : setCurrentFileList}
           uploadProgress={uploadProgress}
+          accept={'.docx,.xlsx,.xls,.ppt,.pdf,.txt,.jpeg,.jpg,.png,.tif,.gif,.csv,.json,.eml,.html'}
+          uploadLimitTip={ '仅支持DOCX、XLSX、XLS、PPT、PDF、TXT、JPEG、JPG、PNG、TIF、GIF、CSV、JSON、EML、HTML文件格式'}
         ></FileUpload>
       ),
     },

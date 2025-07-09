@@ -59,14 +59,18 @@ export const useLogin = () => {
   } = useMutation({
     mutationKey: ['login'],
     mutationFn: async (params: { email: string; password: string }) => {
-
-      console.log(`paramsparamsparamsparamsparams`,params)
+      console.log(`paramsparamsparamsparamsparams`, params);
       const { data: res = {}, response } = await userService.login(params);
+      console.log(`12313131`, res,response);
       if (res.code === 0) {
         const { data } = res;
+        console.log(`12313131`, res);
+
         message.success(t('message.logged'));
         const authorization = response.headers.get(Authorization);
+        
         const token = data.access_token;
+        console.log(`qqqqqqqqqqq`,token,data);
         const userInfo = {
           avatar: data.avatar,
           name: data.nickname,
@@ -77,6 +81,7 @@ export const useLogin = () => {
           userInfo: JSON.stringify(userInfo),
           Token: token,
         });
+        console.log(`11111`,localStorage.getItem('Authorization'));
       }
       return res.code;
     },

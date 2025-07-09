@@ -299,9 +299,9 @@ export const useUploadNextDocument = () => {
     mutationKey: ['uploadDocument'],
     mutationFn: async (fileList: UploadFile[]) => {
       const formData = new FormData();
-      formData.append('kb_id', knowledgeId);
+      formData.append('datasetId', knowledgeId);
       fileList.forEach((file: any) => {
-        formData.append('file', file);
+        formData.append('files', file);
       });
 
       try {
