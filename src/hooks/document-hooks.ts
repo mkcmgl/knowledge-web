@@ -7,7 +7,10 @@ import {
 } from '@/interfaces/request/document';
 import i18n from '@/locales/config';
 import chatService from '@/services/chat-service';
-import kbService, { documentRm, listDocument } from '@/services/knowledge-service';
+import kbService, {
+  documentRm,
+  listDocument,
+} from '@/services/knowledge-service';
 import api, { api_host } from '@/utils/api';
 import { buildChunkHighlights } from '@/utils/document-util';
 import { post } from '@/utils/request';
@@ -17,10 +20,7 @@ import { get } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
 import { IHighlight } from 'react-pdf-highlighter';
 import { useParams } from 'umi';
-import {
-  useGetPaginationWithRouter,
-  useHandleSearchChange,
-} from './logic-hooks';
+import { useGetPaginationWithRouter } from './logic-hooks';
 import {
   useGetKnowledgeSearchParams,
   useSetPaginationParams,
@@ -61,43 +61,45 @@ export const useGetChunkHighlights = (
 export const useFetchNextDocumentList = () => {
   const { knowledgeId } = useGetKnowledgeSearchParams();
   const [searchFilters, setSearchFilters] = useState({
-    keywords: '',
-    parser_id: '',
+    name: '',
+    chunkMethod: '',
     status: '',
-    run: '',
+    progress: '',
     key: '',
-    value: ''
+    value: '',
+    startDate: '',
+    endDate: '',
   });
   const { pagination, setPagination } = useGetPaginationWithRouter();
   const { id } = useParams();
 
-  const filterDocuments = (documents: IDocumentInfo[], filters: any) => {
-    return documents.filter(doc => {
-      if (filters.parser_id && doc.parser_id !== filters.parser_id) {
-        return false;
-      }
-      
-      if (filters.status && doc.status !== filters.status) {
-        return false;
-      }
-      
-      if (filters.run && doc.run !== filters.run) {
-        return false;
-      }
-      
-      if (filters.key || filters.value) {
-        const metaFields = doc.meta_fields || {};
-        if (filters.key && !metaFields[filters.key]) {
-          return false;
-        }
-        if (filters.value && metaFields[filters.key] !== filters.value) {
-          return false;
-        }
-      }
-      
-      return true;
-    });
-  };
+  // const filterDocuments = (documents: IDocumentInfo[], filters: any) => {
+  //   return documents.filter((doc) => {
+  //     if (filters.parser_id && doc.parser_id !== filters.parser_id) {
+  //       return false;
+  //     }
+
+  //     if (filters.status && doc.status !== filters.status) {
+  //       return false;
+  //     }
+
+  //     if (filters.run && doc.run !== filters.run) {
+  //       return false;
+  //     }
+
+  //     if (filters.key || filters.value) {
+  //       const metaFields = doc.meta_fields || {};
+  //       if (filters.key && !metaFields[filters.key]) {
+  //         return false;
+  //       }
+  //       if (filters.value && metaFields[filters.key] !== filters.value) {
+  //         return false;
+  //       }
+  //     }
+
+  //     return true;
+  //   });
+  // };
 
   const { data, isFetching: loading } = useQuery<{
     docs: IDocumentInfo[];
@@ -108,22 +110,40 @@ export const useFetchNextDocumentList = () => {
     refetchInterval: 120000,
     enabled: !!knowledgeId || !!id,
     queryFn: async () => {
+      console.log('111111111111112222222222');
       const ret = await listDocument({
-        kb_id: knowledgeId || id,
-        keywords: searchFilters.keywords,
-        parser_id: searchFilters.parser_id,
+        kbId: knowledgeId || id,
+        name: searchFilters.name,
+        chunkMethod: searchFilters.chunkMethod,
         status: searchFilters.status,
-        run: searchFilters.run,
-        key: searchFilters.key,
-        value: searchFilters.value,
-        page_size: pagination.pageSize,
+        progress: searchFilters.progress || [],
+    
+        metadataCondition: {
+          conditions: [
+            {
+              name: searchFilters.key,
+              value: searchFilters.value ,
+              comparison_operator: 'eq',
+            },
+          ],
+          logical_operator: '',
+        },
+         startDate: searchFilters.startDate,
+        endDate: searchFilters.endDate,
+        // endDate: searchFilters?.dateRange[1],
+        // startDate: searchFilters?.dateRange[0],
+        pageSize: pagination.pageSize,
         page: pagination.current,
-      });
+      } as any);
+      console.log(`qqqqqqqqqqret11111`, ret);
       if (ret.data.code === 0) {
-        const filteredDocs = filterDocuments(ret.data.data.docs, searchFilters);
+        // const filteredDocs = filterDocuments(
+        //   ret.data.data.records,
+        //   searchFilters,
+        // );
         return {
-          docs: filteredDocs,
-          total: ret.data.data.total
+          docs:  ret.data.data.records,
+          total: ret.data.data.total,
         };
       }
 
@@ -134,15 +154,24 @@ export const useFetchNextDocumentList = () => {
     },
   });
 
-  const handleSearch = useCallback((filters: { keywords: string; parser_id: string }) => {
-    setSearchFilters(filters);
-    setPagination({ page: 1 });
-  }, [setPagination]);
+  const handleSearch = useCallback(
+    (filters: typeof searchFilters) => {
+      setSearchFilters(filters);
+      setPagination({ page: 1 });
+    },
+    [setPagination],
+  );
 
   const handleReset = useCallback(() => {
     setSearchFilters({
-      keywords: '',
-      parser_id: '',
+      name: '',
+      chunkMethod: '',
+      status: '',
+      progress: '',
+      key: '',
+      value: '',
+      startDate: '',
+      endDate: '',
     });
     setPagination({ page: 1 });
   }, [setPagination]);
@@ -467,9 +496,17 @@ export const useRemoveNextDocumentKb = () => {
     mutateAsync,
   } = useMutation({
     mutationKey: ['removeDocumentKb'],
-    mutationFn: async ({ documentIds, knowledgeId }: { documentIds: string[]; knowledgeId: string }) => {
-      console.log(`knowledgeId,  documentIds`,knowledgeId,  documentIds);
-      const { data } = await documentRm(knowledgeId, {  ids: documentIds  } as any);
+    mutationFn: async ({
+      documentIds,
+      knowledgeId,
+    }: {
+      documentIds: string[];
+      knowledgeId: string;
+    }) => {
+      console.log(`knowledgeId,  documentIds`, knowledgeId, documentIds);
+      const { data } = await documentRm(knowledgeId, {
+        ids: documentIds,
+      } as any);
       if (data.code === 0) {
         message.success(i18n.t('message.deleted'));
         queryClient.invalidateQueries({ queryKey: ['fetchDocumentList'] });

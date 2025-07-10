@@ -30,7 +30,8 @@ interface IProps {
     progress: string;
     key: string;
     value: string;
-    dateRange: any;
+    startDate?: string;
+    endDate?: string;
   }) => void;
   onReset: () => void;
   parserList: { label: string; value: string }[];
@@ -54,10 +55,13 @@ const DocumentToolbar = ({
 
   const handleSearch = () => {
     const values = form.getFieldsValue();
-    console.log('搜索条件：', values);
-
-    // 调用接口搜索
-    onSearch(values);
+    const { dateRange, ...rest } = values;
+    const [startDate, endDate] = dateRange || [];
+    onSearch({
+      ...rest,
+      startDate,
+      endDate,
+    });
   };
 
   const handleReset = () => {
