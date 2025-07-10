@@ -24,7 +24,7 @@ export interface IDocumentInfo {
   type: string;
   update_date: string;
   update_time: number;
-  meta_fields?: Record<string, any>;
+  metaFields?:string| Record<string, any>;
 }
 
 export interface IParserConfig {

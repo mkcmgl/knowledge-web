@@ -198,9 +198,9 @@ export const listDataset = (body?: IFetchKnowledgeListRequestParams) => {
 };
 
 export const listDocument = (
-  params?: IFetchKnowledgeListRequestParams,
+  //params?: IFetchKnowledgeListRequestParams,
   body?: IFetchDocumentListRequestBody,
-) => request.post(api.get_document_list, { data: body || {}, params });
+) => request.post(api.get_document_list, { data: body || {} });
 
 export const getCount = () => {
   return request.get('/api/dataset/getCount');

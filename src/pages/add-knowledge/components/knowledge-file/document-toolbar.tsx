@@ -24,12 +24,13 @@ interface IProps {
   showDocumentUploadModal(): void;
   documents: IDocumentInfo[];
   onSearch: (filters: {
-    keywords: string;
-    parser_id: string;
+    name: string;
+    chunkMethod: string;
     status: string;
-    run: string;
+    progress: string;
     key: string;
     value: string;
+    dateRange: any;
   }) => void;
   onReset: () => void;
   parserList: { label: string; value: string }[];
@@ -201,14 +202,14 @@ const DocumentToolbar = ({
           labelCol={{ style: { width: 80, textAlign: 'right' } }}
         >
           <Space size="middle" align="center" wrap style={{ columnGap: '0' }}>
-            <Form.Item name="keywords" label={t('fileName')}>
+            <Form.Item name="name" label={t('fileName')}>
               <Input
                 placeholder={t('pleaseInputFileName')}
                 style={{ width: 190 }}
                 allowClear
               />
             </Form.Item>
-            <Form.Item name="parser_id" label={t('chunkMethod')}>
+            <Form.Item name="chunkMethod" label={t('chunkMethod')}>
               <Select
                 placeholder={"请选择切片方法"}
                 style={{ width: 190 }}
@@ -227,9 +228,10 @@ const DocumentToolbar = ({
                 ]}
               />
             </Form.Item>
-            <Form.Item name="run" label={t('parsingStatus')}>
+            <Form.Item name="progress" label={t('parsingStatus')}>
               <Select
-                placeholder="请选择解析状态"
+                mode="multiple"
+                placeholder="请选择解析状态）"
                 style={{ width: 190 }}
                 allowClear
                 options={Object.entries(RunningStatus).map(([, value]) => ({

@@ -6,7 +6,7 @@ interface SetMetaModalProps {
   visible: boolean;
   onOk: (meta: string) => void;
   hideModal: () => void;
-  initialMetaData?: Record<string, string>;
+  initialMetaData?: Record<string, string> | string;
   loading?: boolean;
 }
 
@@ -18,8 +18,22 @@ interface MetaItem {
 const SetMetaModal = ({ visible, onOk, hideModal, initialMetaData = {}, loading = false }: SetMetaModalProps) => {
   const [form] = Form.useForm();
 
-  // 将initialMetaData对象转为key-value数组
-  const metaListInit: MetaItem[] = Object.entries(initialMetaData).map(([key, value]) => ({ key, value }));
+  // 兼容 initialMetaData 可能为 string 的情况
+  let metaObj: Record<string, string> = {};
+  console.log(`initialMetaData`,initialMetaData);
+  if (typeof initialMetaData === 'string') {
+    try {
+      const parsed = JSON.parse(initialMetaData);
+      if (typeof parsed === 'object' && parsed !== null) {
+        metaObj = parsed;
+      }
+    } catch {
+      metaObj = {};
+    }
+  } else if (typeof initialMetaData === 'object' && initialMetaData !== null) {
+    metaObj = initialMetaData;
+  }
+  const metaListInit: MetaItem[] = Object.entries(metaObj).map(([key, value]) => ({ key, value }));
 
   // 打开时设置初始值
   useEffect(() => {

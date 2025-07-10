@@ -4,7 +4,7 @@ export { api_host };
 export { api_rag_host }
 export default {
   // user
-  login: `${api_host}/user/login`,
+  login: `${api_rag_host}/user/login`,
   logout: `${api_host}/user/logout`,
   register: `${api_rag_host}/user/register`,
   setting: `${api_host}/user/setting`,
@@ -63,7 +63,7 @@ export default {
   knowledge_graph: `${api_host}/chunk/knowledge_graph`,
 
   // document
-  get_document_list: `${api_host}/document/list`,
+  get_document_list: `${api_rag_host}/file/docList`,
   document_change_status: `${api_host}/document/change_status`,
   document_rm: `${api_host}/document/rm`,
   documentRm: (dataset_id: string) =>`${api_rag_host}/file/deleteDoc/${dataset_id}`,

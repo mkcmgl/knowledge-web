@@ -159,14 +159,14 @@ const KnowledgeFile = () => {
     },
     {
       title: t('chunkNumber'),
-      dataIndex: 'chunk_num',
-      key: 'chunk_num',
+      dataIndex: 'chunkNum',
+      key: 'chunkNum',
     },
 
     {
       title: t('chunkMethod'),
-      dataIndex: 'parser_id',
-      key: 'parser_id',
+      dataIndex: 'parserId',
+      key: 'parserId',
       render: (text) => {
         return parserList.find((x) => x.value === text)?.label;
       },
@@ -194,13 +194,13 @@ const KnowledgeFile = () => {
     },
     {
       title: '元数据',
-      dataIndex: 'meta_fields',
-      key: 'meta_fields',
+      dataIndex: 'metaFields',
+      key: 'metaFields',
       ellipsis: true,
       render: (meta, record) => {
-        const text = typeof record.meta_fields === 'object'
-          ? JSON.stringify(record.meta_fields)
-          : String(record.meta_fields ?? '');
+        const text = typeof record.metaFields === 'object'
+          ? JSON.stringify(record.metaFields)
+          : String(record.metaFields ?? '');
         return (
           <Tooltip placement="topLeft" title={text}>
             <div
@@ -216,7 +216,10 @@ const KnowledgeFile = () => {
                 style={{ cursor: 'pointer' }}
                 onClick={e => {
                   e.stopPropagation();
-                  setViewMetaData(record.meta_fields);
+
+                  setViewMetaData(typeof record.metaFields === 'string'
+                    ? (() => { try { return JSON.parse(record.metaFields); } catch { return {}; } })()
+                    : record.metaFields);
                   setViewMetaVisible(true);
                 }}
               >
@@ -244,8 +247,8 @@ const KnowledgeFile = () => {
     },
     {
       title: t('uploadDate'),
-      dataIndex: 'create_time',
-      key: 'create_time',
+      dataIndex: 'createTime',
+      key: 'createTime',
       render(value) {
         return formatDate(value);
       },
@@ -448,7 +451,7 @@ const KnowledgeFile = () => {
           hideModal={hideSetMetaModal}
           onOk={handleSetMetaModalOk}
           loading={metaLoading}
-          initialMetaData={currentRecord.meta_fields}
+          initialMetaData={currentRecord.metaFields}
         ></SetMetaModal>
       )}
       <Modal

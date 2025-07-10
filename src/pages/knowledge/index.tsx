@@ -47,6 +47,7 @@ const KnowledgeList = () => {
     dateRange: [string, string] | null;
   }>({ name: '', model: '', dateRange: null });
   const [refreshFlag, setRefreshFlag] = useState(0);
+  const { kbCount, docCount, embdCount, loading: countLoading, refetch: refetchCount } = useFetchKnowledgeCount();
   const { list, total, loading } = useFetchKnowledgeList(
     page,
     pageSize,
@@ -55,7 +56,6 @@ const KnowledgeList = () => {
     searchFilters.dateRange,
     refreshFlag
   );
-  const { kbCount, docCount, embdCount, loading: countLoading, refetch: refetchCount } = useFetchKnowledgeCount();
 
   const handleSearch = () => {
     const values = form.getFieldsValue();

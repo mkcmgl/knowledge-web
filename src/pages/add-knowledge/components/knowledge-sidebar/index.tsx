@@ -1,6 +1,8 @@
 import { ReactComponent as ConfigurationIcon } from '@/assets/svg/knowledge-configration.svg';
 import { ReactComponent as DatasetIcon } from '@/assets/svg/knowledge-dataset.svg';
 import { ReactComponent as TestingIcon } from '@/assets/svg/knowledge-testing.svg';
+import { ReactComponent as GraphIcon } from '@/assets/svg/knowlege-graph.svg';
+
 import {
   useFetchKnowledgeBaseConfiguration,
   useFetchKnowledgeGraph,
@@ -62,7 +64,7 @@ const KnowledgeSidebar = () => {
   const items: MenuItem[] = useMemo(() => {
     const list = [
       getItem(
-        KnowledgeRouteKey.Dataset, // TODO: Change icon color when selected
+        KnowledgeRouteKey.Dataset, 
         KnowledgeRouteKey.Dataset,
         <DatasetIcon />,
       ),
@@ -76,17 +78,23 @@ const KnowledgeSidebar = () => {
         KnowledgeRouteKey.Configuration,
         <ConfigurationIcon />,
       ),
+      getItem(
+        KnowledgeRouteKey.KnowledgeGraph,
+        KnowledgeRouteKey.KnowledgeGraph,
+        <GraphIcon />,
+      ),
+      
     ];
-
-    if (!isEmpty(data?.graph)) {
-      list.push(
-        getItem(
-          KnowledgeRouteKey.KnowledgeGraph,
-          KnowledgeRouteKey.KnowledgeGraph,
-          <GitGraph />,
-        ),
-      );
-    }
+console.log(`data?.graph,data`,data?.graph,data);
+    // if (!isEmpty(data?.graph)) {
+    //   list.push(
+    //     getItem(
+    //       KnowledgeRouteKey.KnowledgeGraph,
+    //       KnowledgeRouteKey.KnowledgeGraph,
+    //       <GitGraph />,
+    //     ),
+    //   );
+    // }
 
     return list;
   }, [data, getItem]);
