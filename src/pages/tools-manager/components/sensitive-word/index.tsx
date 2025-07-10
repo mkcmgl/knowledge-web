@@ -7,6 +7,7 @@ import {
   message
 } from 'antd';
 import { useState } from 'react';
+import { useSensitiveWord } from '@/hooks/tools-hooks';
 import styles from './index.less';
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -14,61 +15,23 @@ const { TextArea } = Input;
 const SensitiveWord = () => {
   const [form] = Form.useForm();
   const [desensitizedResult, setDesensitizedResult] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
+  const { mutateAsync: sensitiveWord, isPending: isProcessing } = useSensitiveWord();
 
   // 脱敏处理
-  const handleDesensitize = () => {
+  const handleDesensitize = async () => {
     const formData = form.getFieldsValue();
-
     if (!formData.textSegment || formData.textSegment.trim() === '') {
       message.error('请输入文本段！');
       return;
     }
-
-    console.log('=== 敏感词处理信息 ===');
-    console.log('原始文本:', formData.textSegment);
-    console.log('处理时间:', new Date().toLocaleString());
-    console.log('========================');
-
-    setIsProcessing(true);
-
-    setTimeout(() => {
-      const originalText = formData.textSegment;
-
-      // 模拟敏感词检测和替换
-      const sensitiveWords = ['敏感', '违规', '违法', '色情', '暴力', '政治', '赌博', '毒品'];
-      let processedText = originalText;
-      let detectedWords: string[] = [];
-
-      sensitiveWords.forEach(word => {
-        if (originalText.includes(word)) {
-          detectedWords.push(word);
-          const regex = new RegExp(word, 'g');
-          processedText = processedText.replace(regex, '*'.repeat(word.length));
-        }
-      });
-
-      const result = `
-敏感词处理结果：
-
-原始文本：
-${originalText}
-
-处理结果：
-${processedText}
-
-检测信息：
-• 检测到的敏感词：${detectedWords.length > 0 ? detectedWords.join(', ') : '无'}
-• 敏感词数量：${detectedWords.length}
-• 替换字符：*
-• 处理方式：字符替换
-
-处理时间：${new Date().toLocaleString()}`;
-
-      setDesensitizedResult(result);
-      setIsProcessing(false);
+    setDesensitizedResult('');
+    try {
+      const result = await sensitiveWord(formData.textSegment);
+      setDesensitizedResult(result.data);
       message.success('脱敏处理完成！');
-    }, 2000);
+    } catch (error: any) {
+      message.error(error.message || '脱敏处理失败');
+    }
   };
 
   return (

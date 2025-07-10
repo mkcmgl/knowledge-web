@@ -64,7 +64,7 @@ export const useFetchNextDocumentList = () => {
     name: '',
     chunkMethod: '',
     status: '',
-    progress: '',
+    run: '',
     key: '',
     value: '',
     startDate: '',
@@ -110,13 +110,12 @@ export const useFetchNextDocumentList = () => {
     refetchInterval: 120000,
     enabled: !!knowledgeId || !!id,
     queryFn: async () => {
-      console.log('111111111111112222222222');
       const ret = await listDocument({
         kbId: knowledgeId || id,
         name: searchFilters.name,
         chunkMethod: searchFilters.chunkMethod,
         status: searchFilters.status,
-        progress: searchFilters.progress || [],
+        run: searchFilters.run || [],
     
         metadataCondition: {
           conditions: [
@@ -135,7 +134,6 @@ export const useFetchNextDocumentList = () => {
         pageSize: pagination.pageSize,
         page: pagination.current,
       } as any);
-      console.log(`qqqqqqqqqqret11111`, ret);
       if (ret.data.code === 0) {
         // const filteredDocs = filterDocuments(
         //   ret.data.data.records,
@@ -167,7 +165,7 @@ export const useFetchNextDocumentList = () => {
       name: '',
       chunkMethod: '',
       status: '',
-      progress: '',
+      run: '',
       key: '',
       value: '',
       startDate: '',

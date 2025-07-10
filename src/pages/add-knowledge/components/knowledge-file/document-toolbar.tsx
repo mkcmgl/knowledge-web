@@ -27,7 +27,7 @@ interface IProps {
     name: string;
     chunkMethod: string;
     status: string;
-    progress: string;
+    run: string;
     key: string;
     value: string;
     startDate?: string;
@@ -232,10 +232,10 @@ const DocumentToolbar = ({
                 ]}
               />
             </Form.Item>
-            <Form.Item name="progress" label={t('parsingStatus')}>
+            <Form.Item name="run" label={t('parsingStatus')}>
               <Select
                 mode="multiple"
-                placeholder="请选择解析状态）"
+                placeholder="请选择解析状态"
                 style={{ width: 190 }}
                 allowClear
                 options={Object.entries(RunningStatus).map(([, value]) => ({

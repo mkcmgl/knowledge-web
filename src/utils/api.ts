@@ -149,5 +149,7 @@ export default {
   // tools
   speechToText: `${api_rag_host}/tools/speechToText`,
   ocrRecognition: `${api_rag_host}/tools/ocrRecognition`,
-  textSimilarity: `${api_rag_host}/tools/textSimilarity`, // 新增
+  textSimilarity: `${api_rag_host}/tools/textSimilarity`, 
+  sensitiveWord: `${api_rag_host}/tools/sensitiveWord`, 
+  keywordExtraction: `${api_rag_host}/tools/keywordExtraction`,
 };

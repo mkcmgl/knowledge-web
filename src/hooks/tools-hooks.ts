@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { speechToText,ocrRecognition, textSimilarity } from '@/services/tools-service';
+import { speechToText, ocrRecognition, textSimilarity, sensitiveWord, keywordExtraction } from '@/services/tools-service';
 
 export const useSpeechToText = () => {
   return useMutation({
@@ -27,3 +27,21 @@ export const useTextSimilarity = () => {
     },
   });
 };
+
+export const useSensitiveWord = () => {
+  return useMutation({
+    mutationFn: async (textContent: string) => {
+      const { data } = await sensitiveWord(textContent);
+      return data;
+    },
+  });
+};
+export const useKeywordExtraction = () => {
+  return useMutation({
+    mutationFn: async (textContent: string) => {
+      const { data } = await keywordExtraction(textContent);
+      return data;
+    },
+  });
+};
+

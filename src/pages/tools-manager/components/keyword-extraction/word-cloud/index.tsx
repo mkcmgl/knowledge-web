@@ -11,8 +11,7 @@ interface WordCloudProps {
 
 const WordCloud: React.FC<WordCloudProps> = ({ 
   data, 
-  width = 600, 
-  height = 400 
+
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
 
@@ -58,7 +57,7 @@ const WordCloud: React.FC<WordCloudProps> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, [data]);
 
-  return <div ref={chartRef} style={{ width, height }} />;
+  return <div ref={chartRef} style={{ width:'100%', height:'80%',minHeight:400,minWidth:400 }} />;
 };
 
 export default WordCloud;

@@ -39,3 +39,23 @@ export const textSimilarity = (sourceFile: string, targetFile: string) => {
     body: JSON.stringify({ sourceFile, targetFile }),
   });
 };
+
+export const sensitiveWord = (textContent: string) => {
+  return request(api.sensitiveWord, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ textContent }),
+  });
+};
+export const keywordExtraction = (textContent: string) => {
+  return request(api.keywordExtraction, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ textContent }),
+  });
+};
+
