@@ -11,7 +11,7 @@ export default {
   user_info: `${api_rag_host}/user/info`,
   tenant_info: `${api_rag_host}/user/tenantInfo`,
   set_tenant_info: `${api_host}/user/set_tenant_info`,
-  login_channels: `${api_host}/user/login/channels`,
+  login_channels: `${api_rag_host}/user/login/channels`,
   login_channel: (channel: string) => `${api_host}/user/login/${channel}`,
 
   // team
@@ -24,9 +24,9 @@ export default {
   agreeTenant: (tenantId: string) => `${api_host}/tenant/agree/${tenantId}`,
 
   // llm model
-  factories_list: `${api_host}/llm/factories`,
-  llm_list: `${api_host}/llm/list`,
-  my_llm: `${api_host}/llm/my_llms`,
+  factories_list: `${api_rag_host}/llm/factories`,
+  llm_list: `${api_rag_host}/llm/list`,
+  my_llm: `${api_rag_host}/llm/myLlms`,
   set_api_key: `${api_host}/llm/set_api_key`,
   add_llm: `${api_host}/llm/add_llm`,
   delete_llm: `${api_host}/llm/delete_llm`,
@@ -126,7 +126,7 @@ export default {
   createSystemToken: `${api_host}/system/new_token`,
   listSystemToken: `${api_host}/system/token_list`,
   removeSystemToken: `${api_host}/system/token`,
-  getSystemConfig: `${api_host}/system/config`,
+  getSystemConfig: `${api_rag_host}/system/config`,
   setLangfuseConfig: `${api_host}/langfuse/api_key`,
 
   // flow
@@ -152,4 +152,5 @@ export default {
   textSimilarity: `${api_rag_host}/tools/textSimilarity`, 
   sensitiveWord: `${api_rag_host}/tools/sensitiveWord`, 
   keywordExtraction: `${api_rag_host}/tools/keywordExtraction`,
+  clusteringAnalysis: `${api_rag_host}/tools/clusteringAnalysis`,
 };

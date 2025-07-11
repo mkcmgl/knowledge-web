@@ -59,3 +59,13 @@ export const keywordExtraction = (textContent: string) => {
   });
 };
 
+export const clusteringAnalysis = (clusteringText: string[], thresholdValue: number) => {
+  return request(api.clusteringAnalysis, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ clusteringText, thresholdValue }),
+  });
+};
+

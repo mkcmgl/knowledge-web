@@ -24,8 +24,12 @@ const TextSimilarity = () => {
     try {
       setAnalysisResult('');
       const result = await calcSimilarity({ sourceFile: formData.originalText, targetFile: formData.compareText });
-      if (result) {
-        const res = `文本相似度分析结果：\n\n原始文本：\n${formData.originalText}\n\n比对文本：\n${formData.compareText}\n\n分析结果：\n• Jaccard相似度：${(result.jaccardSimilarity * 100).toFixed(2)}%\n• 余弦相似度：${(result.cosineSimilarity * 100).toFixed(2)}%\n• 共同词汇数量：${result.commonWordCount}\n• 原始文本词汇数：${result.originalWordCount}\n• 比对文本词汇数：${result.compareWordCount}\n• 词汇交集：${(result.commonWords || []).join(', ')}\n\n计算时间：${new Date().toLocaleString()}`;
+      console.log('相似度计算结果:', result);
+      
+      if (result && result.data.similarity !== undefined) {
+        const similarityPercentage = (result.data.similarity * 100).toFixed(2);
+        const res = `相似度：${similarityPercentage}%
+`;
         setAnalysisResult(res);
         message.success('相似度计算完成！');
       } else {

@@ -11,7 +11,9 @@ import { useState } from 'react';
 import { DeleteOutlined } from '@ant-design/icons';
 import styles from './index.less';
 import noData from "@/assets/svg/noData.svg"
+import VideoPlayer from "./video-player"
 const { Text } = Typography;
+
 const { TextArea } = Input;
 
 const VideoUnderstanding = () => {
@@ -113,7 +115,7 @@ ${formData.question}
           </div>
           <Form form={form} className={styles.myFulllabelForm} layout="vertical" style={{ height: '100%' }}>
             {/* 上传视频 */}
-            <Form.Item label='上传视频:' name='video' rules={[{ required: true, message: '请上传视频！' }]}  style={{ padding: 20 }}>
+            <Form.Item label='上传视频:' name='video' rules={[{ required: true, message: '请上传视频！' }]} style={{ padding: 20 }}>
               <Space direction="vertical" style={{ width: '100%' }}>
                 <Upload className={styles.myFullUpload} {...uploadProps}>
                   <Button
@@ -121,7 +123,7 @@ ${formData.question}
                   >
                     <div style={{ textAlign: 'center', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 
-                      <svg xmlns="http://www.w3.org/2000/svg"  fill="none" version="1.1" width="48" height="48" viewBox="0 0 48 48">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" version="1.1" width="48" height="48" viewBox="0 0 48 48">
                         <defs>
                           <clipPath id="master_svg0_130_16615">
                             <rect x="0" y="0" width="48" height="48" rx="0" />
@@ -231,10 +233,11 @@ ${formData.question}
           <div style={{ width: '100%', flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             {uploadedFiles.length === 0 ? (
               <div style={{ textAlign: 'center', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-               <img src={noData} alt="无数据" style={{ width: 100, marginBottom: 16 }}/>
+                <img src={noData} alt="无数据" style={{ width: 100, marginBottom: 16 }} />
                 <div style={{ color: 'rgba(29, 33, 41, 0.55)', fontSize: 14 }}>拖入或粘贴视频进行转换后，显示相关结果</div>
+                <VideoPlayer src={uploadedFiles.length > 0 ? uploadedFiles[0].url : ''} />
               </div>
-            ) : ( <TextArea
+            ) : (<TextArea
               value={analysisResult}
               placeholder="理解结果将在这里显示..."
               style={{
@@ -248,6 +251,9 @@ ${formData.question}
               }}
               readOnly
             />
+
+
+
             )}
           </div>
         </div>

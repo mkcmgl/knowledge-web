@@ -14,7 +14,7 @@ import {
 } from 'antd';
 import { MenuItemProps } from 'antd/lib/menu/MenuItem';
 import classNames from 'classnames';
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import ChatConfigurationModal from './chat-configuration-modal';
 import ChatContainer from './chat-container';
 import {
@@ -85,6 +85,9 @@ const Chat = () => {
   const [controller, setController] = useState(new AbortController());
   const { showEmbedModal, hideEmbedModal, embedVisible, beta } =
     useShowEmbedModal();
+  const hasAutoSelected = useRef(
+    sessionStorage.getItem('chat_has_auto_selected') === 'true'
+  );
 
   const handleDialogCardClick = useCallback(
     (dialogId: string) => () => {
@@ -94,10 +97,14 @@ const Chat = () => {
   );
 
   useEffect(() => {
-    if (dialogList.length > 0 && !dialogId) {
-      handleDialogCardClick(dialogList[0].id)();
+    if (!hasAutoSelected.current && dialogList.length > 0) {
+      if (!dialogId) {
+        handleDialogCardClick(dialogList[0].id)();
+        hasAutoSelected.current = true;
+        sessionStorage.setItem('chat_has_auto_selected', 'true');
+      }
     }
-  }, [dialogList, dialogId, handleDialogCardClick]);
+  }, [dialogList]);
 
   const handleAppCardEnter = (id: string) => () => {
     handleItemEnter(id);
@@ -164,15 +171,12 @@ const Chat = () => {
   }, [addTemporaryConversation]);
 
   useEffect(() => {
-    // 助理切换后，自动选中第一个聊天或自动新增
-    if (dialogId) {
-      if (conversationList.length > 0) {
-        handleConversationCardClick(conversationList[0].id, conversationList[0].is_new)();
-      } else {
-        handleCreateTemporaryConversation();
-      }
+    // 只在没有选中会话 或 当前会话已被删除时自动跳转
+    const exist = conversationList.some(item => item.id === conversationId);
+    if (conversationList.length > 0 && (!conversationId || !exist)) {
+      handleConversationCardClick(conversationList[0].id, conversationList[0].is_new)();
     }
-  }, [dialogId, conversationList, handleConversationCardClick, handleCreateTemporaryConversation]);
+  }, [conversationList, conversationId, handleConversationCardClick]);
 
   const buildAppItems = (dialog: IDialog) => {
     const dialogId = dialog.id;

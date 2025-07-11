@@ -187,7 +187,7 @@ export const useFetchMyLlmList = (): ResponseGetType<
     queryFn: async () => {
       const { data } = await userService.my_llm();
 
-      return data?.data ?? {};
+      return data?.data?.providers ?? {};
     },
   });
 
