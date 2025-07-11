@@ -235,7 +235,7 @@ ${formData.question}
               <div style={{ textAlign: 'center', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <img src={noData} alt="无数据" style={{ width: 100, marginBottom: 16 }} />
                 <div style={{ color: 'rgba(29, 33, 41, 0.55)', fontSize: 14 }}>拖入或粘贴视频进行转换后，显示相关结果</div>
-                <VideoPlayer src={uploadedFiles.length > 0 ? uploadedFiles[0].url : ''} />
+                {/* <VideoPlayer src={uploadedFiles.length > 0 ? uploadedFiles[0].url : ''} /> */}
               </div>
             ) : (<TextArea
               value={analysisResult}

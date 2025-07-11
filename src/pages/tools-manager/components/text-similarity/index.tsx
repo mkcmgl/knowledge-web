@@ -27,9 +27,15 @@ const TextSimilarity = () => {
       console.log('相似度计算结果:', result);
       
       if (result && result.data.similarity !== undefined) {
-        const similarityPercentage = (result.data.similarity * 100).toFixed(2);
-        const res = `相似度：${similarityPercentage}%
-`;
+        const similarityPercentage = result.data.similarity.toFixed(2);
+        const res = (
+          <span>
+            相似度：
+            <span style={{ color: '#F56C6C', fontSize: 20, fontWeight: 600 }}>
+              {similarityPercentage}%
+            </span>
+          </span>
+        );
         setAnalysisResult(res);
         message.success('相似度计算完成！');
       } else {
@@ -161,20 +167,21 @@ const TextSimilarity = () => {
             <span className='pl-2 text-[16px] font-bold'>分析结果</span>
           </div>
           <div style={{ width: '100%' }}>
-            <TextArea
-              value={analysisResult}
-              placeholder="分析结果将在这里显示..."
+            {/* 用div替换TextArea以支持ReactNode */}
+            <div
               style={{
                 width: '100%',
                 minHeight: '200px',
-                resize: 'none',
                 fontSize: '14px',
                 lineHeight: '1.6',
                 border: 'none',
-                background: 'transparent'
+                background: 'transparent',
+                padding: '12px 8px',
+                color: '#1D2129'
               }}
-              readOnly
-            />
+            >
+              {analysisResult}
+            </div>
           </div>
         </div>
       </div>
