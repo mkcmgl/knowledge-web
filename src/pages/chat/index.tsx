@@ -106,6 +106,13 @@ const Chat = () => {
     }
   }, [dialogList]);
 
+  // 首次进入页面自动选中第一个助理
+  useEffect(() => {
+    if (dialogList.length > 0 && !dialogId) {
+      handleDialogCardClick(dialogList[0].id)();
+    }
+  }, [dialogList, dialogId, handleDialogCardClick]);
+
   const handleAppCardEnter = (id: string) => () => {
     handleItemEnter(id);
   };

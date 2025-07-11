@@ -206,26 +206,31 @@ const MarkdownContent = ({
 
         const docType = chunkItem?.doc_type;
 
-        return showImage(docType) ? (
-          <Image
-            id={imageId}
-            className={styles.referenceInnerChunkImage}
-            onClick={
-              documentId
-                ? handleDocumentButtonClick(
-                    documentId,
-                    chunkItem,
-                    fileExtension === 'pdf',
-                    documentUrl,
-                  )
-                : () => {}
-            }
-          ></Image>
-        ) : (
-          <Popover content={getPopoverContent(chunkIndex)} key={i}>
-            <InfoCircleOutlined className={styles.referenceIcon} />
-          </Popover>
-        );
+        if (showImage(docType)) {
+          return (
+            <Image
+              key={i}
+              id={imageId}
+              className={styles.referenceInnerChunkImage}
+              onClick={
+                documentId
+                  ? handleDocumentButtonClick(
+                      documentId,
+                      chunkItem,
+                      fileExtension === 'pdf',
+                      documentUrl,
+                    )
+                  : () => {}
+              }
+            />
+          );
+        } else {
+          return (
+            <Popover content={getPopoverContent(chunkIndex)} key={i}>
+              <InfoCircleOutlined className={styles.referenceIcon} />
+            </Popover>
+          );
+        }
       });
 
       // replacedText = reactStringReplace(replacedText, curReg, (match, i) => (
