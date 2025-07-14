@@ -34,7 +34,7 @@ const Login = () => {
   const { isLogin } = useAuth();
   useEffect(() => {
     if (isLogin) {
-      navigate('/knowledge');
+      navigate('/chat');
     }
   }, [isLogin, navigate]);
 
@@ -66,7 +66,7 @@ const Login = () => {
           password: rsaPassWord,
         });
         if (code === 0) {
-          navigate('/knowledge');
+          navigate('/chat');
         }
       } else {
         const code = await register({

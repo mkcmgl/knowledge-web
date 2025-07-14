@@ -28,7 +28,7 @@ export const useOAuthCallback = () => {
       authorizationUtil.setAuthorization(auth);
       newQueryParameters.delete('auth');
       setSearchParams(newQueryParameters);
-      navigate('/knowledge');
+      navigate('/chat');
     }
   }, [
     error,
