@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { speechToText, ocrRecognition, textSimilarity, sensitiveWord, keywordExtraction, clusteringAnalysis } from '@/services/tools-service';
+import { speechToText, ocrRecognition, textSimilarity, sensitiveWord, keywordExtraction, clusteringAnalysis, imgUnderstand ,videoUnderstand} from '@/services/tools-service';
 
 export const useSpeechToText = () => {
   return useMutation({
@@ -49,6 +49,24 @@ export const useClusteringAnalysis = () => {
   return useMutation({
     mutationFn: async ({ clusteringText, thresholdValue }: { clusteringText: string[]; thresholdValue: number }) => {
       const { data } = await clusteringAnalysis(clusteringText, thresholdValue);
+      return data;
+    },
+  });
+};
+
+export const useImgUnderstand = () => {
+  return useMutation({
+    mutationFn: async ({ file, desQuestion }: { file: File; desQuestion: string }) => {
+      const { data } = await imgUnderstand(file, desQuestion);
+      return data;
+    },
+  });
+};
+
+export const useVideoUnderstand = () => {
+  return useMutation({
+    mutationFn: async ({ file, desQuestion }: { file: File; desQuestion: string }) => {
+      const { data } = await videoUnderstand(file, desQuestion);
       return data;
     },
   });

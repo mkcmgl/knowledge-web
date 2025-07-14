@@ -3,8 +3,8 @@ import {
     Checkbox,
     Upload,
     Button,
-    Input,
     Space,
+    Input,
     message,
     Form,
     CheckboxProps
@@ -14,13 +14,13 @@ import React, { useState } from 'react';
 import noData from "@/assets/svg/noData.svg"
 import { useOCRRecognition } from '@/hooks/tools-hooks';
 import MarkdownTable from "./markdown-table"
-const { Text } = Typography;
 const { TextArea } = Input;
-const test='\\begin{tabular}{|c|c|c|} \\hline 怎样完成账务处理流程? & 120apug-财务应付操作手册。pdf & 0 HR问题处理文档。pdf \\\\ \\hline 财务应付中报表导出操作有哪些关键步骤? & 120apug-财务应付操作手册。pdf & 1 \\\\ \\hline 财务应付常见的报销应如何应对? & 120apug-财务应付操作手册。pdf & 1 \\\\ \\cline { 1 - 3 } 财务应收中，怎样完成账务处理流程? & 120arug-财务应收操作手册。pdf & 1 \\\\ \\hline 进行财务应收报表导出操作有哪些关键步骤? & 120arug-财务应收操作手册。pdf & 0。120ug-财务总账操作手册。pdf \\\\ \\hline 财务应收操作手册时，常见的报销应如何应对? & 120arug-财务应收操作手册。pdf & 1 \\\\ \\cline { 1 - 3 } 财事固定资产中，怎样完成账务处理流程? & 120faug-财务固定资产操作手册。pdf & 1 \\\\ \\hline 进行财务固定资产报表导出操作有哪些关键步骤? & 120faug-财务固定资产操作手册。pdf & 1 \\\\ \\cline { 1 - 3 } 导出财务固定资产时，常见的报销应如何应对? & 120faug-财务固定资产操作手册。pdf & 1 \\\\ \\(\\quad\\) 财务总账怎样完成账务处理流程? & 120ug-财务总账操作手册。pdf & 1 \\\\ \\hline 财务总账的报表导出操作有哪些关键步骤? & 120ug-财务总账操作手册。pdf & 1 \\\\ \\cline { 1 - 3 } 财目务总账常见的报销如何应对? & 120ug-财务总账操作手册。pdf & 1 \\\\ \\(\\quad\\) 打印机win10系统配置教程中如何正确安装驱动程序? & 3560打印机win10系统配置教程。pdf & 04570打印机win10系统配置教程。pdf \\\\ win10系统配置教程里设置默认打印机? & 3560打印机win10系统配置教程。pdf & 1 \\\\ 打印机在win10系统配置教程使用过程中可能出现哪些常见故障? & 3560打印机win10系统配置教程。pdf & 1 \\\\ \\hline 打印机在win7系统配置教程中如何正确安装驱动程序? & 3560打印机win7系统配置教程。pdf & 04070打印机win7系统配置教程。pdf \\\\ 打印机怎样在win7系统配置教程里设置默认打印机? & 3560打印机win7系统配置教程。pdf & 04570打印机win7系统配置教程。pdf \\\\ 打印机在win7系统配置教程使用过程中可能出现哪些常见故障? & 3560打印机win7系统配置教程。pdf & 045070打印机win7系统配置教程。pdf \\\\ \\hline CAD提示管理员已阻止你运行此程序的解决办法发生闪退时应如何处CAD2012提示管理员已阻止你运行此程 & 1 \\\\ \\hline 如何激活CAD提示管理员已阻止你运行此程序的解决办法以正常使用CAD2012提示管理员已阻止你运行此程 & 1 \\\\ \\h{tabular}{|l|l|} \\hline CAD提示管理员已阻止你运行此程序的解决办法模块加载失败的原因CAD2012提示管理员已阻止你运行此程 & 1 \\\\ \\hular}{|l|} \\hline \\end{tabular} rendering。'
+
+const { Text } = Typography;
 const OCR = () => {
     const [form] = Form.useForm();
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-    const [recognitionResult, setRecognitionResult] = useState('');
+    const [recognitionResult, setRecognitionResult] = useState({ isFormatting: 0, isHtml: 0, text: '' });
     const { mutateAsync: ocrRecognition, isPending: isProcessing } = useOCRRecognition();
 
     // 全选相关逻辑
@@ -71,6 +71,7 @@ const OCR = () => {
     const handleDeleteFile = (index: number) => {
         const newFiles = uploadedFiles.filter((_, i) => i !== index);
         setUploadedFiles(newFiles);
+        setRecognitionResult({ isFormatting: 0, isHtml: 0, text: '' });
         message.success('文件已删除');
     };
 
@@ -113,7 +114,7 @@ const OCR = () => {
         const isFormatting = formData.formatOutput ? 1 : 0;
         const isHtml = formData.textOutputHtml ? 1 : 0;
 
-        setRecognitionResult('');
+        setRecognitionResult({ isFormatting, isHtml, text: '' });
 
         try {
             // 这里只处理第一个文件，如需多文件可自行扩展
@@ -122,7 +123,7 @@ const OCR = () => {
                 isFormatting,
                 isHtml,
             });
-            setRecognitionResult(result?.data?.text || result || '无识别结果');
+            setRecognitionResult(result?.data || { isFormatting: 0, isHtml: 0, text: '' });
             message.success('OCR识别完成！');
         } catch (error: any) {
             message.error(error.message || '识别失败');
@@ -177,7 +178,7 @@ const OCR = () => {
                         padding: '20px 0',
                         borderRadius: '8px',
                         border: '1px solid #f0f0f0',
-                        height: '500px',
+                        height: '600px',
                         overflow: 'auto',
                         flex: 1
                     }}>
@@ -257,7 +258,10 @@ const OCR = () => {
                                             {/* 重新上传按钮，仅在有文件时显示 */}
                                             <div style={{ marginTop: '12px', textAlign: 'center' }} className='flex justify-center'>
                                                 <Button
-                                                    onClick={() => setUploadedFiles([])}
+                                                    onClick={() => {
+                                                        setUploadedFiles([]);
+                                                        setRecognitionResult({ isFormatting: 0, isHtml: 0, text: '' });
+                                                    }}
                                                     type="default"
                                                     style={{ minWidth: '120px' }}
                                                 >
@@ -287,7 +291,7 @@ const OCR = () => {
                         padding: '20px 0',
                         borderRadius: '8px',
                         border: '1px solid #f0f0f0',
-                        height: '500px',
+                        height: '600px',
                         display: 'flex',
                         flexDirection: 'column',
                         flex: 1
@@ -302,10 +306,27 @@ const OCR = () => {
                                 <div style={{ textAlign: 'center', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                     <img src={noData} alt="无数据" style={{ width: 100, marginBottom: 16 }} />
                                     <div style={{ color: 'rgba(29, 33, 41, 0.55)', fontSize: 14 }}>上传图片进行识别后，显示相关结果</div>
-                                     <MarkdownTable text={test}/>
                                 </div>
                             ) : (
-                                <MarkdownTable text={recognitionResult}/>
+                                recognitionResult.isFormatting === 1 ? (
+                                    <MarkdownTable text={recognitionResult.text || ''} />)
+                                    : (
+                                        <TextArea
+                                            value={recognitionResult.text}
+                                            placeholder="识别结果将在这里显示..."
+                                            style={{
+                                                height: '100%',
+                                                resize: 'none',
+                                                fontSize: '14px',
+                                                lineHeight: '1.6',
+                                                border: 'none',
+                                                background: 'transparent'
+                                            }}
+                                            readOnly
+                                        />)
+
+
+
                             )}
                         </div>
                     </div>

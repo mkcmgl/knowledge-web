@@ -153,4 +153,6 @@ export default {
   sensitiveWord: `${api_rag_host}/tools/sensitiveWord`, 
   keywordExtraction: `${api_rag_host}/tools/keywordExtraction`,
   clusteringAnalysis: `${api_rag_host}/tools/clusteringAnalysis`,
+  imgUnderstand: `${api_rag_host}/tools/imgUnderstand`,
+  videoUnderstand: `${api_rag_host}/tools/videoUnderstand`,
 };

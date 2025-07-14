@@ -69,3 +69,23 @@ export const clusteringAnalysis = (clusteringText: string[], thresholdValue: num
   });
 };
 
+export const imgUnderstand = (file: File, desQuestion: string) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('desQuestion', desQuestion);
+  return request(api.imgUnderstand, {
+    method: 'POST',
+    body: formData,
+  });
+};
+
+export const videoUnderstand = (file: File, desQuestion: string) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('desQuestion', desQuestion);
+  return request(api.videoUnderstand, {
+    method: 'POST',
+    body: formData,
+  });
+};
+

@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { DeleteOutlined } from '@ant-design/icons';
 import styles from './index.less';
 import noData from "@/assets/svg/noData.svg"
+import { useImgUnderstand } from '@/hooks/tools-hooks';
 const { Text } = Typography;
 const { TextArea } = Input;
 
@@ -19,6 +20,7 @@ const ImageUnderstanding = () => {
   const [analysisResult, setAnalysisResult] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
+  const imgUnderstandMutation = useImgUnderstand();
 
   // 上传配置
   const uploadProps = {
@@ -33,9 +35,8 @@ const ImageUnderstanding = () => {
         message.error('图片大小不能超过10MB！');
         return false;
       }
-
-      // 添加到已上传文件列表
-      setUploadedFiles(prev => [...prev, file]);
+      // 只保留一个文件，上传新图片时替换
+      setUploadedFiles([file]);
       return false; // 阻止自动上传
     },
     showUploadList: false,
@@ -48,7 +49,7 @@ const ImageUnderstanding = () => {
   };
 
   // 图片理解处理
-  const handleImageUnderstanding = () => {
+  const handleImageUnderstanding = async () => {
     const formData = form.getFieldsValue();
 
     if (uploadedFiles.length === 0) {
@@ -61,44 +62,18 @@ const ImageUnderstanding = () => {
       return;
     }
 
-    // 控制台输出配置信息
-    console.log('=== 图片理解信息 ===');
-    console.log('上传的图片:', uploadedFiles.map(f => f.name));
-    console.log('问题:', formData.question);
-    console.log('处理时间:', new Date().toLocaleString());
-    console.log('==================');
-
     setIsProcessing(true);
-
-    // 模拟图片理解过程
-    setTimeout(() => {
-      const result = `
-图片理解分析结果：
-  
-上传图片：
-${uploadedFiles.map(f => `• ${f.name} (${(f.size / 1024 / 1024).toFixed(2)} MB)`).join('\n')}
-
-问题：
-${formData.question}
-
-理解结果：
-• 图片类型：自然场景图片
-• 主要对象：包含多个视觉元素
-• 场景描述：这是一个包含丰富视觉信息的图片
-• 关键特征：色彩丰富，构图合理
-• 理解准确度：85%
-
-详细分析：
-基于您的问题"${formData.question}"，AI对图片进行了深度理解分析。
-图片中包含了多种视觉元素，AI能够识别出主要对象和场景特征。
-通过计算机视觉技术，系统能够理解图片的内容、结构和语义信息。
-
-处理时间：${new Date().toLocaleString()}`;
-
-      setAnalysisResult(result);
-      setIsProcessing(false);
+    try {
+      // 只取第一个图片文件
+      const file = uploadedFiles[0];
+      const result = await imgUnderstandMutation.mutateAsync({ file, desQuestion: formData.question });
+      setAnalysisResult(result || '');
       message.success('图片理解完成！');
-    }, 3000);
+    } catch (e: any) {
+      message.error(e?.message || '图片理解失败');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
