@@ -164,6 +164,7 @@ export const useEditDialog = () => {
 
   const onDialogEditOk = useCallback(
     async (dialog: IDialog) => {
+      console.log(`dialog1111`,dialog);
       const ret = await submitDialog(dialog);
 
       if (ret === 0) {

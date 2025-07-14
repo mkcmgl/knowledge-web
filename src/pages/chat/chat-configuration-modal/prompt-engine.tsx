@@ -181,7 +181,6 @@ const PromptEngine = (
         [styles.segmentedHidden]: !show,
       })}
     >
-      <Form form={form} labelCol={{ style: { width: 120, textAlign: 'right' } }}>
         <Form.Item label='提示词模板' style={{ marginBottom: 8 }}>
           <Select
             value={systemType}
@@ -269,7 +268,6 @@ const PromptEngine = (
             </Row>
           )}
         </section>
-      </Form>
     </section>
   );
 };

@@ -1,4 +1,3 @@
-import { ReactComponent as ChatConfigurationAtom } from '@/assets/svg/chat-configuration-atom.svg';
 import { IModalManagerChildrenProps } from '@/components/modal-manager';
 import {
   ModelVariableType,
@@ -9,7 +8,7 @@ import { useFetchModelId } from '@/hooks/logic-hooks';
 import { IDialog } from '@/interfaces/database/chat';
 import { getBase64FromUploadFileList } from '@/utils/file-util';
 import { removeUselessFieldsFromValues } from '@/utils/form';
-import { Divider, Flex, Form, Modal, Segmented, UploadFile } from 'antd';
+import { Form, Modal, Segmented, UploadFile } from 'antd';
 import { SegmentedValue } from 'antd/es/segmented';
 import camelCase from 'lodash/camelCase';
 import { useEffect, useRef, useState } from 'react';
@@ -124,6 +123,8 @@ const ChatConfigurationModal = ({
       if (icon) {
         fileList = [{ uid: '1', name: 'file', thumbUrl: icon, status: 'done' }];
       }
+      console.log(`nitialDialog.vector_similarity_weight`,initialDialog.vector_similarity_weight);
+      console.log(initialDialog);
       form.setFieldsValue({
         ...initialDialog,
         llm_setting:
@@ -132,7 +133,9 @@ const ChatConfigurationModal = ({
         icon: fileList,
         llm_id: initialDialog.llm_id ?? modelId,
         vector_similarity_weight:
-          1 - (initialDialog.vector_similarity_weight ?? 0.3),
+         (typeof initialDialog.vector_similarity_weight === 'number' && !isNaN(initialDialog.vector_similarity_weight))
+           ? initialDialog.vector_similarity_weight
+           : 0.3,
       });
     }
   }, [initialDialog, form, visible, modelId]);

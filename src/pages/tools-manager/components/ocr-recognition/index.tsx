@@ -13,7 +13,7 @@ import { DeleteOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';
 import noData from "@/assets/svg/noData.svg"
 import { useOCRRecognition } from '@/hooks/tools-hooks';
-import MarkdownTable from "./markdown-table"
+import MarkdownTable from "./markdown-table";
 const { TextArea } = Input;
 
 const { Text } = Typography;
@@ -309,7 +309,8 @@ const OCR = () => {
                                 </div>
                             ) : (
                                 recognitionResult.isFormatting === 1 ? (
-                                    <MarkdownTable text={recognitionResult.text || ''} />)
+                                    <MarkdownTable text={recognitionResult.text || ''} />
+                                )
                                     : (
                                         <TextArea
                                             value={recognitionResult.text}
@@ -334,10 +335,8 @@ const OCR = () => {
 
 
 
-
             </Form>
             {/* 底部识别按钮 */}
-
         </div>
     );
 };

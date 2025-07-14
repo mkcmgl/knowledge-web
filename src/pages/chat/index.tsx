@@ -181,7 +181,7 @@ const Chat = () => {
     // 只在没有选中会话 或 当前会话已被删除时自动跳转
     const exist = conversationList.some(item => item.id === conversationId);
     if (conversationList.length > 0 && (!conversationId || !exist)) {
-      handleConversationCardClick(conversationList[0].id, conversationList[0].is_new)();
+        handleConversationCardClick(conversationList[0].id, conversationList[0].is_new)();
     }
   }, [conversationList, conversationId, handleConversationCardClick]);
 
