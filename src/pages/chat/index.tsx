@@ -113,6 +113,16 @@ const Chat = () => {
     }
   }, [dialogList, dialogId, handleDialogCardClick]);
 
+  // 助理下没有聊天记录时自动新建聊天
+  useEffect(() => {
+    if (dialogList.length > 0 && dialogId) {
+      // 当前助理下没有聊天记录
+      if (conversationList.length === 0) {
+        addTemporaryConversation();
+      }
+    }
+  }, [dialogList, dialogId, conversationList, addTemporaryConversation]);
+
   const handleAppCardEnter = (id: string) => () => {
     handleItemEnter(id);
   };
