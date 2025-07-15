@@ -74,7 +74,7 @@ const VideoUnderstanding = () => {
       // 只取第一个视频文件
       const file = uploadedFiles[0];
       const result = await videoUnderstandMutation.mutateAsync({ file, desQuestion: formData.question });
-      setAnalysisResult(result || '');
+      setAnalysisResult(result.data || '');
       message.success('视频理解完成！');
     } catch (e: any) {
       message.error(e?.message || '视频理解失败');
@@ -233,7 +233,7 @@ const VideoUnderstanding = () => {
               value={analysisResult}
               placeholder="理解结果将在这里显示..."
               style={{
-                width: '100%',
+                height: '100%',
                 minHeight: '200px',
                 resize: 'none',
                 fontSize: '14px',

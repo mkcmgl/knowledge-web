@@ -5,7 +5,8 @@ import {
   Button,
   Slider,
   Space,
-  message
+  message,
+  Result
 } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useState } from 'react';
@@ -13,6 +14,7 @@ import ScatterChart from './scatter-chat';
 import sampleDataList from "./data.json"
 import ClusterVisualization from './cluster-visualization';
 import { useClusteringAnalysis } from '@/hooks/tools-hooks';
+import MarkdownTable from "@/components/markdown-table";
 const { Text } = Typography;
 const { TextArea } = Input;
 
@@ -22,7 +24,26 @@ interface ScatterData {
   color: string;
 }
 
-
+const testdatadata = [
+  {
+    "clusteringNum": 0,
+    "textContent": "场景一：AI+清单自动化 智能清单生成引擎 自动输出设备名称/单位/数量三维结构，关联历史清单数据库 供应商智能推荐系统 历史合作供应商（信用评级）、行业标杆（TOP10）、可替代供应商（参数相似度≥90%） 多维清单分析平台 变更追踪标红技术 | 参数对比雷达图（性能/价格/交付周期） | 智能配置建议引擎 合规性审核中枢 排他性条款AI检测模型| 智能格式校验器（标点/单位/编号）| 一键合规优化 数据驱动采购决策 实时业务洞察 | 精准匹配供需 | 全链路可追溯 | 动态优化配置",
+    "x": -3.42,
+    "y": -25.37
+  },
+  {
+    "clusteringNum": 2,
+    "textContent": "场景二：AI+造价估算 动态价格优化中枢 历史报价沉淀库 风险预警决策系统 智能成本分解引擎 积累过往报价数据，为价格预测提供基础依据，挖掘价格波动规律。 价格异动实时追踪 参数化建模 大宗商品期货指数 预警准确率高 供应商履约画像 构建动态成本公式库，精准计算各环节成本，适应复杂项目需求。 依据期货指数，分析原材料价格走向，助力精准采购决策。 实时监测价格波动，提前规避风险。 精准评估供应商履约能力，保障供应链稳定。 数据智能驱动 替代方案模拟 实时价格穿透力 成本结构可解释性 推演多套可行性方案，为成本优化提供多种选择，降低风险。 核心能力架构 决策敏捷度升级 风险收益动态平衡",
+    "x": 24.7,
+    "y": 9.86
+  },
+  {
+    "clusteringNum": 1,
+    "textContent": "场景三：AI+供应商管理 工商注册、税务申报、司法记录等企业基础数据 1 多源异构数据整合 招标文件、投标文件、合同文本等业务数据 2 供应商历史合作记录、交付质量等业务行为数据 3 语义相似度模型​​：检测投标文件重复率、异常条款表述 1 规则引擎​​：硬性指标筛查（如经营范围不匹配、资质过期） 2 风险识别与预警​AI模型引擎​​： 空壳公司识别：注册资本虚高检测+经营异常预测模型 围标识别：投标行为聚类分析+关联图谱穿透检测 3 围标案件拦截实时阻断 风险处置人工耗时降低 实时拦截​​：高风险投标自动冻结并触发人工复核 1​​策略优化​​：基于历史误报率动态调整模型阈值 动态防控体系​2 供应商分级​​：建立五维信用评分体系（财务/质量/交付/合规/合作）",
+    "x": -21.28,
+    "y": 15.52
+  }
+]
 
 export const sampleData: ScatterData[] = [
   { x: 0.5, y: 1.0, color: "#ff7f0e" },
@@ -60,7 +81,7 @@ const ClusteringAnalysis = () => {
   const [form] = Form.useForm();
   const [analysisResult, setAnalysisResult] = useState('');
   const [textSegments, setTextSegments] = useState([0, 1]); // 默认两个文本段
-
+  const [clusterData, setClusterData] = useState([]);
   const { mutateAsync: clusteringAnalysis, isPending: isProcessing } = useClusteringAnalysis();
 
   // 添加文本段
@@ -98,23 +119,16 @@ const ClusteringAnalysis = () => {
         clusteringText: formData.textSegments,
         thresholdValue: formData.threshold
       });
-      console.log(`result`, result);
+      console.log(`result`, Result);
 
-      // 组装展示内容
-      const analysisResult = `${result?.data?.map((cluster: any) => `聚类 ${cluster.clusteringNum}：
-文本内容：${cluster.textContent}
-聚类编号：${cluster.clusteringNum}
-
-`).join('')}
-`;
-
-      setAnalysisResult(analysisResult);
+      setAnalysisResult(result.data.result);
+      setClusterData(result.data.clusteringAnalysisVOList)
       message.success('聚类分析完成！');
     } catch (err: any) {
       message.error('聚类分析失败！');
     }
   };
-  const [clusterData] = useState(generateData());
+
   console.log(`clusterData`, clusterData);
   return (
     <div >
@@ -198,24 +212,15 @@ const ClusteringAnalysis = () => {
           <Text strong style={{ fontSize: '16px' }}>分析结果</Text>
         </div>
         <div style={{ width: '100%' }}>
-          <TextArea
-            value={analysisResult}
-            placeholder="分析结果将在这里显示..."
-            style={{
-              width: '100%',
-              minHeight: '300px',
-              resize: 'none',
-              fontSize: '14px',
-              lineHeight: '1.6',
-              border: 'none',
-              background: 'transparent'
-            }}
-            readOnly
-          />
+
+          <MarkdownTable text={analysisResult} />
           {/* <ScatterChart2  data={sampleData} /> */}
           {/* 修复类型错误，确保传递给ScatterChart的数据格式正确 */}
           {/* <ScatterChart scatterData={sampleData2 as { value: [number, number]; itemStyle?: { color: string } }[]} /> */}
-          <ClusterVisualization data={clusterData} />
+          {analysisResult ? (<ClusterVisualization data={clusterData} />) : (<div />)}
+
+
+
 
           {/* <ScatterChart scatterData={sampleData2 as [number, number][]} /> */}
         </div>

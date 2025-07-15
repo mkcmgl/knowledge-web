@@ -4,14 +4,15 @@ import {
   Button,
   message
 } from 'antd';
-import { useState } from 'react';
+import { useState, ReactNode } from 'react';
 import { useTextSimilarity } from '@/hooks/tools-hooks';
 import styles from './index.less';
+import MarkdownTable from "@/components/markdown-table";
 const { TextArea } = Input;
 
 const TextSimilarity = () => {
   const [form] = Form.useForm();
-  const [analysisResult, setAnalysisResult] = useState('');
+  const [analysisResult, setAnalysisResult] = useState<ReactNode>('');
   const { mutateAsync: calcSimilarity, isPending: isProcessing } = useTextSimilarity();
 
   // 文本相似度计算处理
@@ -25,16 +26,22 @@ const TextSimilarity = () => {
       setAnalysisResult('');
       const result = await calcSimilarity({ sourceFile: formData.originalText, targetFile: formData.compareText });
       console.log('相似度计算结果:', result);
-      
+
       if (result && result.data.similarity !== undefined) {
         const similarityPercentage = result.data.similarity.toFixed(2);
+        // 替换 result.data.result 中的“相似度约XX%”为 similarityPercentage%
+        let resultText = result.data.result;
+        resultText = resultText.replace(/相似度约\d+(\.\d+)?%/g, `相似度约${similarityPercentage}%`);
         const res = (
-          <span>
-            相似度：
-            <span style={{ color: '#F56C6C', fontSize: 20, fontWeight: 600 }}>
-              {similarityPercentage}%
+          <div>
+            <span>
+              相似度：
+              <span style={{ color: '#F56C6C', fontSize: 20, fontWeight: 600 }}>
+                {similarityPercentage}%
+              </span>
             </span>
-          </span>
+            <MarkdownTable text={resultText} />
+          </div>
         );
         setAnalysisResult(res);
         message.success('相似度计算完成！');

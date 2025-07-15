@@ -12,18 +12,33 @@ import {
 ChartJS.register(LinearScale, PointElement, Tooltip, Legend, Title);
 
 
-const COLORS = ['#FF6384', '#36A2EB', '#FFC85E'];
-const POINT_STYLES = ['circle', 'triangle', 'rect'];
+// 动态生成颜色
+function getRandomColor() {
+  return `#${Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0')}`;
+}
+// Chart.js 支持的点样式
+const ALL_POINT_STYLES = [
+  'circle', 'triangle', 'rect', 'rectRounded', 'rectRot', 'cross', 'crossRot', 'star', 'line', 'dash'
+];
 
-
-const ClusterVisualization = ({ data }: { data: { x: number; y: number; cluster: number; label?: string; value?: string|number }[] }) => {
+const ClusterVisualization = ({ data }: { data: { x: number; y: number; clusteringNum: number; label?: string; textContent?: string | number }[] }) => {
+    console.log(`data`, data);
+    // 统计有多少个 cluster
+    const clusterIds = Array.from(new Set(data.map(d => d.clusteringNum)));
+    // 为每个 cluster 分配颜色和点样式
+    const clusterColorMap = clusterIds.map((_, i) =>
+      i < 20 ? getRandomColor() : getRandomColor()
+    );
+    const clusterPointStyleMap = clusterIds.map((_, i) =>
+      ALL_POINT_STYLES[i % ALL_POINT_STYLES.length]
+    );
 
     const chartData = {
-        datasets: COLORS.map((color, i) => ({
-            label: `分类 ${i + 1}`,
-            data: data.filter((d: any) => d.cluster === i),
-            backgroundColor: color,
-            pointStyle: POINT_STYLES[i],
+        datasets: clusterIds.map((clusterId, i) => ({
+            label: `分类 ${clusterId + 1}`,
+            data: data.filter((d: any) => d.clusteringNum === clusterId),
+            backgroundColor: clusterColorMap[i],
+            pointStyle: clusterPointStyleMap[i],
             pointRadius: 6,
             pointHoverRadius: 8,
             borderWidth: 1
@@ -37,16 +52,18 @@ const ClusterVisualization = ({ data }: { data: { x: number; y: number; cluster:
                 options={{
                     responsive: true,
                     scales: {
-                        x: { min: 0, max: 20, ticks: { stepSize: 2 } },
-                        y: { min: 0, max: 20, ticks: { stepSize: 2 } }
+                        x: { ticks: { stepSize: 2 } },
+                        y: { ticks: { stepSize: 2 } }
                     },
                     plugins: {
                         tooltip: {
                             callbacks: {
-                                label: function(context: any) {
+                                label: function (context: any) {
                                     const point = context.raw;
-                                    // 显示label和value字段
-                                    return `label: ${point.label ?? ''}, value: ${point.value ?? ''}`;
+                                    // 长文本自动换行，每30个字符一行
+                                    const text = `${point.textContent ?? ''}`;
+                                    const lines = text.match(/.{1,30}/g) || [];
+                                    return lines;
                                 }
                             }
                         }

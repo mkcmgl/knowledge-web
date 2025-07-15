@@ -13,8 +13,10 @@ export interface IDocumentInfo {
   parser_id: string;
   process_begin_at?: string;
   process_duation: number;
+  processDuation?:number,
   progress: number;
-  progress_msg: string;
+  progress_msg?: string;
+  progressMsg: string;
   run: RunningStatus;
   size: number;
   source_type: string;
@@ -25,6 +27,7 @@ export interface IDocumentInfo {
   update_date: string;
   update_time: number;
   metaFields?:string| Record<string, any>;
+  meta_fields?:string| Record<string, any>;
 }
 
 export interface IParserConfig {

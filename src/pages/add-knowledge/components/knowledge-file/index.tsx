@@ -159,14 +159,14 @@ const KnowledgeFile = () => {
     },
     {
       title: t('chunkNumber'),
-      dataIndex: 'chunkNum',
-      key: 'chunkNum',
+      dataIndex: 'chunk_num',
+      key: 'chunk_num',
     },
 
     {
       title: t('chunkMethod'),
-      dataIndex: 'parserId',
-      key: 'parserId',
+      dataIndex: 'parser_id',
+      key: 'parser_id',
       render: (text) => {
         return parserList.find((x) => x.value === text)?.label;
       },
@@ -194,13 +194,13 @@ const KnowledgeFile = () => {
     },
     {
       title: '元数据',
-      dataIndex: 'metaFields',
-      key: 'metaFields',
+      dataIndex: 'meta_fields',
+      key: 'meta_fields',
       ellipsis: true,
       render: (meta, record) => {
-        const text = typeof record.metaFields === 'object'
-          ? JSON.stringify(record.metaFields)
-          : String(record.metaFields ?? '');
+        const text = typeof record.meta_fields === 'object'
+          ? JSON.stringify(record.meta_fields)
+          : String(record.meta_fields ?? '');
         return (
           <Tooltip placement="topLeft" title={text}>
             <div
@@ -217,9 +217,9 @@ const KnowledgeFile = () => {
                 onClick={e => {
                   e.stopPropagation();
 
-                  setViewMetaData(typeof record.metaFields === 'string'
-                    ? (() => { try { return JSON.parse(record.metaFields); } catch { return {}; } })()
-                    : record.metaFields);
+                  setViewMetaData(typeof record.meta_fields === 'string'
+                    ? (() => { try { return JSON.parse(record.meta_fields); } catch { return {}; } })()
+                    : record.meta_fields);
                   setViewMetaVisible(true);
                 }}
               >
@@ -247,8 +247,8 @@ const KnowledgeFile = () => {
     },
     {
       title: t('uploadDate'),
-      dataIndex: 'createTime',
-      key: 'createTime',
+      dataIndex: 'create_time',
+      key: 'create_time',
       render(value) {
         return formatDate(value);
       },

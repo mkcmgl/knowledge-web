@@ -13,7 +13,7 @@ import { DeleteOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';
 import noData from "@/assets/svg/noData.svg"
 import { useOCRRecognition } from '@/hooks/tools-hooks';
-import MarkdownTable from "./markdown-table";
+import MarkdownTable from "@/components/markdown-table";
 const { TextArea } = Input;
 
 const { Text } = Typography;
