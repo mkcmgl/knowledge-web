@@ -107,7 +107,7 @@ export const useFetchNextDocumentList = () => {
   }>({
     queryKey: ['fetchDocumentList', searchFilters, pagination],
     initialData: { docs: [], total: 0 },
-    refetchInterval: 120000,
+    refetchInterval: 60000,
     enabled: !!knowledgeId || !!id,
     queryFn: async () => {
       const ret = await listDocument({
@@ -407,7 +407,7 @@ export const useRunNextDocument = () => {
       });
 
       const ret = await kbService.document_run({
-        doc_ids: documentIds,
+        document_ids: documentIds,
         run,
         delete: shouldDelete,
       });
@@ -508,6 +508,8 @@ export const useRemoveNextDocumentKb = () => {
       if (data.code === 0) {
         message.success(i18n.t('message.deleted'));
         queryClient.invalidateQueries({ queryKey: ['fetchDocumentList'] });
+      }else{
+        message.error(data.message);
       }
       return data.code;
     },

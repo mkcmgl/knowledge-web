@@ -223,7 +223,7 @@ export const useRunDocument = () => {
       });
 
       const ret = await kbService.document_run({
-        doc_ids: documentIds,
+        document_ids: documentIds,
         run,
         delete: shouldDelete,
       });

@@ -70,7 +70,7 @@ export default {
   document_delete: `${api_host}/api/document`,
   document_rename: `${api_host}/document/rename`,
   document_create: `${api_host}/document/create`,
-  document_run: `${api_host}/document/run`,
+  document_run: `${api_rag_host}/file/run`,
   document_change_parser: `${api_host}/document/change_parser`,
   document_thumbnails: `${api_host}/document/thumbnails`,
   get_document_file: `${api_host}/document/get`,
