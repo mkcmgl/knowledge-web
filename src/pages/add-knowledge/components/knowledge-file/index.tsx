@@ -3,18 +3,14 @@ import SvgIcon from '@/components/svg-icon';
 import {
   useFetchNextDocumentList,
   useSetNextDocumentStatus,
+  // usePollingTaskList, // 移除未导出hook
 } from '@/hooks/document-hooks';
 import { useSetSelectedRecord } from '@/hooks/logic-hooks';
 import { useSelectParserList } from '@/hooks/user-setting-hooks';
 import { getExtension } from '@/utils/document-util';
-import {
-  FileOutlined,
-  FileTextOutlined,
-  PlusOutlined,
-} from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import {
   Button,
-  Divider,
   Dropdown,
   Flex,
   MenuProps,
@@ -49,15 +45,16 @@ import { RunningStatus } from '@/constants/knowledge';
 import { IDocumentInfo } from '@/interfaces/database/document';
 import { formatDate } from '@/utils/date';
 import { CircleHelp } from 'lucide-react';
-import { useMemo, useState, useCallback, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import styles from './index.less';
 import SetMetaModal from './set-meta-modal';
 import Editor from '@monaco-editor/react';
 import { useGetKnowledgeSearchParams } from '@/hooks/route-hook';
+// import { getTaskList } from '@/services/knowledge-service';
 const { Text } = Typography;
 
 const KnowledgeFile = () => {
-  const { documents, pagination, setPagination, handleSearch, handleReset, loading } = useFetchNextDocumentList();
+  const { documents, pagination, handleSearch, handleReset, loading, taskList } = useFetchNextDocumentList();
   const [filteredDocuments, setFilteredDocuments] = useState<IDocumentInfo[]>([]);
   const parserList = useSelectParserList();
   const { setDocumentStatus } = useSetNextDocumentStatus();
@@ -116,6 +113,7 @@ const KnowledgeFile = () => {
   // 本地loading状态用于SetMetaModal
   const [metaLoading, setMetaLoading] = useState(false);
 
+
   // SetMetaModal确定按钮处理
   const handleSetMetaModalOk = async (meta: string) => {
     setMetaLoading(true);
@@ -127,11 +125,15 @@ const KnowledgeFile = () => {
   };
 
   const { knowledgeId } = useGetKnowledgeSearchParams();
+  // const { data: taskList } = usePollingTaskList(knowledgeId); // 移除
+
 
   const rowSelection = useGetRowSelection();
 
   const [viewMetaVisible, setViewMetaVisible] = useState(false);
   const [viewMetaData, setViewMetaData] = useState<any>(null);
+
+
 
   const columns: ColumnsType<IDocumentInfo> = [
     {
@@ -139,11 +141,17 @@ const KnowledgeFile = () => {
       dataIndex: 'name',
       key: 'name',
       // fixed: 'left',
-      render: (text: any, { id, thumbnail, name }) => (
+      render: (text: any, { kb_id, id, thumbnail, name }) => (
         <div className={styles.toChunks} onClick={() => toChunk(id)}>
           <Flex gap={10} align="center">
             {thumbnail ? (
-              <img className={styles.img} src={thumbnail} alt="" />
+              <img
+                className={styles.img}
+                src={
+                  '/api/file/downloadImage?imageId=' + kb_id + '-' + thumbnail
+                }
+                alt=""
+              />
             ) : (
               <SvgIcon
                 name={`file-icon/${getExtension(name)}`}
@@ -317,7 +325,7 @@ const KnowledgeFile = () => {
                 </defs>
                 <g clipPath="url(#master_svg0_94_12496)">
                   <g>
-                    <path d="M10.1248046875,11.3999755859375L2.4748046875,11.3999755859375C2.1021836875,11.3995755859375,1.8002175905,11.0975755859375,1.7998046875,10.7249755859375L1.7998046875,1.2749775859375C1.8002180485,0.9023575859374999,2.1021836875,0.6003912349375,2.4748046875,0.5999779891975L7.9444646875,0.5999779891975C8.1235746875,0.5994987109375,8.2954346875,0.6706945859375,8.4217446875,0.7976965859375L10.6020846875,2.9780355859375C10.7290846875,3.1043455859375,10.8002846875,3.2762055859375,10.7998046875,3.4553255859375L10.7998046875,10.7249755859375C10.7993946875,11.0975755859375,10.4974246875,11.3995755859375,10.1248046875,11.3999755859375ZM2.4748046875,1.1999775859375C2.4333836875,1.1999775859375,2.3998046875,1.2335565859375,2.3998046875,1.2749775859375L2.3998046875,10.7249755859375C2.3998046875,10.7663755859375,2.4333836875,10.7999755859375,2.4748046875,10.7999755859375L10.1248046875,10.7999755859375C10.1662246875,10.7999755859375,10.1998046875,10.7663755859375,10.1998046875,10.7249755859375L10.1998046875,3.5999755859375L8.4748046875,3.5999755859375C8.1021846875,3.5995655859375,7.8002146875,3.2975955859375,7.7998046875,2.9249755859375L7.7998046875,1.1999775859375L2.4748046875,1.1999775859375ZM8.3998046875,1.6241955859375L8.3998046875,2.9249755859375C8.3998046875,2.9663955859375,8.4333846875,2.9999755859375,8.4748046875,2.9999755859375L9.7755846875,2.9999755859375L8.3998046875,1.6241955859375Z" fill="#306EFD" fillOpacity="1" style={{ mixBlendMode: "passthrough" }} />
+                    <path d="M10.1248046875,11.3999755859375L2.4748046875,11.3999755859375C2.1021836875,11.3995755859375,1.8002175905,11.0975755859375,1.7998046875,10.7249755859375L1.7998046875,1.2749775859375C1.8002180485,0.9023575859374999,2.1021836875,0.6003912349375,2.4748046875,0.5999779891975L7.9444646875,0.5999779891975C8.1235746875,0.5994987109375,8.2954346875,0.6706945859375,8.4217446875,0.7976965859375L10.6020846875,2.9780355859375C10.7290846875,3.1043455859375,10.8002846875,3.2762055859375,10.7998046875,3.4553255859375L10.7998046875,10.7249755859375C10.7993946875,11.0975755859375,10.4974246875,11.3995755859375,10.1248046875,11.3999755859375ZM2.4748046875,1.1999775859375C2.4333836875,1.1999775859375,2.3998046875,1.2335565859375,2.3998046875,1.2749775859375L2.3998046875,10.7249755859375C2.3998046875,10.7663755859375,2.4333836875,10.7999755859375,2.4748046875,10.7999755859375L10.1248046875,10.7999755859375C10.1662246875,10.7999755859375,10.1998046875,10.7663755859375,10.1998046875,10.7249755859375L10.1998046875,3.5999755859375L8.4748046875,3.5999755859375C8.1021846875,3.5995655859375,7.8002146875,3.2975955859375,7.7998046875,2.9249755859375L7.7998046875,1.1999775859375L2.4748046875,1.1999775859375ZM8.3998046875,1.6241955859375L8.3998046875,2.9249755859375C8.3998046875,2.9663955859375,8.4333846875,2.9999755859375,8.4748046875,2.9999755859375L9.7755846875,2.9999755859375L8.3998046875,1.6241955859375Z" fill="#306EFD" fillOpacity="1" />
                   </g>
                   <g>
                     <path d="M3.9999999523162844,3.674999952316284L7.999999952316284,3.674999952316284C8.179489952316285,3.674999952316284,8.324999952316285,3.820506952316284,8.324999952316285,3.9999999523162844C8.324999952316285,4.179492952316284,8.179489952316285,4.3249999523162845,7.999999952316284,4.3249999523162845L3.9999999523162844,4.3249999523162845C3.820506952316284,4.3249999523162845,3.674999952316284,4.179492952316284,3.674999952316284,3.9999999523162844C3.674999952316284,3.820506952316284,3.820506952316284,3.674999952316284,3.9999999523162844,3.674999952316284Z" fillRule="evenodd" fill="#306EFD" fillOpacity="1" />
@@ -357,15 +365,14 @@ const KnowledgeFile = () => {
 
       <DocumentToolbar
         selectedRowKeys={rowSelection.selectedRowKeys as string[]}
-        showCreateModal={showCreateModal}
         showWebCrawlModal={showWebCrawlUploadModal}
         showDocumentUploadModal={showDocumentUploadModal}
         documents={documents}
-        onSearch={handleSearch}
+        onSearch={handleSearch as (filters: { name: string; chunkMethod: string; status: string; run: string; key: string; value: string; startDate?: string; endDate?: string }) => void}
         onReset={handleReset}
         parserList={parserList}
         onFilteredDocumentsChange={setFilteredDocuments}
-      ></DocumentToolbar>
+      />
       <div className={styles.testingControlTip}>
         <div>  <svg xmlns="http://www.w3.org/2000/svg" fill="none" version="1.1" style={{ width: 20, height: 20, marginRight: 8, }} viewBox="0 0 20 20">
           <defs>
@@ -414,10 +421,10 @@ const KnowledgeFile = () => {
       />
       <ChunkMethodModal
         documentId={currentRecord.id}
-        parserId={currentRecord.parser_id}
+        parserId={currentRecord.parser_id as any}
         parserConfig={currentRecord.parser_config}
         documentExtension={getExtension(currentRecord.name)}
-        onOk={onChangeParserOk}
+        onOk={onChangeParserOk as any}
         visible={changeParserVisible}
         hideModal={hideChangeParserModal}
         loading={changeParserLoading}
@@ -428,7 +435,7 @@ const KnowledgeFile = () => {
         loading={renameLoading}
         hideModal={hideRenameModal}
         initialName={currentRecord.name}
-      ></RenameModal>
+      />
       <FileUploadModal
         visible={documentUploadVisible}
         hideModal={hideDocumentUploadModal}
@@ -438,13 +445,13 @@ const KnowledgeFile = () => {
         setUploadFileList={setUploadFileList}
         uploadProgress={uploadProgress}
         setUploadProgress={setUploadProgress}
-      ></FileUploadModal>
+      />
       <WebCrawlModal
         visible={webCrawlUploadVisible}
         hideModal={hideWebCrawlUploadModal}
         loading={webCrawlUploadLoading}
         onOk={onWebCrawlUploadOk}
-      ></WebCrawlModal>
+      />
       {setMetaVisible && (
         <SetMetaModal
           visible={setMetaVisible}
@@ -452,7 +459,7 @@ const KnowledgeFile = () => {
           onOk={handleSetMetaModalOk}
           loading={metaLoading}
           initialMetaData={currentRecord.metaFields}
-        ></SetMetaModal>
+        />
       )}
       <Modal
         title="查看元数据"
@@ -461,7 +468,6 @@ const KnowledgeFile = () => {
         footer={null}
         width={600}
       >
-
         <Editor
           height={200}
           defaultLanguage="json"

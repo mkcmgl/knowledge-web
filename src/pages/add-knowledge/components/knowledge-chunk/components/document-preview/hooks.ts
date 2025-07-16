@@ -1,5 +1,5 @@
 import { useGetKnowledgeSearchParams } from '@/hooks/route-hook';
-import { api_host } from '@/utils/api';
+import { api_host,api_rag_host } from '@/utils/api';
 import { useSize } from 'ahooks';
 import { CustomTextRenderer } from 'node_modules/react-pdf/dist/esm/shared/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -44,12 +44,11 @@ export const useHighlightText = (searchText: string = '') => {
   return textRenderer;
 };
 
-export const useGetDocumentUrl = () => {
-  const { documentId } = useGetKnowledgeSearchParams();
-
+export const useGetDocumentUrl = (docId?: string) => {
+  const { documentId: routeDocumentId } = useGetKnowledgeSearchParams();
+  const finalDocId = docId || routeDocumentId;
   const url = useMemo(() => {
-    return `${api_host}/document/get/${documentId}`;
-  }, [documentId]);
-
+    return `${api_rag_host}/file/download/${finalDocId}`;
+  }, [finalDocId]);
   return url;
 };

@@ -42,6 +42,22 @@ const DocumentPreviewer = ({ chunk, documentId, visible }: IProps) => {
   const ref = useRef<(highlight: IHighlight) => void>(() => {});
   const [loaded, setLoaded] = useState(false);
   const url = getDocumentUrl();
+  const [pdfUrl, setPdfUrl] = useState<string>('');
+  useEffect(() => {
+    const token = 'Bearer ragflow-' + localStorage.getItem('Authorization');
+    if (!url || !token) return;
+    fetch(url, {
+      headers: {
+        Authorization: token,
+      },
+    })
+      .then(res => res.blob())
+      .then(blob => {
+        const localUrl = URL.createObjectURL(blob);
+        setPdfUrl(localUrl);
+        return () => URL.revokeObjectURL(localUrl);
+      });
+  }, [url]);
   const error = useCatchDocumentError(url);
 
   const resetHash = () => {};
@@ -60,7 +76,7 @@ const DocumentPreviewer = ({ chunk, documentId, visible }: IProps) => {
   return (
     <div className={styles.documentContainer}>
       <PdfLoader
-        url={url}
+        url={pdfUrl}
         beforeLoad={<Skeleton active />}
         workerSrc="/pdfjs-dist/pdf.worker.min.js"
         errorMessage={<FileError>{error}</FileError>}

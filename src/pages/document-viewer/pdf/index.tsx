@@ -21,7 +21,7 @@ const PdfPreviewer = ({ url }: IProps) => {
     [Authorization]: getAuthorization(),
   };
   return (
-    <div style={{ width: '100%', height: '100%' }}>
+    <div style={{ width: '100%', }}>
       <Loader
         url={url}
         httpHeaders={httpHeaders}

@@ -52,7 +52,7 @@ export default {
     `${api_host}/kb/${knowledgeId}/rename_tag`,
 
   // chunk
-  chunk_list: `${api_host}/chunk/list`,
+  chunk_list: `${api_rag_host}/chunk/list`,
   create_chunk: `${api_host}/chunk/create`,
   set_chunk: `${api_host}/chunk/set`,
   get_chunk: `${api_host}/chunk/get`,
@@ -65,6 +65,7 @@ export default {
   // document
   get_document_list: `${api_rag_host}/file/docList`,
   document_change_status: `${api_host}/document/change_status`,
+  document_update_status: `${api_rag_host}/file/updateDocStatus`,
   document_rm: `${api_host}/document/rm`,
   documentRm: (dataset_id: string) =>`${api_rag_host}/file/deleteDoc/${dataset_id}`,
   document_delete: `${api_host}/api/document`,
@@ -155,4 +156,5 @@ export default {
   clusteringAnalysis: `${api_rag_host}/tools/clusteringAnalysis`,
   imgUnderstand: `${api_rag_host}/tools/imgUnderstand`,
   videoUnderstand: `${api_rag_host}/tools/videoUnderstand`,
+  taskList: (dataset_id: string) => `${api_rag_host}/task/list/${dataset_id}`,
 };

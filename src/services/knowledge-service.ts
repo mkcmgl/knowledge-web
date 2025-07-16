@@ -16,6 +16,7 @@ const {
 
   get_document_list,
   document_change_status,
+  document_update_status,
   document_rm,
   document_delete,
   document_create,
@@ -71,7 +72,10 @@ const methods = {
     url: document_change_status,
     method: 'post',
   },
-
+  document_update_status:{
+     url: document_update_status,
+    method: 'post'
+  },
   document_rename: {
     url: document_rename,
     method: 'post',
@@ -204,6 +208,10 @@ export const listDocument = (
 
 export const getCount = () => {
   return request.get('/api/dataset/getCount');
+};
+
+export const getTaskList = (dataset_id: string) => {
+  return request.get(api.taskList(dataset_id));
 };
 
 export default kbService;

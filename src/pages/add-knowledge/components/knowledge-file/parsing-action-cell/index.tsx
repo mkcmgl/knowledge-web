@@ -74,7 +74,7 @@ const ParsingActionCell = ({
   }, [setRecord, showSetMetaModal]);
 
   const onShowPreviewModal = (docId: string) => {
-    setPreviewDocId(docId);
+    setPreviewDocId(docId); // 只传 id，不拼接
     setPreviewVisible(true);
   };
 
@@ -172,7 +172,7 @@ const ParsingActionCell = ({
       <PreviewModal
         visible={previewVisible}
         hideModal={hidePreviewModal}
-        docId={previewDocId}
+        docId={previewDocId} // 只传 id
       />
     </>
   );

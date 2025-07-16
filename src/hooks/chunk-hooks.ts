@@ -24,14 +24,15 @@ export interface IChunkListResult {
   handleSetAvailable: (available: number | undefined) => void;
 }
 
-export const useFetchNextChunkList = (options?: { enabled?: boolean }): ResponseGetType<{
+export const useFetchNextChunkList = (options?: { enabled?: boolean; docId?: string }): ResponseGetType<{
   data: IChunk[];
   total: number;
   documentInfo: IKnowledgeFile;
 }> &
   IChunkListResult => {
   const { pagination, setPagination } = useGetPaginationWithRouter();
-  const { documentId } = useGetKnowledgeSearchParams();
+  const { documentId: routeDocumentId } = useGetKnowledgeSearchParams();
+  const documentId = options?.docId || routeDocumentId;
   const { searchString, handleInputChange } = useHandleSearchChange();
   const [available, setAvailable] = useState<number | undefined>();
   const debouncedSearchString = useDebounce(searchString, { wait: 500 });

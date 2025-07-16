@@ -10,14 +10,16 @@ import chatService from '@/services/chat-service';
 import kbService, {
   documentRm,
   listDocument,
+  getTaskList,
 } from '@/services/knowledge-service';
-import api, { api_host } from '@/utils/api';
+import api, { api_host,api_rag_host } from '@/utils/api';
 import { buildChunkHighlights } from '@/utils/document-util';
 import { post } from '@/utils/request';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { UploadFile, message } from 'antd';
 import { get } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
+import React from 'react';
 import { IHighlight } from 'react-pdf-highlighter';
 import { useParams } from 'umi';
 import { useGetPaginationWithRouter } from './logic-hooks';
@@ -29,7 +31,7 @@ import {
 export const useGetDocumentUrl = (documentId?: string) => {
   const getDocumentUrl = useCallback(
     (id?: string) => {
-      return `${api_host}/document/get/${documentId || id}`;
+      return `${api_rag_host}/file/download/${documentId || id}`;
     },
     [documentId],
   );
@@ -73,84 +75,68 @@ export const useFetchNextDocumentList = () => {
   const { pagination, setPagination } = useGetPaginationWithRouter();
   const { id } = useParams();
 
-  // const filterDocuments = (documents: IDocumentInfo[], filters: any) => {
-  //   return documents.filter((doc) => {
-  //     if (filters.parser_id && doc.parser_id !== filters.parser_id) {
-  //       return false;
-  //     }
-
-  //     if (filters.status && doc.status !== filters.status) {
-  //       return false;
-  //     }
-
-  //     if (filters.run && doc.run !== filters.run) {
-  //       return false;
-  //     }
-
-  //     if (filters.key || filters.value) {
-  //       const metaFields = doc.meta_fields || {};
-  //       if (filters.key && !metaFields[filters.key]) {
-  //         return false;
-  //       }
-  //       if (filters.value && metaFields[filters.key] !== filters.value) {
-  //         return false;
-  //       }
-  //     }
-
-  //     return true;
-  //   });
-  // };
-
-  const { data, isFetching: loading } = useQuery<{
-    docs: IDocumentInfo[];
-    total: number;
-  }>({
-    queryKey: ['fetchDocumentList', searchFilters, pagination],
-    initialData: { docs: [], total: 0 },
-    refetchInterval: 60000,
+  const queryResult = useQuery({
+    queryKey: ['fetchDocumentAndTaskList', knowledgeId || id, searchFilters, pagination],
     enabled: !!knowledgeId || !!id,
+    refetchInterval: 60000,
     queryFn: async () => {
+      const kbId = knowledgeId || id;
+      if (!kbId) return { docs: [], total: 0, taskList: [] };
+      // 1. 获取文档列表
       const ret = await listDocument({
-        kbId: knowledgeId || id,
+        kbId,
         name: searchFilters.name,
         chunkMethod: searchFilters.chunkMethod,
         status: searchFilters.status,
         run: searchFilters.run || [],
-    
         metadataCondition: {
           conditions: [
             {
               name: searchFilters.key,
-              value: searchFilters.value ,
+              value: searchFilters.value,
               comparison_operator: 'eq',
             },
           ],
           logical_operator: '',
         },
-         startDate: searchFilters.startDate,
+        startDate: searchFilters.startDate,
         endDate: searchFilters.endDate,
-        // endDate: searchFilters?.dateRange[1],
-        // startDate: searchFilters?.dateRange[0],
         pageSize: pagination.pageSize,
         page: pagination.current,
       } as any);
+      let docs: any[] = [];
+      let total = 0;
       if (ret.data.code === 0) {
-        // const filteredDocs = filterDocuments(
-        //   ret.data.data.records,
-        //   searchFilters,
-        // );
-        return {
-          docs:  ret.data.data.records,
-          total: ret.data.data.total,
-        };
+        docs = ret.data.data.records;
+        total = ret.data.data.total;
       }
-
-      return {
-        docs: [],
-        total: 0,
-      };
+      // 2. 获取任务列表
+      const res = await getTaskList(kbId);
+      let taskList: any[] = [];
+      if (res?.data?.code === 0 && Array.isArray(res.data.data)) {
+        taskList = res.data.data;
+      }
+      return { docs, total, taskList };
     },
   });
+
+  // 任务提示逻辑移到 useEffect，避免 useQuery options 报错
+  // 3. 比对并提示
+  React.useEffect(() => {
+    const data = queryResult.data;
+    if (!data) return;
+    const docIds = new Set((data.docs || []).map((d: any) => d.id));
+    const needTipTasks = (data.taskList || []).filter((t: any) => !docIds.has(t.dto?.documentId));
+    if (needTipTasks.length > 0) {
+      const msg = needTipTasks.map((t: any) => {
+        const docName = t.dto?.documentName || '';
+        const status = t.status || '';
+        const msg = t.message || '';
+        return `文件 ${docName}：${status}${msg ? ' - ' + msg : ''}`;
+      }).join('\n');
+      message.info(msg, 5);
+    }
+  }, [queryResult.data]);
 
   const handleSearch = useCallback(
     (filters: typeof searchFilters) => {
@@ -175,13 +161,14 @@ export const useFetchNextDocumentList = () => {
   }, [setPagination]);
 
   return {
-    loading,
+    loading: queryResult.isFetching,
     searchFilters,
-    documents: data.docs,
-    pagination: { ...pagination, total: data?.total },
+    documents: queryResult.data?.docs || [],
+    pagination: { ...pagination, total: queryResult.data?.total || 0 },
     handleSearch,
     handleReset,
     setPagination,
+    taskList: queryResult.data?.taskList || [],
   };
 };
 
@@ -207,7 +194,7 @@ export const useSetNextDocumentStatus = () => {
       });
       if (data.code === 0) {
         message.success(i18n.t('message.modified'));
-        queryClient.invalidateQueries({ queryKey: ['fetchDocumentList'] });
+        queryClient.invalidateQueries({ queryKey: ['fetchDocumentAndTaskList'] });
       }
       return data;
     },
@@ -238,7 +225,7 @@ export const useSaveNextDocumentName = () => {
       });
       if (data.code === 0) {
         message.success(i18n.t('message.renamed'));
-        queryClient.invalidateQueries({ queryKey: ['fetchDocumentList'] });
+        queryClient.invalidateQueries({ queryKey: ['fetchDocumentAndTaskList'] });
       }
       return data.code;
     },
@@ -265,7 +252,7 @@ export const useCreateNextDocument = () => {
       });
       if (data.code === 0) {
         if (page === 1) {
-          queryClient.invalidateQueries({ queryKey: ['fetchDocumentList'] });
+          queryClient.invalidateQueries({ queryKey: ['fetchDocumentAndTaskList'] });
         } else {
           setPaginationParams(); // fetch document list
         }
@@ -303,7 +290,7 @@ export const useSetNextDocumentParser = () => {
         parser_config: parserConfig,
       });
       if (data.code === 0) {
-        queryClient.invalidateQueries({ queryKey: ['fetchDocumentList'] });
+        queryClient.invalidateQueries({ queryKey: ['fetchDocumentAndTaskList'] });
 
         message.success(i18n.t('message.modified'));
       }
@@ -336,7 +323,7 @@ export const useUploadNextDocument = () => {
         const code = get(ret, 'data.code');
 
         if (code === 0 || code === 500) {
-          queryClient.invalidateQueries({ queryKey: ['fetchDocumentList'] });
+          queryClient.invalidateQueries({ queryKey: ['fetchDocumentAndTaskList'], exact: false });
         }
         return ret?.data;
       } catch (error) {
@@ -403,7 +390,7 @@ export const useRunNextDocument = () => {
       shouldDelete: boolean;
     }) => {
       queryClient.invalidateQueries({
-        queryKey: ['fetchDocumentList'],
+        queryKey: ['fetchDocumentAndTaskList'],
       });
 
       const ret = await kbService.document_run({
@@ -413,7 +400,7 @@ export const useRunNextDocument = () => {
       });
       const code = get(ret, 'data.code');
       if (code === 0) {
-        queryClient.invalidateQueries({ queryKey: ['fetchDocumentList'] });
+        queryClient.invalidateQueries({ queryKey: ['fetchDocumentAndTaskList'] });
         message.success(i18n.t('message.operated'));
       }
 
@@ -478,7 +465,7 @@ export const useRemoveNextDocument = () => {
       const { data } = await kbService.document_rm({ doc_id: documentIds });
       if (data.code === 0) {
         message.success(i18n.t('message.deleted'));
-        queryClient.invalidateQueries({ queryKey: ['fetchDocumentList'] });
+        queryClient.invalidateQueries({ queryKey: ['fetchDocumentAndTaskList'] });
       }
       return data.code;
     },
@@ -507,7 +494,7 @@ export const useRemoveNextDocumentKb = () => {
       } as any);
       if (data.code === 0) {
         message.success(i18n.t('message.deleted'));
-        queryClient.invalidateQueries({ queryKey: ['fetchDocumentList'] });
+        queryClient.invalidateQueries({ queryKey: ['fetchDocumentAndTaskList'] });
       }else{
         message.error(data.message);
       }
@@ -577,7 +564,7 @@ export const useParseDocument = () => {
     mutationFn: async (url: string) => {
       try {
         const data = await post(api.parse, { url });
-        if (data?.code === 0) {
+        if (data?.data?.code === 0) {
           message.success(i18n.t('message.uploaded'));
         }
         return data;
@@ -607,7 +594,7 @@ export const useSetDocumentMeta = () => {
         });
 
         if (data?.code === 0) {
-          queryClient.invalidateQueries({ queryKey: ['fetchDocumentList'] });
+          queryClient.invalidateQueries({ queryKey: ['fetchDocumentAndTaskList'] });
 
           message.success(i18n.t('message.modified'));
         }

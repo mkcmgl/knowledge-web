@@ -1,7 +1,5 @@
 import { useFetchNextChunkList } from '@/hooks/chunk-hooks';
 import { Modal, Spin } from 'antd';
-import { useEffect } from 'react';
-import { useSearchParams } from 'umi';
 import DocumentPreview from '../../knowledge-chunk/components/document-preview/preview';
 import { useGetChunkHighlights } from '../../knowledge-chunk/hooks';
 import styles from './index.less';
@@ -13,20 +11,20 @@ export interface IProps {
 }
 
 const PreviewModal = ({ visible, hideModal, docId }: IProps) => {
-    const [, setSearchParams] = useSearchParams();
-
-    useEffect(() => {
-        if (visible && docId) {
-            console.log('Setting doc_id:', docId);
-            setSearchParams({ doc_id: docId });
-        }
-    }, [visible, docId, setSearchParams]);
+    console.log('Setting doc_id:111', docId);
+    // useEffect(() => {
+    //     console.log('Setting doc_id:', docId);
+    //     if (visible && docId) {
+    //         console.log('Setting doc_id:', docId);
+    //     }
+    // }, [visible, docId, ]);
 
     const {
         data: { documentInfo, data = [] },
         loading,
     } = useFetchNextChunkList({
-        enabled: visible && !!docId // 只在弹窗打开且有 docId 时调用接口
+        enabled: visible && !!docId, // 只在弹窗打开且有 docId 时调用接口
+        docId // 传递 docId，确保接口参数正确
     });
 
     console.log('documentInfo:', documentInfo);
@@ -56,6 +54,7 @@ const PreviewModal = ({ visible, hideModal, docId }: IProps) => {
                         <DocumentPreview
                             highlights={highlights}
                             setWidthAndHeight={setWidthAndHeight}
+                            docId={docId}
                         />
                     ) : (
                         <div className={styles.textContent}>

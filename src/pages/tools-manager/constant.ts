@@ -17,7 +17,7 @@ export const toolsRouteMap = {
   [ToolsMenuRouteKey.ClusteringAnalysis]: '文本聚类分析',
   [ToolsMenuRouteKey.SensitiveWord]: '敏感词处理',
   [ToolsMenuRouteKey.KeywordExtraction]: '关键词提取',
-  [ToolsMenuRouteKey.SpeechToText]: '语言转文字',
+  [ToolsMenuRouteKey.SpeechToText]: '语音转文字',
   [ToolsMenuRouteKey.ImgUnderstand]: '图片理解',
   [ToolsMenuRouteKey.VideoUnderstand]: '视频理解',
 };

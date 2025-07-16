@@ -40,9 +40,9 @@ const VideoUnderstanding = () => {
         message.error('仅支持MP4、AVI、MOV、MKV、WMV格式的视频！');
         return false;
       }
-      const isLt10M = file.size / 1024 / 1024 < 10;
-      if (!isLt10M) {
-        message.error('视频大小不能超过10MB！');
+      const isLt50M = file.size / 1024 / 1024 < 50;
+      if (!isLt50M) {
+        message.error('视频大小不能超过50MB！');
         return false;
       }
       // 只保留一个文件，上传新视频时替换
@@ -132,7 +132,7 @@ const VideoUnderstanding = () => {
                         支持 MP4、AVI、MOV、MKV、WMV 格式，
                       </p>
                       <p style={{ fontSize: '12px', color: '#999' }}>
-                        视频大小不超过 10MB
+                        视频大小不超过 50MB
                       </p>
                     </div>
                   </Button>

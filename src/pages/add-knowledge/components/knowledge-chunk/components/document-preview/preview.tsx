@@ -1,5 +1,5 @@
 import { Skeleton } from 'antd';
-import { memo, useEffect, useRef } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import {
   AreaHighlight,
   Highlight,
@@ -17,6 +17,7 @@ import styles from './index.less';
 interface IProps {
   highlights: IHighlight[];
   setWidthAndHeight: (width: number, height: number) => void;
+  docId?: string;
 }
 const HighlightPopup = ({
   comment,
@@ -30,8 +31,24 @@ const HighlightPopup = ({
   ) : null;
 
 // TODO: merge with DocumentPreviewer
-const Preview = ({ highlights: state, setWidthAndHeight }: IProps) => {
-  const url = useGetDocumentUrl();
+const Preview = ({ highlights: state, setWidthAndHeight, docId }: IProps) => {
+  const url = useGetDocumentUrl(docId);
+  const [pdfUrl, setPdfUrl] = useState<string>('');
+  useEffect(() => {
+    const token ='Bearer ragflow-'+localStorage.getItem('Authorization');
+    if (!url || !token) return;
+    fetch(url, {
+      headers: {
+        Authorization: token,
+      },
+    })
+      .then(res => res.blob())
+      .then(blob => {
+        const localUrl = URL.createObjectURL(blob);
+        setPdfUrl(localUrl);
+        return () => URL.revokeObjectURL(localUrl);
+      });
+  }, [url]);
 
   const ref = useRef<(highlight: IHighlight) => void>(() => {});
   const error = useCatchDocumentError(url);
@@ -47,7 +64,7 @@ const Preview = ({ highlights: state, setWidthAndHeight }: IProps) => {
   return (
     <div className={styles.documentContainer}>
       <PdfLoader
-        url={url}
+        url={pdfUrl}
         beforeLoad={<Skeleton active />}
         workerSrc="/pdfjs-dist/pdf.worker.min.js"
         errorMessage={<FileError>{error}</FileError>}
