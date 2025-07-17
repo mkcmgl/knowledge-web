@@ -242,12 +242,12 @@ const KnowledgeFile = () => {
       title: '启用状态',
       key: 'status',
       dataIndex: 'status',
-      render: (_, { status, id }) => (
+      render: (_, { kb_id,status, id }) => (
         <>
           <Switch
             checked={status === '1'}
             onChange={(e) => {
-              setDocumentStatus({ status: e, documentId: id });
+              setDocumentStatus({kb_id:kb_id, status: e, documentId: id });
             }}
           />
         </>

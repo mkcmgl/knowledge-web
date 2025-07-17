@@ -64,7 +64,7 @@ export default {
 
   // document
   get_document_list: `${api_rag_host}/file/docList`,
-  document_change_status: `${api_host}/document/change_status`,
+  document_change_status: `${api_rag_host}/file/updateDocStatus`,
   document_update_status: `${api_rag_host}/file/updateDocStatus`,
   document_rm: `${api_host}/document/rm`,
   documentRm: (dataset_id: string) =>`${api_rag_host}/file/deleteDoc/${dataset_id}`,
@@ -72,9 +72,9 @@ export default {
   document_rename: `${api_host}/document/rename`,
   document_create: `${api_host}/document/create`,
   document_run: `${api_rag_host}/file/run`,
-  document_change_parser: `${api_host}/document/change_parser`,
+  document_change_parser: `${api_rag_host}/file/changeParser`,
   document_thumbnails: `${api_host}/document/thumbnails`,
-  get_document_file: `${api_host}/document/get`,
+  get_document_file: `${api_rag_host}/file/download`,
   document_upload: `${api_rag_host}/file/uploadFile`,
   web_crawl: `${api_host}/document/web_crawl`,
   document_infos: `${api_host}/document/infos`,
@@ -110,15 +110,15 @@ export default {
   uploadAndParseExternal: `${api_host}/api/document/upload_and_parse`,
 
   // file manager
-  listFile: `${api_host}/file/list`,
+  listFile: `${api_rag_host}/fileManage/list`,
   uploadFile: `${api_host}/file/upload`,
-  removeFile: `${api_host}/file/rm`,
-  renameFile: `${api_host}/file/rename`,
-  getAllParentFolder: `${api_host}/file/all_parent_folder`,
+  removeFile: `${api_rag_host}/fileManage/rm`,
+  renameFile: `${api_rag_host}/fileManage/rename`,
+  getAllParentFolder: `${api_rag_host}/fileManage/allParentFolder`,
   createFolder: `${api_host}/file/create`,
-  connectFileToKnowledge: `${api_host}/file2document/convert`,
+  connectFileToKnowledge: `${api_rag_host}/fileManage/file2document/convert`,
   getFile: `${api_host}/file/get`,
-  moveFile: `${api_host}/file/mv`,
+  moveFile: `${api_rag_host}/fileManage/mv`,
 
   // system
   getSystemVersion: `${api_host}/system/version`,

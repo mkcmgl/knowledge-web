@@ -110,7 +110,7 @@ export const useDeleteFile = () => {
   } = useMutation({
     mutationKey: ['deleteFile'],
     mutationFn: async (params: { fileIds: string[]; parentId: string }) => {
-      const { data } = await fileManagerService.removeFile(params);
+      const { data } = await fileManagerService.removeFile({file_ids:params.fileIds,parent_id:params.parentId});
       if (data.code === 0) {
         setPaginationParams(1); // TODO: There should be a better way to paginate the request list
         queryClient.invalidateQueries({ queryKey: ['fetchFileList'] });
@@ -147,7 +147,7 @@ export const useRenameFile = () => {
     mutateAsync,
   } = useMutation({
     mutationKey: ['renameFile'],
-    mutationFn: async (params: { fileId: string; name: string }) => {
+    mutationFn: async (params: { file_id: string; name: string }) => {
       const { data } = await fileManagerService.renameFile(params);
       if (data.code === 0) {
         message.success(t('message.renamed'));
@@ -168,7 +168,7 @@ export const useFetchParentFolderList = (): IFolder[] => {
     enabled: !!id,
     queryFn: async () => {
       const { data } = await fileManagerService.getAllParentFolder({
-        fileId: id,
+        file_id: id,
       });
 
       return data?.data?.parent_folders?.toReversed() ?? [];

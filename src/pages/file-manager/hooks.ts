@@ -64,7 +64,7 @@ export const useRenameCurrentFile = () => {
   const onFileRenameOk = useCallback(
     async (name: string) => {
       const ret = await renameFile({
-        fileId: file.id,
+        file_id: file.id,
         name,
       });
 

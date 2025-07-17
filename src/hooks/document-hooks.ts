@@ -181,15 +181,11 @@ export const useSetNextDocumentStatus = () => {
     mutateAsync,
   } = useMutation({
     mutationKey: ['updateDocumentStatus'],
-    mutationFn: async ({
-      status,
-      documentId,
-    }: {
-      status: boolean;
-      documentId: string;
-    }) => {
+    mutationFn: async (params: { kb_id?: string; status: boolean; documentId: string }) => {
+      const { kb_id, status, documentId } = params;
       const { data } = await kbService.document_change_status({
-        doc_id: documentId,
+        datasetId: kb_id,
+        ids: [documentId],
         status: Number(status),
       });
       if (data.code === 0) {
