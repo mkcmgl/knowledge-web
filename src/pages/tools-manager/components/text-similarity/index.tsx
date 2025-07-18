@@ -4,16 +4,17 @@ import {
   Button,
   message
 } from 'antd';
-import { useState, ReactNode } from 'react';
-import { useTextSimilarity } from '@/hooks/tools-hooks';
+import { useState } from 'react';
+import { useTextSimilarityStream } from '@/hooks/tools-hooks';
 import styles from './index.less';
-import MarkdownTable from "@/components/markdown-table";
+// import MarkdownTable from "@/components/markdown-table";
 const { TextArea } = Input;
 
 const TextSimilarity = () => {
   const [form] = Form.useForm();
-  const [analysisResult, setAnalysisResult] = useState<ReactNode>('');
-  const { mutateAsync: calcSimilarity, isPending: isProcessing } = useTextSimilarity();
+  const [analysisResult, setAnalysisResult] = useState('');
+  const [similarity, setSimilarity] = useState<number | undefined>(undefined);
+  const { runTextSimilarity, isLoading: isProcessing } = useTextSimilarityStream();
 
   // 文本相似度计算处理
   const handleSimilarityCalculation = async () => {
@@ -22,32 +23,25 @@ const TextSimilarity = () => {
       message.error('请填写原始文本和比对文本！');
       return;
     }
+    setAnalysisResult('');
     try {
-      setAnalysisResult('');
-      const result = await calcSimilarity({ sourceFile: formData.originalText, targetFile: formData.compareText });
-      console.log('相似度计算结果:', result);
-
-      if (result && result.data.similarity !== undefined) {
-        const similarityPercentage = result.data.similarity.toFixed(2);
-        // 替换 result.data.result 中的“相似度约XX%”为 similarityPercentage%
-        let resultText = result.data.result;
-        resultText = resultText.replace(/相似度约\d+(\.\d+)?%/g, `相似度约${similarityPercentage}%`);
-        const res = (
-          <div>
-            <span>
-              相似度：
-              <span style={{ color: '#F56C6C', fontSize: 20, fontWeight: 600 }}>
-                {similarityPercentage}%
-              </span>
-            </span>
-            <MarkdownTable text={resultText} />
-          </div>
-        );
-        setAnalysisResult(res);
-        message.success('相似度计算完成！');
-      } else {
-        setAnalysisResult('无分析结果');
-      }
+      await runTextSimilarity({
+        sourceFile: formData.originalText,
+        targetFile: formData.compareText,
+        onMessage: (chunk, sim) => {
+          if (sim !== undefined) setSimilarity(sim);
+          try {
+            const data = JSON.parse(chunk);
+            if (data.choices !== undefined) {
+              const reasoningContent = data.choices[0]?.delta?.reasoning_content ?? data.choices[0]?.delta?.content ?? '';
+              setAnalysisResult(prev => prev + reasoningContent);
+            }
+          } catch {
+            setAnalysisResult(prev => prev + chunk);
+          }
+        }
+      });
+      message.success('相似度计算完成！');
     } catch (err: any) {
       message.error(err.message || '相似度计算失败！');
     }
@@ -174,21 +168,29 @@ const TextSimilarity = () => {
             <span className='pl-2 text-[16px] font-bold'>分析结果</span>
           </div>
           <div style={{ width: '100%' }}>
-            {/* 用div替换TextArea以支持ReactNode */}
-            <div
+            {similarity !== undefined && (
+              <div style={{ marginTop: 8 ,marginLeft: 10 }}>
+                相似度：
+                <span style={{ color: '#F56C6C', fontSize: 20, fontWeight: 600 }}>
+                  {similarity.toFixed(2)}%
+                </span>
+              </div>
+            )}
+            <TextArea
+              value={analysisResult}
+              placeholder="分析结果将在这里显示..."
               style={{
                 width: '100%',
-                minHeight: '200px',
+                minHeight: '300px',
+                resize: 'none',
                 fontSize: '14px',
                 lineHeight: '1.6',
                 border: 'none',
-                background: 'transparent',
-                padding: '12px 8px',
-                color: '#1D2129'
+                background: 'transparent'
               }}
-            >
-              {analysisResult}
-            </div>
+              readOnly
+            />
+
           </div>
         </div>
       </div>

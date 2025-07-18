@@ -13,8 +13,9 @@ import { useState } from 'react';
 import ScatterChart from './scatter-chat';
 import sampleDataList from "./data.json"
 import ClusterVisualization from './cluster-visualization';
-import { useClusteringAnalysis } from '@/hooks/tools-hooks';
+import { useClusteringAnalysisStream } from '@/hooks/tools-hooks';
 import MarkdownTable from "@/components/markdown-table";
+import { clusteringAnalysisCalculate } from '@/services/tools-service';
 const { Text } = Typography;
 const { TextArea } = Input;
 
@@ -82,7 +83,7 @@ const ClusteringAnalysis = () => {
   const [analysisResult, setAnalysisResult] = useState('');
   const [textSegments, setTextSegments] = useState([0, 1]); // 默认两个文本段
   const [clusterData, setClusterData] = useState([]);
-  const { mutateAsync: clusteringAnalysis, isPending: isProcessing } = useClusteringAnalysis();
+  const { runClustering, isLoading: isProcessing } = useClusteringAnalysisStream();
 
   // 添加文本段
   const handleAddTextSegment = () => {
@@ -113,18 +114,35 @@ const ClusteringAnalysis = () => {
       return;
     }
 
+    setAnalysisResult('');
+    setClusterData([]);
     try {
-      setAnalysisResult('');
-      const result = await clusteringAnalysis({
+      // 先启动流式分析（不 await）
+      const runClusteringPromise = runClustering({
         clusteringText: formData.textSegments,
-        thresholdValue: formData.threshold
+        thresholdValue: formData.threshold,
+        onMessage: (chunk) => {
+          console.log('onMessage', chunk, Date.now());
+          try {
+            const data = JSON.parse(chunk);
+            console.log(`chunk,data22222222222222`, chunk, data);
+            console.log(`data.choices[0]?.delta.reasoning_content`, data.choices[0]?.delta.reasoning_content);
+            if (data.choices !== undefined) {
+              const reasoningContent = data.choices[0]?.delta?.reasoning_content ?? data.choices[0]?.delta?.content ?? '';
+              setAnalysisResult(prev => prev + reasoningContent);
+            }
+          } catch {
+            setAnalysisResult(prev => prev + chunk);
+          }
+        }
       });
-      console.log(`result`, Result);
-
-      setAnalysisResult(result.data.result);
-      setClusterData(result.data.clusteringAnalysisVOList)
+      // 并发请求聚类点
+      const clusterDataRes = await clusteringAnalysisCalculate(formData.textSegments, formData.threshold);
+      setClusterData(clusterDataRes);
+      // 等流式分析结束
+      await runClusteringPromise;
       message.success('聚类分析完成！');
-    } catch (err: any) {
+    } catch (err) {
       message.error('聚类分析失败！');
     }
   };
@@ -213,7 +231,20 @@ const ClusteringAnalysis = () => {
         </div>
         <div style={{ width: '100%' }}>
 
-          <MarkdownTable text={analysisResult} />
+        <TextArea
+            value={analysisResult}
+            placeholder="分析结果将在这里显示..."
+            style={{
+              width: '100%',
+              minHeight: '300px',
+              resize: 'none',
+              fontSize: '14px',
+              lineHeight: '1.6',
+              border: 'none',
+              background: 'transparent'
+            }}
+            readOnly
+          />
           {/* <ScatterChart2  data={sampleData} /> */}
           {/* 修复类型错误，确保传递给ScatterChart的数据格式正确 */}
           {/* <ScatterChart scatterData={sampleData2 as { value: [number, number]; itemStyle?: { color: string } }[]} /> */}
