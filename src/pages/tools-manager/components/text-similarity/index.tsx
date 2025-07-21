@@ -29,9 +29,12 @@ const TextSimilarity = () => {
         sourceFile: formData.originalText,
         targetFile: formData.compareText,
         onMessage: (chunk, sim) => {
+          console.log('onMessage', new Date().toLocaleString());
+
           if (sim !== undefined) setSimilarity(sim);
           try {
             const data = JSON.parse(chunk);
+            console.log(`chunk,data22222222222222`, chunk, data);
             if (data.choices !== undefined) {
               const reasoningContent = data.choices[0]?.delta?.reasoning_content ?? data.choices[0]?.delta?.content ?? '';
               setAnalysisResult(prev => prev + reasoningContent);
@@ -169,7 +172,7 @@ const TextSimilarity = () => {
           </div>
           <div style={{ width: '100%' }}>
             {similarity !== undefined && (
-              <div style={{ marginTop: 8 ,marginLeft: 10 }}>
+              <div style={{ marginTop: 8, marginLeft: 10 }}>
                 相似度：
                 <span style={{ color: '#F56C6C', fontSize: 20, fontWeight: 600 }}>
                   {similarity.toFixed(2)}%

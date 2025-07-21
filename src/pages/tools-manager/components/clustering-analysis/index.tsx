@@ -117,30 +117,29 @@ const ClusteringAnalysis = () => {
     setAnalysisResult('');
     setClusterData([]);
     try {
-      // 先启动流式分析（不 await）
-      const runClusteringPromise = runClustering({
-        clusteringText: formData.textSegments,
-        thresholdValue: formData.threshold,
-        onMessage: (chunk) => {
-          console.log('onMessage', chunk, Date.now());
-          try {
-            const data = JSON.parse(chunk);
-            console.log(`chunk,data22222222222222`, chunk, data);
-            console.log(`data.choices[0]?.delta.reasoning_content`, data.choices[0]?.delta.reasoning_content);
-            if (data.choices !== undefined) {
-              const reasoningContent = data.choices[0]?.delta?.reasoning_content ?? data.choices[0]?.delta?.content ?? '';
-              setAnalysisResult(prev => prev + reasoningContent);
+      // 并发请求流式分析和聚类点计算
+      await Promise.all([
+        runClustering({
+          clusteringText: formData.textSegments,
+          thresholdValue: formData.threshold,
+          onMessage: (chunk) => {
+            console.log('onMessage', new Date().toLocaleString());
+            try {
+              const data = JSON.parse(chunk);
+              if (data.choices !== undefined) {
+                const reasoningContent = data.choices[0]?.delta?.reasoning_content ?? data.choices[0]?.delta?.content ?? '';
+                setAnalysisResult(prev => prev + reasoningContent);
+              }
+            } catch {
+              setAnalysisResult(prev => prev + chunk);
             }
-          } catch {
-            setAnalysisResult(prev => prev + chunk);
           }
-        }
-      });
-      // 并发请求聚类点
-      const clusterDataRes = await clusteringAnalysisCalculate(formData.textSegments, formData.threshold);
-      setClusterData(clusterDataRes);
-      // 等流式分析结束
-      await runClusteringPromise;
+        }),
+        (async () => {
+          const clusterDataRes = await clusteringAnalysisCalculate(formData.textSegments, formData.threshold);
+          setClusterData(clusterDataRes);
+        })()
+      ]);
       message.success('聚类分析完成！');
     } catch (err) {
       message.error('聚类分析失败！');

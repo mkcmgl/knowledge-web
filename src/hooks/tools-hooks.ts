@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { speechToText, ocrRecognition, textSimilarity, sensitiveWord, keywordExtraction, clusteringAnalysis, imgUnderstand ,videoUnderstand, clusteringAnalysisStream, textSimilarityStream } from '@/services/tools-service';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 export const useSpeechToText = () => {
   return useMutation({
@@ -77,24 +77,15 @@ export const useVideoUnderstand = () => {
 export const useClusteringAnalysisStream = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const runClustering = async ({
-    clusteringText,
-    thresholdValue,
-    onMessage,
-  }: {
+  const runClustering = useCallback(({ clusteringText, thresholdValue, onMessage }: {
     clusteringText: string[];
     thresholdValue: number;
     onMessage: (msg: string) => void;
   }) => {
     setIsLoading(true);
-    try {
-      await clusteringAnalysisStream(clusteringText, thresholdValue, onMessage);
-      setIsLoading(false);
-    } catch (e) {
-      setIsLoading(false);
-      throw e;
-    }
-  };
+    return clusteringAnalysisStream(clusteringText, thresholdValue, onMessage)
+      .finally(() => setIsLoading(false));
+  }, []);
 
   return { runClustering, isLoading };
 };
@@ -103,24 +94,15 @@ export const useClusteringAnalysisStream = () => {
 export const useTextSimilarityStream = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const runTextSimilarity = async ({
-    sourceFile,
-    targetFile,
-    onMessage,
-  }: {
+  const runTextSimilarity = useCallback(({ sourceFile, targetFile, onMessage }: {
     sourceFile: string;
     targetFile: string;
     onMessage: (msg: string, similarity?: number) => void;
   }) => {
     setIsLoading(true);
-    try {
-      await textSimilarityStream(sourceFile, targetFile, onMessage);
-      setIsLoading(false);
-    } catch (e) {
-      setIsLoading(false);
-      throw e;
-    }
-  };
+    return textSimilarityStream(sourceFile, targetFile, onMessage)
+      .finally(() => setIsLoading(false));
+  }, []);
 
   return { runTextSimilarity, isLoading };
 };
