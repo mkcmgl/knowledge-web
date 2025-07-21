@@ -21,10 +21,10 @@ const SpeechToText = () => {
   // 文件上传配置
   const uploadProps = {
     accept: '.mp3,.m4a,.wma,.aac,.flac,.ac3,.m4r,.ape,.ogg,.wav',
-    maxSize: 100 * 1024 * 1024, // 100MB
+    maxSize: 10 * 1024 * 1024, // 10MB
     beforeUpload: (file: File) => {
       const isValidFormat = /\.(mp3|m4a|wma|aac|flac|ac3|m4r|ape|ogg|wav)$/i.test(file.name);
-      const isValidSize = file.size <= 100 * 1024 * 1024;
+      const isValidSize = file.size <= 10 * 1024 * 1024;
 
       if (!isValidFormat) {
         message.error('只支持 MP3、M4A、WMA、AAC、FLAC、AC3、M4R、APE、OGG、WAV 格式的音频文件！');
@@ -32,7 +32,7 @@ const SpeechToText = () => {
       }
 
       if (!isValidSize) {
-        message.error('音频文件大小不能超过 100MB！');
+        message.error('音频文件大小不能超过 10MB！');
         return false;
       }
 
@@ -122,6 +122,9 @@ const SpeechToText = () => {
                         </p>
                         <p style={{ fontSize: '12px', color: 'rgba(29, 33, 41, 0.55)' }}>
                           M4R、APE、OGG、WAV 格式
+                        </p>
+                        <p style={{ fontSize: '12px', color: '#999' }}>
+                         文件大小不超过 10MB
                         </p>
                       </div>
                     </Button>

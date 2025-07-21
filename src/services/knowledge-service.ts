@@ -38,6 +38,7 @@ const {
   listTagByKnowledgeIds,
   setMeta,
   //retrieval_test,
+  getVideoChunks,
 } = api;
 
 const methods = {
@@ -162,6 +163,10 @@ const methods = {
   //   url: retrieval_test,
   //   method: 'post',
   // },
+  getVideoChunks: {
+    url: getVideoChunks,
+    method: 'post',
+  },
 };
 
 const kbService = registerServer<keyof typeof methods>(methods, request);
@@ -213,5 +218,8 @@ export const getCount = () => {
 export const getTaskList = (dataset_id: string) => {
   return request.get(api.taskList(dataset_id));
 };
+
+export const fetchVideoChunks = (chunk_ids: string[]) =>
+  kbService['getVideoChunks']({ chunk_ids });
 
 export default kbService;

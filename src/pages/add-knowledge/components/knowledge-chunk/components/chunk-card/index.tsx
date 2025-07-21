@@ -44,7 +44,7 @@ const ChunkCard = ({
   };
 
   const handleContentDoubleClick = () => {
-    editChunk(item.chunk_id);
+    // editChunk(item.chunk_id);
   };
 
   const handleContentClick = () => {
@@ -82,7 +82,9 @@ const ChunkCard = ({
         >
           <div
             dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(item.content_with_weight),
+              __html: DOMPurify.sanitize(
+                item.content_with_weight.replace(/\[\{chunk_id:[^}]+\}\]/g, '')
+              ),
             }}
             className={classNames(styles.contentText, {
               [styles.contentEllipsis]: textMode === ChunkTextMode.Ellipse,

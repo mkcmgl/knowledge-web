@@ -113,6 +113,7 @@ export interface IChunk {
 }
 
 export interface ITestingChunk {
+  id?: string;
   chunk_id: string;
   content_ltks: string;
   content_with_weight: string;

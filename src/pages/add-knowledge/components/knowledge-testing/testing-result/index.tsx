@@ -23,7 +23,8 @@ import {
 import { useGetPaginationWithRouter } from '@/hooks/logic-hooks';
 import { api_host } from '@/utils/api';
 import { showImage } from '@/utils/chat';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { fetchVideoChunks } from '@/services/knowledge-service';
 import styles from './index.less';
 
 const similarityList: Array<{ field: keyof ITestingChunk; label: string }> = [
@@ -81,6 +82,28 @@ const TestingResult = ({
     [setPagination, handleTesting],
   );
 
+  const [videoChunkInfo, setVideoChunkInfo] = useState<any[]>([]);
+
+  // 弹窗打开后收集 chunks 的 id，调用 fetchVideoChunks
+  useEffect(() => {
+    if (isSuccess && chunks && chunks.length > 0) {
+      const chunkIds = chunks.map((x) => x.id ).filter(Boolean);
+      if (chunkIds.length > 0) {
+        (async () => {
+          try {
+            const {data} = await fetchVideoChunks(chunkIds as string[]);
+            setVideoChunkInfo(data.data);
+            console.log('fetchVideoChunks 返回:', data);
+          } catch (e: any) {
+            console.warn('获取视频分块信息失败', e);
+          }
+        })();
+      } else {
+        setVideoChunkInfo([]);
+      }
+    }
+  }, [isSuccess, chunks]);
+
   return (
     <section className={styles.testingResultWrapper}>
       <Collapse
@@ -135,7 +158,31 @@ const TestingResult = ({
                     ></Image>
                   )}
                 </div>
-                <div className="pt-4">{x.content_ltks}</div>
+                <div className="pt-4" style={{ display: 'flex', alignItems: 'flex-start', gap: 16,flexDirection:'column' }}>
+                  {/* 渲染内容时去除所有 '[{chunk_id:...}]' 结构的文本 */}
+                  <div style={{ flex: 1 }}>
+                    {x.content_ltks
+                      ? x.content_ltks.replace(/\[\{chunk_id:[^}]+\}\]/g, '')
+                      : ''}
+                  </div>
+                  {/* 渲染视频 */}
+                  {Array.isArray(videoChunkInfo) && (() => {
+                    console.log(`videoChunkInfo`,videoChunkInfo);
+                    const videoInfo = videoChunkInfo.find((v) => v.id === x.id);
+                    if (videoInfo && videoInfo.doc_id) {
+                      const videoUrl = `/api/file/playVideo?docId=${videoInfo.doc_id}`;
+                      return (
+                        <video
+                          src={videoUrl}
+                          controls
+                          width={200}
+                          style={{ borderRadius: 8, background: '#000' }}
+                        />
+                      );
+                    }
+                    return null;
+                  })()}
+                </div>
               </Card>
             ))
           ) : isSuccess && chunks?.length === 0 ? (

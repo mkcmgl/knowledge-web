@@ -2,7 +2,7 @@ import { useFetchNextChunkList, useSwitchChunk } from '@/hooks/chunk-hooks';
 import type { PaginationProps } from 'antd';
 import { Divider, Flex, Pagination, Space, Spin, message } from 'antd';
 import classNames from 'classnames';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import ChunkCard from './components/chunk-card';
 import CreatingModal from './components/chunk-creating-modal';
@@ -15,6 +15,7 @@ import {
   useHandleChunkCardClick,
   useUpdateChunk,
 } from './hooks';
+import { fetchVideoChunks } from '@/services/knowledge-service';
 
 import styles from './index.less';
 
@@ -45,6 +46,20 @@ const Chunk = () => {
     chunkUpdatingVisible,
     documentId,
   } = useUpdateChunk();
+
+  const [videoChunkInfo, setVideoChunkInfo] = useState<any[]>([]);
+
+  // 页面加载后收集所有 chunk_id 并获取视频分块信息
+  useEffect(() => {
+    const chunkIds = data.map((item) => item.chunk_id);
+    if (chunkIds.length > 0) {
+      fetchVideoChunks(chunkIds)
+        .then(setVideoChunkInfo)
+        .catch((e) => console.warn('获取视频分块信息失败', e));
+    } else {
+      setVideoChunkInfo([]);
+    }
+  }, [data]);
 
   const onPaginationChange: PaginationProps['onShowSizeChange'] = (
     page,

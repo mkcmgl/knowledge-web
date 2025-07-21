@@ -12,7 +12,9 @@ import { DeleteOutlined } from '@ant-design/icons';
 import styles from './index.less';
 import noData from "@/assets/svg/noData.svg"
 // import VideoPlayer from "./video-player"
+import VideoSeek from './video-seek';
 import { useVideoUnderstand } from '@/hooks/tools-hooks';
+import videoTest from "@/assets/testVideo.mp4"
 const { Text } = Typography;
 
 const { TextArea } = Input;
@@ -228,6 +230,9 @@ const VideoUnderstanding = () => {
                 <img src={noData} alt="无数据" style={{ width: 100, marginBottom: 16 }} />
                 <div style={{ color: 'rgba(29, 33, 41, 0.55)', fontSize: 14 }}>拖入或粘贴视频进行转换后，显示相关结果</div>
                 {/* <VideoPlayer src={uploadedFiles.length > 0 ? uploadedFiles[0].url : ''} /> */}
+                <VideoSeek src={videoTest}
+                  startTime={3}
+                  endTime={10} />
               </div>
             ) : (<TextArea
               value={analysisResult}
