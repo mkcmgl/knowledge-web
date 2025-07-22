@@ -230,7 +230,7 @@ const ClusteringAnalysis = () => {
         </div>
         <div style={{ width: '100%' }}>
 
-        <TextArea
+          <TextArea
             value={analysisResult}
             placeholder="分析结果将在这里显示..."
             style={{

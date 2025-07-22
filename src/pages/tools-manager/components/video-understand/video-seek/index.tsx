@@ -3,13 +3,11 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Button } from 'antd';
 
 interface VideoPlayerProps {
-  src: string;
   startTime?: number;
   endTime?: number;
 }
 
 const VideoPlayerWithSeek: React.FC<VideoPlayerProps> = ({ 
-  src, 
   startTime = 3, 
   endTime = 10 
 }) => {
@@ -44,7 +42,7 @@ const VideoPlayerWithSeek: React.FC<VideoPlayerProps> = ({
     <div className="video-container">
       <video
         ref={videoRef}
-        src={src}
+        src='https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_1MB.mp4'
         controls
         width="600"
       />
