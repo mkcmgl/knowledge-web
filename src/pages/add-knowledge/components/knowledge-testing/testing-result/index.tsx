@@ -89,6 +89,7 @@ const TestingResult = ({
   const [modalVisible, setModalVisible] = useState(false);
   const [currentVideoInfo, setCurrentVideoInfo] = useState<any>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false); // 新增：控制视频是否正在播放
 
   // 弹窗打开后收集 chunks 的 id，调用 fetchVideoChunks
   useEffect(() => {
@@ -128,30 +129,6 @@ const TestingResult = ({
     return 0;
   };
 
-  const handleLoadedMetadata = () => {
-    if (videoRef.current && currentVideoInfo) {
-      const startSec = timeStrToSeconds(currentVideoInfo.start_time);
-      const endSec = timeStrToSeconds(currentVideoInfo.end_time);
-
-      videoRef.current.currentTime = startSec;
-      videoRef.current.play().catch(e => console.error('播放失败:', e));
-
-      // 添加时间更新监听
-      const handleTimeUpdate = () => {
-        if (videoRef.current && videoRef.current.currentTime >= endSec) {
-          videoRef.current.pause();
-          videoRef.current.currentTime = startSec; // 可选：重置到开始位置
-        }
-      };
-
-      videoRef.current.addEventListener('timeupdate', handleTimeUpdate);
-
-      // 返回清理函数，避免内存泄漏
-      return () => {
-        videoRef.current?.removeEventListener('timeupdate', handleTimeUpdate);
-      };
-    }
-  };
   // 弹窗视频起止时间控制
   useEffect(() => {
     if (!modalVisible || !videoRef.current || !currentVideoInfo) return;
@@ -169,6 +146,30 @@ const TestingResult = ({
     video.addEventListener('timeupdate', handleTimeUpdate);
     return () => video.removeEventListener('timeupdate', handleTimeUpdate);
   }, [modalVisible, currentVideoInfo]);
+
+  const handlePlaySection = () => {
+    if (videoRef.current && currentVideoInfo) {
+      const startSec = timeStrToSeconds(currentVideoInfo.start_time);
+      const endSec = timeStrToSeconds(currentVideoInfo.end_time);
+      videoRef.current.currentTime = startSec;
+      videoRef.current.play().catch(e => console.error('播放失败:', e));
+      setIsPlaying(true);
+
+      const handleTimeUpdate = () => {
+        if (videoRef.current && videoRef.current.currentTime >= endSec) {
+          videoRef.current.pause();
+          videoRef.current.currentTime = startSec; // 可选：重置到开始位置
+          setIsPlaying(false);
+        }
+      };
+
+      videoRef.current.addEventListener('timeupdate', handleTimeUpdate);
+
+      return () => {
+        videoRef.current?.removeEventListener('timeupdate', handleTimeUpdate);
+      };
+    }
+  };
 
   return (
     <section className={styles.testingResultWrapper}>
@@ -239,8 +240,8 @@ const TestingResult = ({
                         onClick={() => {
                           setCurrentVideoInfo({
                             ...videoInfo,
-                            // videoUrl: `https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_1MB.mp4`, // TODO: 替换为真实接口
-                           videoUrl : `/api/file/playVideo?docId=${videoInfo.doc_id}`
+                            videoUrl: `https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_1MB.mp4`, // TODO: 替换为真实接口
+                          //  videoUrl : `/api/file/playVideo?docId=${videoInfo.doc_id}`
                           });
                           setModalVisible(true);
                         }}
@@ -276,7 +277,6 @@ const TestingResult = ({
       >
         {currentVideoInfo && (
           <div style={{ textAlign: 'center' }}>
-
             <video
               ref={videoRef}
               src={currentVideoInfo.videoUrl}
@@ -284,20 +284,21 @@ const TestingResult = ({
               width="100%"
               poster={currentVideoInfo.cover_url || undefined}
               style={{ borderRadius: 8, background: '#000' }}
-              onLoadedMetadata={handleLoadedMetadata}
             />
-
-            {/* <video
-              src="http://119.84.128.68:6583/api/file/playVideo?docId=aa64c406d6374e0f933cd86ca5b03880"
-              controls
-              width="100%"
-              style={{ borderRadius: 8, background: '#000' }}
-            /> */}
             <div style={{ marginTop: 16 }}>
               当前播放区间: {currentVideoInfo.start_time} - {currentVideoInfo.end_time}
             </div>
+            <div style={{ marginTop: 16 }}>
+              <button
+                type="button"
+                style={{ padding: '8px 16px', fontSize: 16, borderRadius: 4, background: '#306EFD', color: '#fff', border: 'none', cursor: isPlaying ? 'not-allowed' : 'pointer' }}
+                onClick={handlePlaySection}
+                disabled={isPlaying}
+              >
+                {isPlaying ? '播放中...' : '播放区间'}
+              </button>
+            </div>
           </div>
-
         )}
       </Modal>
       <div className={styles.paginationWrapper}>
