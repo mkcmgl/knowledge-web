@@ -27,6 +27,7 @@ import { showImage } from '@/utils/chat';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { fetchVideoChunks } from '@/services/knowledge-service';
 import styles from './index.less';
+import { type } from '../../../../../.umi/exports';
 
 const similarityList: Array<{ field: keyof ITestingChunk; label: string }> = [
   { field: 'similarity', label: 'Hybrid Similarity' },
@@ -238,7 +239,8 @@ const TestingResult = ({
                         onClick={() => {
                           setCurrentVideoInfo({
                             ...videoInfo,
-                            videoUrl: `https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_1MB.mp4`, // TODO: 替换为真实接口
+                            // videoUrl: `https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_1MB.mp4`, // TODO: 替换为真实接口
+                           videoUrl : `/api/file/playVideo?docId=${videoInfo.doc_id}`
                           });
                           setModalVisible(true);
                         }}
@@ -284,6 +286,13 @@ const TestingResult = ({
               style={{ borderRadius: 8, background: '#000' }}
               onLoadedMetadata={handleLoadedMetadata}
             />
+
+            {/* <video
+              src="http://119.84.128.68:6583/api/file/playVideo?docId=aa64c406d6374e0f933cd86ca5b03880"
+              controls
+              width="100%"
+              style={{ borderRadius: 8, background: '#000' }}
+            /> */}
             <div style={{ marginTop: 16 }}>
               当前播放区间: {currentVideoInfo.start_time} - {currentVideoInfo.end_time}
             </div>
