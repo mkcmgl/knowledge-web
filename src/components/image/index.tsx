@@ -1,35 +1,53 @@
 import { api_host } from '@/utils/api';
 import { Popover } from 'antd';
 import classNames from 'classnames';
+import {
 
+  Image,
+
+} from 'antd';
 import styles from './index.less';
 
 interface IImage {
   id: string;
   className: string;
+  type?: boolean;
   onClick?(): void;
 }
 
-const Image = ({ id, className, ...props }: IImage) => {
-  return (
-    <img
-      {...props}
-      src={`${api_host}/document/image/${id}`}
-      alt=""
-      className={classNames(styles.primitiveImg, className)}
-    />
-  );
+const MyImage = ({ id, className,type, ...props }: IImage) => {
+
+    if(!type){
+      return (
+        <Image
+        {...props}
+        src={`${api_host}/document/image/${id}`}
+        alt=""
+        className={classNames(styles.primitiveImg, className)}
+      />
+      )
+    }else{
+      return (
+        <img
+        {...props}
+        src={`${api_host}/document/image/${id}`}
+        alt=""
+        className={classNames(styles.primitiveImg, className)}
+      />
+      )
+    }
+   
 };
 
-export default Image;
+export default MyImage;
 
 export const ImageWithPopover = ({ id }: { id: string }) => {
   return (
     <Popover
       placement="left"
-      content={<Image id={id} className={styles.imagePreview}></Image>}
+      content={<MyImage id={id} className={styles.imagePreview}></MyImage>}
     >
-      <Image id={id} className={styles.image}></Image>
+      <MyImage id={id} className={styles.image}></MyImage>
     </Popover>
   );
 };

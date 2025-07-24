@@ -27,7 +27,7 @@ import { showImage } from '@/utils/chat';
 import { fetchVideoChunks } from '@/services/knowledge-service';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import styles from './index.less';
-
+import { api_rag_host } from '@/utils/api';
 const similarityList: Array<{ field: keyof ITestingChunk; label: string }> = [
   { field: 'similarity', label: 'Hybrid Similarity' },
   { field: 'term_similarity', label: 'Term Similarity' },
@@ -85,6 +85,7 @@ const TestingResult = ({
   const [modalVisible, setModalVisible] = useState(false);
   const [currentVideoInfo, setCurrentVideoInfo] = useState<any>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false); // 新增：控制视频是否正在播放
 
   // 弹窗打开后收集 chunks 的 id，调用 fetchVideoChunks
   useEffect(() => {
@@ -124,30 +125,6 @@ const TestingResult = ({
     return 0;
   };
 
-  const handleLoadedMetadata = () => {
-    if (videoRef.current && currentVideoInfo) {
-      const startSec = timeStrToSeconds(currentVideoInfo.start_time);
-      const endSec = timeStrToSeconds(currentVideoInfo.end_time);
-
-      videoRef.current.currentTime = startSec;
-      videoRef.current.play().catch(e => console.error('播放失败:', e));
-
-      // 添加时间更新监听
-      const handleTimeUpdate = () => {
-        if (videoRef.current && videoRef.current.currentTime >= endSec) {
-          videoRef.current.pause();
-          videoRef.current.currentTime = startSec; // 可选：重置到开始位置
-        }
-      };
-
-      videoRef.current.addEventListener('timeupdate', handleTimeUpdate);
-
-      // 返回清理函数，避免内存泄漏
-      return () => {
-        videoRef.current?.removeEventListener('timeupdate', handleTimeUpdate);
-      };
-    }
-  };
   // 弹窗视频起止时间控制
   useEffect(() => {
     if (!modalVisible || !videoRef.current || !currentVideoInfo) return;
@@ -165,7 +142,83 @@ const TestingResult = ({
     video.addEventListener('timeupdate', handleTimeUpdate);
     return () => video.removeEventListener('timeupdate', handleTimeUpdate);
   }, [modalVisible, currentVideoInfo]);
+  // 弹窗关闭时重置视频状态
+  useEffect(() => {
 
+    if (modalVisible) {
+      // 弹窗刚打开，重置播放状态
+      setIsPlaying(false);
+      // 也可以重置视频 currentTime
+      if (videoRef.current && currentVideoInfo) {
+        const startSec = timeStrToSeconds(currentVideoInfo.start_time);
+        videoRef.current.currentTime = startSec;
+        videoRef.current.pause();
+      }
+    } else {
+      // 弹窗刚关闭，重置播放状态
+      setIsPlaying(false);
+      if (videoRef.current && currentVideoInfo) {
+        videoRef.current.pause();
+        const startSec = timeStrToSeconds(currentVideoInfo.start_time);
+        videoRef.current.currentTime = startSec;
+      }
+    }
+  }, [modalVisible, currentVideoInfo]);
+  const handlePlaySection = () => {
+    if (videoRef.current && currentVideoInfo) {
+      const startSec = timeStrToSeconds(currentVideoInfo.start_time);
+      const endSec = timeStrToSeconds(currentVideoInfo.end_time);
+      videoRef.current.currentTime = startSec;
+      videoRef.current.play().catch(e => console.error('播放失败:', e));
+      setIsPlaying(true);
+
+      const handleTimeUpdate = () => {
+        if (videoRef.current && videoRef.current.currentTime >= endSec) {
+          videoRef.current.pause();
+          videoRef.current.currentTime = startSec; // 可选：重置到开始位置
+          setIsPlaying(false);
+        }
+      };
+
+      videoRef.current.addEventListener('timeupdate', handleTimeUpdate);
+
+      return () => {
+        videoRef.current?.removeEventListener('timeupdate', handleTimeUpdate);
+      };
+    }
+  };
+    // 工具函数：将[IMG::xxxx]替换为Antd <Image>组件
+    function renderContentWithImages(content: string) {
+      if (!content) return null;
+      const parts = [];
+      let lastIndex = 0;
+      const regex = /\[IMG::([a-zA-Z0-9]+)\]/g;
+      let match;
+      let key = 0;
+      while ((match = regex.exec(content)) !== null) {
+        // 文本部分
+        if (match.index > lastIndex) {
+          parts.push(<span key={key++}>{content.slice(lastIndex, match.index)}</span>);
+        }
+        // 图片部分
+        const imgId = match[1];
+        parts.push(
+          <Image
+            key={key++}
+            src={`${api_rag_host}/file/download/${imgId}`}
+            style={{ maxWidth: 120, maxHeight: 120, margin: '0 4px', verticalAlign: 'middle' }}
+            preview={true}
+          />
+        );
+        lastIndex = match.index + match[0].length;
+      }
+      // 剩余文本
+      if (lastIndex < content.length) {
+        parts.push(<span key={key++}>{content.slice(lastIndex)}</span>);
+      }
+      return parts;
+    }
+  
   return (
     <section className={styles.testingResultWrapper}>
       <Collapse
@@ -225,8 +278,8 @@ const TestingResult = ({
                   <div className="pt-4" style={{ display: 'flex', alignItems: 'flex-start', gap: 16, flexDirection: 'column' }}>
                     {/* 渲染内容时去除所有 '[{chunk_id:...}]' 结构的文本 */}
                     <div style={{ flex: 1 }}>
-                      {x.content_ltks
-                        ? x.content_ltks.replace(/\[\{chunk_id:[^}]+\}\]/g, '')
+                    {x.content_ltks
+                        ? renderContentWithImages(x.content_ltks.replace(/\[\{chunk_id:[^}]+\}\]/g, ''))
                         : ''}
                     </div>
                     {/* 渲染视频封面，点击弹窗播放指定区间 */}
@@ -279,10 +332,22 @@ const TestingResult = ({
               width="100%"
               poster={currentVideoInfo.cover_url || undefined}
               style={{ borderRadius: 8, background: '#000' }}
-              onLoadedMetadata={handleLoadedMetadata}
             />
             <div style={{ marginTop: 16 }}>
               当前播放区间: {currentVideoInfo.start_time} - {currentVideoInfo.end_time}
+            </div>
+            <div style={{ marginTop: 16 }}>
+              <button type="button" 
+              style={{ padding: '8px 16px',
+               fontSize: 16, borderRadius: 4,
+                background: '#306EFD', color: '#fff',
+                 border: 'none', 
+                 cursor: isPlaying ? 'not-allowed' : 'pointer' }}
+                 onClick={handlePlaySection}
+                 disabled={isPlaying}
+                  >
+                {isPlaying ? '播放中...' : '播放区间'}
+              </button>
             </div>
           </div>
 

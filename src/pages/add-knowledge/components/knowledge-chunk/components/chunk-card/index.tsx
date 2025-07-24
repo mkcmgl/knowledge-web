@@ -1,10 +1,10 @@
-import Image from '@/components/image';
+import MyImage from '@/components/image';
 import { IChunk } from '@/interfaces/database/knowledge';
-import { Card, Checkbox, CheckboxProps, Flex, Popover, Switch } from 'antd';
+import { Card, Checkbox, CheckboxProps, Flex, Popover, Switch, Image } from 'antd';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
 import { useEffect, useState } from 'react';
-
+import { api_rag_host } from '@/utils/api';
 import { useTheme } from '@/components/theme-provider';
 import { ChunkTextMode } from '../../constant';
 import styles from './index.less';
@@ -16,13 +16,47 @@ interface IProps {
   editChunk: (chunkId: string) => void;
   handleCheckboxClick: (chunkId: string, checked: boolean) => void;
   selected: boolean;
+  isPdf:boolean;
   clickChunkCard: (chunkId: string) => void;
   textMode: ChunkTextMode;
+}
+
+// PDF内容渲染：将[IMG::xxxx]替换为图片组件
+function renderPdfContentWithImages(content: string, api_rag_host: string) {
+  if (!content) return null;
+  const parts = [];
+  let lastIndex = 0;
+  const regex = /\[IMG::([a-zA-Z0-9]+)\]/g;
+  let match;
+  let key = 0;
+  while ((match = regex.exec(content)) !== null) {
+    // 文本部分
+    if (match.index > lastIndex) {
+      parts.push(<span key={key++}>{content.slice(lastIndex, match.index)}</span>);
+    }
+    // 图片部分
+    const imgId = match[1];
+    parts.push(
+      <Image
+        key={key++}
+        src={`${api_rag_host}/file/download/${imgId}`}
+        style={{ maxWidth: 120, maxHeight: 120, margin: '0 4px', verticalAlign: 'middle' }}
+        preview={true}
+      />
+    );
+    lastIndex = match.index + match[0].length;
+  }
+  // 剩余文本
+  if (lastIndex < content.length) {
+    parts.push(<span key={key++}>{content.slice(lastIndex)}</span>);
+  }
+  return parts;
 }
 
 const ChunkCard = ({
   item,
   checked,
+  isPdf,
   handleCheckboxClick,
   editChunk,
   switchChunk,
@@ -68,10 +102,10 @@ const ChunkCard = ({
           <Popover
             placement="right"
             content={
-              <Image id={item.image_id} className={styles.imagePreview}></Image>
+              <MyImage id={item.image_id} className={styles.imagePreview}></MyImage>
             }
           >
-            <Image id={item.image_id} className={styles.image}></Image>
+            <MyImage id={item.image_id} className={styles.image}></MyImage>
           </Popover>
         )}
 
@@ -81,15 +115,25 @@ const ChunkCard = ({
           className={styles.content}
         >
           <div
-            dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(
-                item.content_with_weight.replace(/\[\{chunk_id:[^}]+\}\]/g, '')
-              ),
-            }}
             className={classNames(styles.contentText, {
               [styles.contentEllipsis]: textMode === ChunkTextMode.Ellipse,
             })}
-          ></div>
+          >
+            {isPdf
+              ? renderPdfContentWithImages(
+                  item.content_with_weight.replace(/\[\{chunk_id:[^}]+\}\]/g, ''),
+                  api_rag_host
+                )
+              : (
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(
+                      item.content_with_weight.replace(/\[\{chunk_id:[^}]+\}\]/g, '')
+                    ),
+                  }}
+                />
+              )}
+          </div>
         </section>
 
         <div>

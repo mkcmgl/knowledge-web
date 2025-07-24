@@ -165,6 +165,7 @@ const Chunk = () => {
                   {data.map((item) => (
                     <ChunkCard
                       item={item}
+                      isPdf={isPdf}
                       key={item.chunk_id}
                       editChunk={showChunkUpdatingModal}
                       checked={selectedChunkIds.some(

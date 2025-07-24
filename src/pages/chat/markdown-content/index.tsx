@@ -1,4 +1,4 @@
-import Image from '@/components/image';
+import MyImage from '@/components/image';
 import SvgIcon from '@/components/svg-icon';
 import { IReference, IReferenceChunk } from '@/interfaces/database/chat';
 import { getExtension } from '@/utils/document-util';
@@ -69,12 +69,19 @@ const MarkdownContent = ({
       documentUrl?: string,
     ) =>
       () => {
+        console.log(`handleDocumentButtonClick`, documentId, chunk, isPdf, documentUrl)
         if (!isPdf) {
           if (!documentUrl) {
+            console.log(`handleDocumentButtonClick`, documentId, chunk, isPdf, documentUrl)
+            //  clickDocumentButton?.(documentId, chunk);
             return;
           }
-          window.open(documentUrl, '_blank');
+          console.log(`handleDocumentButtonClick`, documentId, chunk, isPdf, documentUrl)
+
+           window.open(documentUrl, '_blank');
         } else {
+          console.log(`handleDocumentButtonClick`, documentId, chunk, isPdf, documentUrl)
+
           clickDocumentButton?.(documentId, chunk);
         }
       },
@@ -142,16 +149,16 @@ const MarkdownContent = ({
             <Popover
               placement="left"
               content={
-                <Image
+                <MyImage
                   id={imageId}
                   className={styles.referenceImagePreview}
-                ></Image>
+                ></MyImage>
               }
             >
-              <Image
+              <MyImage
                 id={imageId}
                 className={styles.referenceChunkImage}
-              ></Image>
+              ></MyImage>
             </Popover>
           )}
           <div className={'space-y-2 max-w-[40vw]'}>
@@ -205,22 +212,23 @@ const MarkdownContent = ({
           getReferenceInfo(chunkIndex);
 
         const docType = chunkItem?.doc_type;
-
+        console.log(`docType,documentUrl, fileExtension, imageId, chunkItem, documentId`,docType,documentUrl, fileExtension, imageId, chunkItem, documentId);
         if (showImage(docType)) {
           return (
-            <Image
+            <MyImage
               key={i}
               id={imageId}
               className={styles.referenceInnerChunkImage}
+              type={fileExtension === 'pdf'}
               onClick={
                 documentId
-                  ? handleDocumentButtonClick(
+                  ?handleDocumentButtonClick(
                       documentId,
                       chunkItem,
                       fileExtension === 'pdf',
                       documentUrl,
                     )
-                  : () => {}
+                  : () => {console.log(`documentIdfalse`,documentId); }
               }
             />
           );

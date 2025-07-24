@@ -27,7 +27,7 @@ import { showImage } from '@/utils/chat';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { fetchVideoChunks } from '@/services/knowledge-service';
 import styles from './index.less';
-import { type } from '../../../../../.umi/exports';
+import { api_rag_host } from '@/utils/api';
 
 const similarityList: Array<{ field: keyof ITestingChunk; label: string }> = [
   { field: 'similarity', label: 'Hybrid Similarity' },
@@ -147,6 +147,31 @@ const TestingResult = ({
     return () => video.removeEventListener('timeupdate', handleTimeUpdate);
   }, [modalVisible, currentVideoInfo]);
 
+  // 弹窗关闭时重置视频状态
+  useEffect(() => {
+   
+    if (modalVisible) {
+      // 弹窗刚打开，重置播放状态
+      setIsPlaying(false);
+      // 也可以重置视频 currentTime
+      if (videoRef.current && currentVideoInfo) {
+        const startSec = timeStrToSeconds(currentVideoInfo.start_time);
+        videoRef.current.currentTime = startSec;
+        videoRef.current.pause();
+      }
+    } else {
+      // 弹窗刚关闭，重置播放状态
+      setIsPlaying(false);
+      if (videoRef.current && currentVideoInfo) {
+        videoRef.current.pause();
+        const startSec = timeStrToSeconds(currentVideoInfo.start_time);
+        videoRef.current.currentTime = startSec;
+      }
+    }
+  }, [modalVisible, currentVideoInfo]);
+
+
+
   const handlePlaySection = () => {
     if (videoRef.current && currentVideoInfo) {
       const startSec = timeStrToSeconds(currentVideoInfo.start_time);
@@ -170,6 +195,38 @@ const TestingResult = ({
       };
     }
   };
+
+  // 工具函数：将[IMG::xxxx]替换为Antd <Image>组件
+  function renderContentWithImages(content: string) {
+    if (!content) return null;
+    const parts = [];
+    let lastIndex = 0;
+    const regex = /\[IMG::([a-zA-Z0-9]+)\]/g;
+    let match;
+    let key = 0;
+    while ((match = regex.exec(content)) !== null) {
+      // 文本部分
+      if (match.index > lastIndex) {
+        parts.push(<span key={key++}>{content.slice(lastIndex, match.index)}</span>);
+      }
+      // 图片部分
+      const imgId = match[1];
+      parts.push(
+        <Image
+          key={key++}
+          src={`${api_rag_host}/file/download/${imgId}`}
+          style={{ maxWidth: 120, maxHeight: 120, margin: '0 4px', verticalAlign: 'middle' }}
+          preview={true}
+        />
+      );
+      lastIndex = match.index + match[0].length;
+    }
+    // 剩余文本
+    if (lastIndex < content.length) {
+      parts.push(<span key={key++}>{content.slice(lastIndex)}</span>);
+    }
+    return parts;
+  }
 
   return (
     <section className={styles.testingResultWrapper}>
@@ -231,7 +288,7 @@ const TestingResult = ({
                     {/* 渲染内容时去除所有 '[{chunk_id:...}]' 结构的文本 */}
                     <div style={{ flex: 1 }}>
                       {x.content_ltks
-                        ? x.content_ltks.replace(/\[\{chunk_id:[^}]+\}\]/g, '')
+                        ? renderContentWithImages(x.content_ltks.replace(/\[\{chunk_id:[^}]+\}\]/g, ''))
                         : ''}
                     </div>
                     {/* 渲染视频封面，点击弹窗播放指定区间 */}
@@ -241,7 +298,7 @@ const TestingResult = ({
                           setCurrentVideoInfo({
                             ...videoInfo,
                             videoUrl: `https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_1MB.mp4`, // TODO: 替换为真实接口
-                          //  videoUrl : `/api/file/playVideo?docId=${videoInfo.doc_id}`
+                            //  videoUrl : `/api/file/playVideo?docId=${videoInfo.doc_id}`
                           });
                           setModalVisible(true);
                         }}

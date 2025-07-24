@@ -11,6 +11,8 @@ export const useClickDrawer = () => {
 
   const clickDocumentButton = useCallback(
     (documentId: string, chunk: IReferenceChunk) => {
+    console.log(`clickDocumentButton`,documentId,chunk)
+
       showModal();
       setSelectedChunk(chunk);
       setDocumentId(documentId);
