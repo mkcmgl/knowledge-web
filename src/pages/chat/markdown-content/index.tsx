@@ -3,7 +3,7 @@ import SvgIcon from '@/components/svg-icon';
 import { IReference, IReferenceChunk } from '@/interfaces/database/chat';
 import { getExtension } from '@/utils/document-util';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { Button, Flex, Popover } from 'antd';
+import { Button, Flex, Popover ,Image} from 'antd';
 import DOMPurify from 'dompurify';
 import { useCallback, useEffect, useMemo } from 'react';
 import Markdown from 'react-markdown';
@@ -14,7 +14,7 @@ import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import { visitParents } from 'unist-util-visit-parents';
-
+import { api_rag_host } from '@/utils/api';
 import { useFetchDocumentThumbnailsByIds } from '@/hooks/document-hooks';
 import { useTranslation } from 'react-i18next';
 
@@ -61,6 +61,36 @@ const MarkdownContent = ({
     setDocumentIds(Array.isArray(docAggs) ? docAggs.map((x) => x.doc_id) : []);
   }, [reference, setDocumentIds]);
 
+  function renderContentWithImages(content: string) {
+    if (!content) return null;
+    const parts = [];
+    let lastIndex = 0;
+    const regex = /\[IMG::([a-zA-Z0-9]+)\]/g;
+    let match;
+    let key = 0;
+    while ((match = regex.exec(content)) !== null) {
+      // 文本部分
+      if (match.index > lastIndex) {
+        parts.push(<span key={key++}>{content.slice(lastIndex, match.index)}</span>);
+      }
+      // 图片部分
+      const imgId = match[1];
+      parts.push(
+        <Image
+          key={key++}
+          src={`${api_rag_host}/file/download/${imgId}`}
+          style={{ maxWidth: 120, maxHeight: 120, margin: '0 4px', verticalAlign: 'middle' }}
+          preview={true}
+        />
+      );
+      lastIndex = match.index + match[0].length;
+    }
+    // 剩余文本
+    if (lastIndex < content.length) {
+      parts.push(<span key={key++}>{content.slice(lastIndex)}</span>);
+    }
+    return parts;
+  }
   const handleDocumentButtonClick = useCallback(
     (
       documentId: string,
@@ -142,7 +172,7 @@ const MarkdownContent = ({
         documentId,
         document,
       } = getReferenceInfo(chunkIndex);
-
+      console.log(`getPopoverContent`,documentUrl, fileThumbnail, fileExtension, imageId, chunkItem, documentId, document);
       return (
         <div key={chunkItem?.id} className="flex gap-2">
           {imageId && (
@@ -162,12 +192,14 @@ const MarkdownContent = ({
             </Popover>
           )}
           <div className={'space-y-2 max-w-[40vw]'}>
+            {/* 提示内容 chunk内容 */}
             <div
-              dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(chunkItem?.content ?? ''),
-              }}
+              // dangerouslySetInnerHTML={{
+              //   __html: DOMPurify.sanitize(
+              //     chunkItem?.content ?? ''),
+              // }}
               className={classNames(styles.chunkContentText)}
-            ></div>
+            >{renderContentWithImages(chunkItem?.content ?? '')}</div>
             {documentId && (
               <Flex gap={'small'}>
                 {fileThumbnail ? (
@@ -205,6 +237,7 @@ const MarkdownContent = ({
 
   const renderReference = useCallback(
     (text: string) => {
+      console.log(`test`,text);
       let replacedText = reactStringReplace(text, currentReg, (match, i) => {
         const chunkIndex = getChunkIndex(match);
 
