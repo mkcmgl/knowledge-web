@@ -3,9 +3,8 @@ import SvgIcon from '@/components/svg-icon';
 import { IReference, IReferenceChunk } from '@/interfaces/database/chat';
 import { getExtension } from '@/utils/document-util';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { Button, Flex, Popover ,Image} from 'antd';
-import DOMPurify from 'dompurify';
-import { useCallback, useEffect, useMemo } from 'react';
+import { Button, Flex, Popover, Image } from 'antd';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import Markdown from 'react-markdown';
 import reactStringReplace from 'react-string-replace';
 import SyntaxHighlighter from 'react-syntax-highlighter';
@@ -108,7 +107,7 @@ const MarkdownContent = ({
           }
           console.log(`handleDocumentButtonClick`, documentId, chunk, isPdf, documentUrl)
 
-           window.open(documentUrl, '_blank');
+          window.open(documentUrl, '_blank');
         } else {
           console.log(`handleDocumentButtonClick`, documentId, chunk, isPdf, documentUrl)
 
@@ -172,7 +171,7 @@ const MarkdownContent = ({
         documentId,
         document,
       } = getReferenceInfo(chunkIndex);
-      console.log(`getPopoverContent`,documentUrl, fileThumbnail, fileExtension, imageId, chunkItem, documentId, document);
+      console.log(`getPopoverContent`, documentUrl, fileThumbnail, fileExtension, imageId, chunkItem, documentId, document);
       return (
         <div key={chunkItem?.id} className="flex gap-2">
           {imageId && (
@@ -237,7 +236,7 @@ const MarkdownContent = ({
 
   const renderReference = useCallback(
     (text: string) => {
-      console.log(`test`,text);
+      console.log(`test`, text);
       let replacedText = reactStringReplace(text, currentReg, (match, i) => {
         const chunkIndex = getChunkIndex(match);
 
@@ -245,7 +244,7 @@ const MarkdownContent = ({
           getReferenceInfo(chunkIndex);
 
         const docType = chunkItem?.doc_type;
-        console.log(`docType,documentUrl, fileExtension, imageId, chunkItem, documentId`,docType,documentUrl, fileExtension, imageId, chunkItem, documentId);
+        console.log(`docType,documentUrl, fileExtension, imageId, chunkItem, documentId`, docType, documentUrl, fileExtension, imageId, chunkItem, documentId);
         if (showImage(docType)) {
           return (
             <MyImage
@@ -255,13 +254,13 @@ const MarkdownContent = ({
               type={fileExtension === 'pdf'}
               onClick={
                 documentId
-                  ?handleDocumentButtonClick(
-                      documentId,
-                      chunkItem,
-                      fileExtension === 'pdf',
-                      documentUrl,
-                    )
-                  : () => {console.log(`documentIdfalse`,documentId); }
+                  ? handleDocumentButtonClick(
+                    documentId,
+                    chunkItem,
+                    fileExtension === 'pdf',
+                    documentUrl,
+                  )
+                  : () => { console.log(`documentIdfalse`, documentId); }
               }
             />
           );
@@ -283,38 +282,83 @@ const MarkdownContent = ({
     [getPopoverContent, getReferenceInfo, handleDocumentButtonClick],
   );
 
-  return (
-    <Markdown
-      rehypePlugins={[rehypeWrapReference, rehypeKatex, rehypeRaw]}
-      remarkPlugins={[remarkGfm, remarkMath]}
-      className={styles.markdownContentWrapper}
-      components={
-        {
-          'custom-typography': ({ children }: { children: string }) =>
-            renderReference(children),
-          code(props: any) {
-            const { children, className, node, ...rest } = props;
-            const match = /language-(\w+)/.exec(className || '');
-            return match ? (
-              <SyntaxHighlighter
-                {...rest}
-                PreTag="div"
-                language={match[1]}
-                wrapLongLines
-              >
-                {String(children).replace(/\n$/, '')}
-              </SyntaxHighlighter>
-            ) : (
-              <code {...rest} className={classNames(className, 'text-wrap')}>
-                {children}
-              </code>
-            );
-          },
-        } as any
+  // 折叠控制section.think（自定义section渲染，保证children走markdown逻辑）
+  const [thinkOpen, setThinkOpen] = useState(true);
+  const markdownComponents = useMemo(() => ({
+    section: ({ className, children, ...rest }: { className?: string; children?: React.ReactNode }) => {
+      if (className && className.includes('think')) {
+        return (
+          <div style={{ marginBottom: 16 }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                cursor: 'pointer',
+                userSelect: 'none',
+                marginBottom: 8,
+              }}
+              onClick={() => setThinkOpen(v => !v)}
+            >
+              <svg width="16" height="16" style={{ verticalAlign: 'middle', transition: 'transform 0.2s' }} viewBox="0 0 1024 1024">
+                <path d={thinkOpen
+                  ? 'M192 352l320 320 320-320z' // 向下
+                  : 'M192 672l320-320 320 320z' // 向上
+                } fill="#666"/>
+              </svg>
+              <span style={{ marginLeft: 8, fontWeight: 500 }}>思考过程</span>
+            </div>
+            <section
+              className={className}
+              style={{
+                display: thinkOpen ? 'block' : 'none',
+                background: '#f6f8fa',
+                padding: 12,
+                borderRadius: 6,
+                transition: 'all 0.2s'
+              }}
+              {...rest}
+            >
+              {children}
+            </section>
+          </div>
+        );
       }
-    >
-      {contentWithCursor}
-    </Markdown>
+      // 其它 section 正常渲染
+      return <section className={className} {...rest}>{children}</section>;
+    },
+    'custom-typography': ({ children }: { children: string }) =>
+      renderReference(children),
+    code(props: any) {
+      const { children, className,node, ...rest } = props;
+      const match = /language-(\w+)/.exec(className || '');
+      return match ? (
+        <SyntaxHighlighter
+          {...rest}
+          PreTag="div"
+          language={match[1]}
+          wrapLongLines
+        >
+          {String(children).replace(/\n$/, '')}
+        </SyntaxHighlighter>
+      ) : (
+        <code {...rest} className={classNames(className, 'text-wrap')}>
+          {children}
+        </code>
+      );
+    },
+  }), [thinkOpen, renderReference]);
+
+  return (
+    <div>
+      <Markdown
+        rehypePlugins={[rehypeWrapReference, rehypeKatex, rehypeRaw]}
+        remarkPlugins={[remarkGfm, remarkMath]}
+        className={styles.markdownContentWrapper}
+        components={markdownComponents as any}
+      >
+        {contentWithCursor}
+      </Markdown>
+    </div>
   );
 };
 
