@@ -83,7 +83,8 @@ const MessageItem = ({
     const ids = item?.doc_ids ?? [];
     if (ids.length) {
       setDocumentIds(ids);
-      const documentIds = ids.filter((x) => !(x in documentThumbnails));
+      const isObject = documentThumbnails && typeof documentThumbnails === 'object';
+      const documentIds = ids.filter((x) => !isObject || !documentThumbnails.hasOwnProperty(x));
       if (documentIds.length) {
         setIds(documentIds);
       }

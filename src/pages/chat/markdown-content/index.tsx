@@ -75,16 +75,16 @@ const MarkdownContent = ({
       // 图片部分
       const imgId = match[1];
       parts.push(
-        <>
+        <div  key={key++} >
           <Image
-            key={key++}
+           
             src={`${api_rag_host}/file/download/${imgId}`}
             alt='图片'
             style={{ maxWidth: 120, maxHeight: 120, margin: '0 4px', verticalAlign: 'middle' }}
             preview={true}
           />
-          <br key={key++} />
-        </>
+          <br />
+        </div>
       );
       lastIndex = match.index + match[0].length;
     }
