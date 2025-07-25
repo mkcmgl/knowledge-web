@@ -106,12 +106,22 @@ const Chat = () => {
     }
   }, [dialogList]);
 
-  // 首次进入页面自动选中第一个助理
+  // 首次进入页面自动选中第一个助理（无dialogId时），dialogId变化后自动新建一个聊天并只执行一次
   useEffect(() => {
-    if (dialogList.length > 0 && !dialogId) {
+    if (!dialogLoading && dialogList.length > 0 && !dialogId) {
       handleDialogCardClick(dialogList[0].id)();
     }
-  }, [dialogList, dialogId, handleDialogCardClick,]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dialogLoading, dialogList, dialogId]);
+
+  useEffect(() => {
+    if (!dialogLoading && dialogId && !hasAutoSelected.current) {
+      addTemporaryConversation();
+      hasAutoSelected.current = true;
+      sessionStorage.setItem('chat_has_auto_selected', 'true');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dialogLoading, dialogId]);
 
   // 助理下没有聊天记录时自动新建聊天
   useEffect(() => {
@@ -346,7 +356,12 @@ const Chat = () => {
                   })}
                   onMouseEnter={handleAppCardEnter(x.id)}
                   onMouseLeave={handleItemLeave}
-                  onClick={handleDialogCardClick(x.id)}
+                  onClick={conversationLoading ? undefined : handleDialogCardClick(x.id)}
+                  style={{
+                    pointerEvents: conversationLoading ? 'none' : 'auto',
+                    opacity: conversationLoading ? 0.5 : 1,
+                    cursor: conversationLoading ? 'not-allowed' : 'pointer',
+                  }}
                 >
                   <Flex justify="space-between" align="center">
                     <Space size={15}>
