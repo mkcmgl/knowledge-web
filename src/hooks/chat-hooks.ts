@@ -186,7 +186,7 @@ export const useFetchNextDialog = () => {
     enabled: !!dialogId,
     refetchOnWindowFocus: false,
     queryFn: async () => {
-      const { data } = await chatService.getDialog({id: dialogId });
+      const { data } = await chatService.getDialog({ id:dialogId });
 
       return data?.data ?? ({} as IDialog);
     },

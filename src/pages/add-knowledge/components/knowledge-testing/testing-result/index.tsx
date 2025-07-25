@@ -216,6 +216,7 @@ const TestingResult = ({
           <Image
             key={key++}
             src={`${api_rag_host}/file/download/${imgId}`}
+            alt='图片'
             style={{ maxWidth: 120, maxHeight: 120, margin: '0 4px', verticalAlign: 'middle' }}
             preview={true}
           />

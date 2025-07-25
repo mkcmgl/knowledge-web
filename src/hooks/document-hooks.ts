@@ -438,7 +438,7 @@ export const useFetchDocumentThumbnailsByIds = () => {
     enabled: ids.length > 0,
     initialData: {},
     queryFn: async () => {
-      const { data } = await kbService.document_thumbnails({ doc_ids: ids });
+      const { data } = await kbService.document_thumbnails({ docIds: ids });
       if (data.code === 0) {
         return data.data;
       }
