@@ -85,9 +85,9 @@ export default {
 
   // chat
   setDialog: `${api_host}/dialog/set`,
-  getDialog: `${api_host}/dialog/get`,
+  getDialog: `${api_rag_host}/conversation/dialog/list`,
   removeDialog: `${api_host}/dialog/rm`,
-  listDialog: `${api_host}/dialog/list`,
+  listDialog: `${api_rag_host}/conversation/dialog/list`,
   setConversation: `${api_host}/conversation/set`,
   getConversation: `${api_host}/conversation/get`,
   getConversationSSE: `${api_host}/conversation/getsse`,

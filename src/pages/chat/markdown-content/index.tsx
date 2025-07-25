@@ -75,12 +75,15 @@ const MarkdownContent = ({
       // 图片部分
       const imgId = match[1];
       parts.push(
-        <Image
-          key={key++}
-          src={`${api_rag_host}/file/download/${imgId}`}
-          style={{ maxWidth: 120, maxHeight: 120, margin: '0 4px', verticalAlign: 'middle' }}
-          preview={true}
-        />
+        <>
+          <Image
+            key={key++}
+            src={`${api_rag_host}/file/download/${imgId}`}
+            style={{ maxWidth: 120, maxHeight: 120, margin: '0 4px', verticalAlign: 'middle' }}
+            preview={true}
+          />
+          <br key={key++} />
+        </>
       );
       lastIndex = match.index + match[0].length;
     }
@@ -295,18 +298,18 @@ const MarkdownContent = ({
                 alignItems: 'center',
                 cursor: 'pointer',
                 userSelect: 'none',
-                justifyContent:"space-between",
+                justifyContent: "space-between",
                 marginBottom: 8,
               }}
               onClick={() => setThinkOpen(v => !v)}
             >
-              
+
               <span style={{ marginLeft: 8, fontWeight: 500 }}>思考过程</span>
               <svg width="16" height="16" style={{ verticalAlign: 'middle', transition: 'transform 0.2s' }} viewBox="0 0 1024 1024">
                 <path d={thinkOpen
                   ? 'M192 352l320 320 320-320z' // 向下
                   : 'M192 672l320-320 320 320z' // 向上
-                } fill="#666"/>
+                } fill="#666" />
               </svg>
             </div>
             <section
@@ -331,7 +334,7 @@ const MarkdownContent = ({
     'custom-typography': ({ children }: { children: string }) =>
       renderReference(children),
     code(props: any) {
-      const { children, className,node, ...rest } = props;
+      const { children, className, node, ...rest } = props;
       const match = /language-(\w+)/.exec(className || '');
       return match ? (
         <SyntaxHighlighter

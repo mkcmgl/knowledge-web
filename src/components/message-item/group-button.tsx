@@ -54,14 +54,15 @@ export const AssistantGroupButton = ({
         <Radio.Button value="a">
           <CopyToClipboard text={content}></CopyToClipboard>
         </Radio.Button>
-        {showLoudspeaker && (
+        {/* 朗读 */}
+        {/* {showLoudspeaker && (
           <Radio.Button value="b" onClick={handleRead}>
             <Tooltip title={t('chat.read')}>
               {isPlaying ? <PauseCircleOutlined /> : <SoundOutlined />}
             </Tooltip>
             <audio src="" ref={ref}></audio>
           </Radio.Button>
-        )}
+        )} */}
         {showLikeButton && (
           <>
             <Radio.Button value="c" onClick={handleLike}>

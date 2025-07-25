@@ -39,7 +39,7 @@ const HighlightPopup = ({
 const DocumentPreviewer = ({ chunk, documentId, visible }: IProps) => {
   const getDocumentUrl = useGetDocumentUrl(documentId);
   const { highlights: state, setWidthAndHeight } = useGetChunkHighlights(chunk);
-  const ref = useRef<(highlight: IHighlight) => void>(() => {});
+  const ref = useRef<(highlight: IHighlight) => void>(() => { });
   const [loaded, setLoaded] = useState(false);
   const url = getDocumentUrl();
   const [pdfUrl, setPdfUrl] = useState<string>('');
@@ -57,10 +57,10 @@ const DocumentPreviewer = ({ chunk, documentId, visible }: IProps) => {
         setPdfUrl(localUrl);
         return () => URL.revokeObjectURL(localUrl);
       });
-  }, [url]);
+  }, [url, documentId]);
   const error = useCatchDocumentError(url);
 
-  const resetHash = () => {};
+  const resetHash = () => { };
 
   useEffect(() => {
     setLoaded(visible);
@@ -75,6 +75,7 @@ const DocumentPreviewer = ({ chunk, documentId, visible }: IProps) => {
 
   return (
     <div className={styles.documentContainer}>
+
       <PdfLoader
         url={pdfUrl}
         beforeLoad={<Skeleton active />}
@@ -122,7 +123,7 @@ const DocumentPreviewer = ({ chunk, documentId, visible }: IProps) => {
                   <AreaHighlight
                     isScrolledTo={isScrolledTo}
                     highlight={highlight}
-                    onChange={() => {}}
+                    onChange={() => { }}
                   />
                 );
 

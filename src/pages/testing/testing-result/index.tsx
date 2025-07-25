@@ -187,38 +187,42 @@ const TestingResult = ({
       };
     }
   };
-    // 工具函数：将[IMG::xxxx]替换为Antd <Image>组件
-    function renderContentWithImages(content: string) {
-      if (!content) return null;
-      const parts = [];
-      let lastIndex = 0;
-      const regex = /\[IMG::([a-zA-Z0-9]+)\]/g;
-      let match;
-      let key = 0;
-      while ((match = regex.exec(content)) !== null) {
-        // 文本部分
-        if (match.index > lastIndex) {
-          parts.push(<span key={key++}>{content.slice(lastIndex, match.index)}</span>);
-        }
-        // 图片部分
-        const imgId = match[1];
-        parts.push(
+  // 工具函数：将[IMG::xxxx]替换为Antd <Image>组件
+  function renderContentWithImages(content: string) {
+    if (!content) return null;
+    const parts = [];
+    let lastIndex = 0;
+    const regex = /\[IMG::([a-zA-Z0-9]+)\]/g;
+    let match;
+    let key = 0;
+    while ((match = regex.exec(content)) !== null) {
+      // 文本部分
+      if (match.index > lastIndex) {
+        parts.push(<span key={key++}>{content.slice(lastIndex, match.index)}</span>);
+      }
+      // 图片部分
+      const imgId = match[1];
+      parts.push(
+
+        <>
           <Image
             key={key++}
             src={`${api_rag_host}/file/download/${imgId}`}
             style={{ maxWidth: 120, maxHeight: 120, margin: '0 4px', verticalAlign: 'middle' }}
             preview={true}
           />
-        );
-        lastIndex = match.index + match[0].length;
-      }
-      // 剩余文本
-      if (lastIndex < content.length) {
-        parts.push(<span key={key++}>{content.slice(lastIndex)}</span>);
-      }
-      return parts;
+          <br key={key++} />
+        </>
+      );
+      lastIndex = match.index + match[0].length;
     }
-  
+    // 剩余文本
+    if (lastIndex < content.length) {
+      parts.push(<span key={key++}>{content.slice(lastIndex)}</span>);
+    }
+    return parts;
+  }
+
   return (
     <section className={styles.testingResultWrapper}>
       <Collapse
@@ -278,7 +282,7 @@ const TestingResult = ({
                   <div className="pt-4" style={{ display: 'flex', alignItems: 'flex-start', gap: 16, flexDirection: 'column' }}>
                     {/* 渲染内容时去除所有 '[{chunk_id:...}]' 结构的文本 */}
                     <div style={{ flex: 1 }}>
-                    {x.content_ltks
+                      {x.content_ltks
                         ? renderContentWithImages(x.content_ltks.replace(/\[\{chunk_id:[^}]+\}\]/g, ''))
                         : ''}
                     </div>
@@ -337,15 +341,17 @@ const TestingResult = ({
               当前播放区间: {currentVideoInfo.start_time} - {currentVideoInfo.end_time}
             </div>
             <div style={{ marginTop: 16 }}>
-              <button type="button" 
-              style={{ padding: '8px 16px',
-               fontSize: 16, borderRadius: 4,
-                background: '#306EFD', color: '#fff',
-                 border: 'none', 
-                 cursor: isPlaying ? 'not-allowed' : 'pointer' }}
-                 onClick={handlePlaySection}
-                 disabled={isPlaying}
-                  >
+              <button type="button"
+                style={{
+                  padding: '8px 16px',
+                  fontSize: 16, borderRadius: 4,
+                  background: '#306EFD', color: '#fff',
+                  border: 'none',
+                  cursor: isPlaying ? 'not-allowed' : 'pointer'
+                }}
+                onClick={handlePlaySection}
+                disabled={isPlaying}
+              >
                 {isPlaying ? '播放中...' : '播放区间'}
               </button>
             </div>

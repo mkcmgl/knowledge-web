@@ -212,12 +212,15 @@ const TestingResult = ({
       // 图片部分
       const imgId = match[1];
       parts.push(
-        <Image
-          key={key++}
-          src={`${api_rag_host}/file/download/${imgId}`}
-          style={{ maxWidth: 120, maxHeight: 120, margin: '0 4px', verticalAlign: 'middle' }}
-          preview={true}
-        />
+        <>
+          <Image
+            key={key++}
+            src={`${api_rag_host}/file/download/${imgId}`}
+            style={{ maxWidth: 120, maxHeight: 120, margin: '0 4px', verticalAlign: 'middle' }}
+            preview={true}
+          />
+          <br key={key++} />
+        </>
       );
       lastIndex = match.index + match[0].length;
     }

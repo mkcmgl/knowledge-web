@@ -15,6 +15,9 @@ export const PdfDrawer = ({
   documentId,
   chunk,
 }: IProps) => {
+
+console.log(`documentId,chunk----------`,documentId,chunk);
+
   return (
     <Drawer
       title="Document Previewer"
