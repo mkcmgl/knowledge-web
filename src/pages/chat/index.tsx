@@ -111,7 +111,7 @@ const Chat = () => {
     if (dialogList.length > 0 && !dialogId) {
       handleDialogCardClick(dialogList[0].id)();
     }
-  }, [dialogList, dialogId, handleDialogCardClick]);
+  }, [dialogList, dialogId, handleDialogCardClick,]);
 
   // 助理下没有聊天记录时自动新建聊天
   useEffect(() => {
@@ -139,12 +139,15 @@ const Chat = () => {
         showDialogEditModal(dialogId);
       };
 
+  const { refetch: refetchDialogList } = useFetchNextDialogList();
   const handleRemoveDialog =
     (dialogId: string): MenuItemProps['onClick'] =>
-      ({ domEvent }) => {
+      async ({ domEvent }) => {
         domEvent.preventDefault();
         domEvent.stopPropagation();
-        onRemoveDialog([dialogId]);
+        await onRemoveDialog([dialogId]);
+        // 删除后强制刷新并走自动选中逻辑
+        refetchDialogList();
       };
 
   const handleShowOverviewModal =

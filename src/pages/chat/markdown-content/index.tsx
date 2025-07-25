@@ -102,7 +102,7 @@ const MarkdownContent = ({
       documentUrl?: string,
     ) =>
       () => {
-        console.log(`handleDocumentButtonClick`, documentId, chunk, isPdf, documentUrl)
+        // console.log(`handleDocumentButtonClick`, documentId, chunk, isPdf, documentUrl)
         if (!isPdf) {
           if (!documentUrl) {
             //  clickDocumentButton?.(documentId, chunk);
@@ -172,7 +172,7 @@ const MarkdownContent = ({
         documentId,
         document,
       } = getReferenceInfo(chunkIndex);
-      console.log(`getPopoverContent`, documentUrl, fileThumbnail, fileExtension, imageId, chunkItem, documentId, document);
+      // console.log(`getPopoverContent`, documentUrl, fileThumbnail, fileExtension, imageId, chunkItem, documentId, document);
       return (
         <div key={chunkItem?.id} className="flex gap-2">
           {imageId && (
@@ -237,7 +237,7 @@ const MarkdownContent = ({
 
   const renderReference = useCallback(
     (text: string) => {
-      console.log(`test`, text);
+      // console.log(`test`, text);
       let replacedText = reactStringReplace(text, currentReg, (match, i) => {
         const chunkIndex = getChunkIndex(match);
 
@@ -245,7 +245,7 @@ const MarkdownContent = ({
           getReferenceInfo(chunkIndex);
 
         const docType = chunkItem?.doc_type;
-        console.log(`docType,documentUrl, fileExtension, imageId, chunkItem, documentId`, docType, documentUrl, fileExtension, imageId, chunkItem, documentId);
+        // console.log(`docType,documentUrl, fileExtension, imageId, chunkItem, documentId`, docType, documentUrl, fileExtension, imageId, chunkItem, documentId);
         if (showImage(docType)) {
           return (
             <MyImage
