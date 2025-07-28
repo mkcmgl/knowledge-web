@@ -24,7 +24,7 @@ import {
 import { useGetPaginationWithRouter } from '@/hooks/logic-hooks';
 import { api_host } from '@/utils/api';
 import { showImage } from '@/utils/chat';
-import { fetchVideoChunks } from '@/services/knowledge-service';
+import { fetchVideoChunks, getMinioDownloadUrl } from '@/services/knowledge-service';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import styles from './index.less';
 import { api_rag_host } from '@/utils/api';
@@ -291,10 +291,14 @@ const TestingResult = ({
                     {/* 渲染视频封面，点击弹窗播放指定区间 */}
                     {videoInfo && videoInfo.doc_id && (
                       <div style={{ cursor: 'pointer', width: 200 }}
-                        onClick={() => {
+                        onClick={async () => {
+                          const { data } = await getMinioDownloadUrl(videoInfo.doc_id)
+                          const videoUrl = data.data.replace('http://localhost:9000', 'http://119.84.128.68:6581/minio');
                           setCurrentVideoInfo({
                             ...videoInfo,
-                            videoUrl: `https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_1MB.mp4`, // TODO: 替换为真实接口
+                            // videoUrl: `https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_1MB.mp4`, // TODO: 替换为真实接口
+                            //  videoUrl : `http://119.84.128.68:6581/minio/cisdi-zqrag-documents/aa64c406d6374e0f933cd86ca5b03880.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=rag_flow%2F20250728%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250728T012228Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=0b31e1ec325c35dea1f1e9cd0d820d5babc91dfbeaa19bc99d5f1df9111b61d8`
+                            videoUrl: videoUrl
                           });
                           setModalVisible(true);
                         }}

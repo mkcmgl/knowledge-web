@@ -39,6 +39,7 @@ const {
   setMeta,
   //retrieval_test,
   getVideoChunks,
+  minioGetDownloadUrl,
 } = api;
 
 const methods = {
@@ -167,6 +168,10 @@ const methods = {
     url: getVideoChunks,
     method: 'post',
   },
+  minioGetDownloadUrl: {
+    url: minioGetDownloadUrl,
+    method: 'get',
+  },
 };
 
 const kbService = registerServer<keyof typeof methods>(methods, request);
@@ -222,4 +227,6 @@ export const getTaskList = (dataset_id: string) => {
 export const fetchVideoChunks = (chunk_ids: string[]) =>
   kbService['getVideoChunks']({ chunk_ids });
 
+export const getMinioDownloadUrl = (docId: string[]) =>
+  kbService['minioGetDownloadUrl']({ docId });
 export default kbService;

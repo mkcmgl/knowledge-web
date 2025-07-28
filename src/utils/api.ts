@@ -62,7 +62,7 @@ export default {
   retrieval_test: `${api_rag_host}/query/retrieval`,
   knowledge_graph: `${api_host}/chunk/knowledge_graph`,
   getVideoChunks: `${api_rag_host}/chunk/getVideoChunks`,
-
+  minioGetDownloadUrl: `${api_rag_host}/minio/getDownloadUrl`,
   // document
   get_document_list: `${api_rag_host}/file/docList`,
   document_change_status: `${api_rag_host}/file/updateDocStatus`,

@@ -59,6 +59,14 @@ export default defineConfig({
       logger: console,
       // pathRewrite: { '^/v1': '/v1' },
     },
+    {
+      context: ['/minio'],
+      target: 'http://119.84.128.68:6581/',
+      changeOrigin: true,
+      ws: true,
+      logger: console,
+      // pathRewrite: { '^/v1': '/v1' },
+    },
     
   ],
 
