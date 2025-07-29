@@ -2,7 +2,7 @@ import MyImage from '@/components/image';
 import SvgIcon from '@/components/svg-icon';
 import { IReference, IReferenceChunk } from '@/interfaces/database/chat';
 import { getExtension } from '@/utils/document-util';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { Button, Flex, Popover, Image, Modal } from 'antd';
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import Markdown from 'react-markdown';
@@ -239,13 +239,23 @@ const MarkdownContent = ({
     };
   };
 
+  // 判断是否为视频文件的函数
+  const isVideoFile = useCallback((fileName?: string) => {
+    if (!fileName) return false;
+    const videoExtensions = ['.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mkv', '.m4v'];
+    const lowerFileName = fileName.toLowerCase();
+    return videoExtensions.some(ext => lowerFileName.endsWith(ext));
+  }, []);
+
   const getReferenceInfo = useCallback(
     (chunkIndex: number) => {
+      console.log(`reference?.chunks`,reference?.chunks);
       const chunks = reference?.chunks ?? [];
       const chunkItem = chunks[chunkIndex];
       const document = reference?.doc_aggs?.find(
         (x) => x?.doc_id === chunkItem?.document_id,
       );
+      console.log(`--------document--------`,document);
       const documentId = document?.doc_id;
       const documentUrl = document?.url;
       const fileThumbnail = documentId ? fileThumbnails[documentId] : '';
@@ -341,11 +351,11 @@ const MarkdownContent = ({
 
   const renderReference = useCallback(
     (text: string) => {
-      // console.log(`test`, text);
+      console.log(`test`, text);
       let replacedText = reactStringReplace(text, currentReg, (match, i) => {
         const chunkIndex = getChunkIndex(match);
 
-        const { documentUrl, fileExtension, imageId, chunkItem, documentId } =
+        const { documentUrl, fileExtension, imageId, chunkItem, documentId, document } =
           getReferenceInfo(chunkIndex);
 
         const docType = chunkItem?.doc_type;
@@ -370,9 +380,15 @@ const MarkdownContent = ({
             />
           );
         } else {
+          // 根据文档名称判断是否为视频文件
+          const isVideo = isVideoFile(document?.doc_name);
           return (
             <Popover content={getPopoverContent(chunkIndex)} key={i}>
-              <InfoCircleOutlined className={styles.referenceIcon} />
+              {isVideo ? (
+                <PlayCircleOutlined className={styles.referenceIcon} />
+              ) : (
+                <InfoCircleOutlined className={styles.referenceIcon} />
+              )}
             </Popover>
           );
         }
@@ -384,7 +400,7 @@ const MarkdownContent = ({
 
       return replacedText;
     },
-    [getPopoverContent, getReferenceInfo, handleDocumentButtonClick],
+    [getPopoverContent, getReferenceInfo, handleDocumentButtonClick, isVideoFile],
   );
 
   // 折叠控制section.think（自定义section渲染，保证children走markdown逻辑）
@@ -484,7 +500,7 @@ const MarkdownContent = ({
               src={currentVideoInfo.videoUrl}
               controls
               width="100%"
-              poster={currentVideoInfo.cover_url || undefined}
+              poster={currentVideoInfo.cover_url.replace('http://localhost:9000', 'http://119.84.128.68:6581/minio') || undefined}
               style={{ borderRadius: 8, background: '#000' }}
             />
             <div style={{ marginTop: 16 }}>
