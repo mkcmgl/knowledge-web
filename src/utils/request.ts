@@ -72,7 +72,7 @@ const errorHandler = (error: {
 
 const request: RequestMethod = extend({
   errorHandler,
-  timeout: 300000,
+  timeout: 300000, // 5分钟 = 300000毫秒
   getResponse: true,
 });
 
@@ -91,6 +91,12 @@ request.interceptors.request.use((url: string, options: any) => {
   } else {
     options.headers.Authorization = 'Bearer ' + token;
   }
+  
+  // 为文件下载请求设置5分钟超时时间
+  if (options.responseType === 'blob') {
+    options.timeout = 300000; // 5分钟
+  }
+  
   const headers = {
     ...options.headers,
   };
@@ -112,7 +118,17 @@ request.interceptors.response.use(async (response: Response, options) => {
   }
 
   if (options.responseType === 'blob') {
-    return response;
+    // 对于 blob 响应，需要将 blob 数据添加到 response 对象中
+    try {
+      const blob = await response.clone().blob();
+      return {
+        ...response,
+        data: blob,
+      };
+    } catch (error) {
+      console.error('处理 blob 响应时出错:', error);
+      return response;
+    }
   }
 
   const data: ResponseType = await response?.clone()?.json();

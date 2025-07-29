@@ -20,6 +20,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { v4 as uuid } from 'uuid';
 import { useTranslate } from './common-hooks';
 import { useSetPaginationParams } from './route-hook';
 import { useFetchTenantInfo } from './user-setting-hooks';

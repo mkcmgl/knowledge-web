@@ -17,6 +17,7 @@ import { Avatar, Button, Flex, List, Space, Typography } from 'antd';
 import FileIcon from '../file-icon';
 import IndentedTreeModal from '../indented-tree/modal';
 import NewDocumentLink from '../new-document-link';
+import PdfDrawer from '../pdf-drawer';
 import { useTheme } from '../theme-provider';
 import { AssistantGroupButton, UserGroupButton } from './group-button';
 import styles from './index.less';
@@ -63,6 +64,11 @@ const MessageItem = ({
   const { visible, hideModal, showModal } = useSetModalState();
   const [clickedDocumentId, setClickedDocumentId] = useState('');
 
+  // PDF Drawer状态
+  const [pdfVisible, setPdfVisible] = useState(false);
+  const [pdfDocumentId, setPdfDocumentId] = useState('');
+  const [pdfChunk, setPdfChunk] = useState<IReferenceChunk>({} as IReferenceChunk);
+
   const referenceDocumentList = useMemo(() => {
     return reference?.doc_aggs ?? [];
   }, [reference?.doc_aggs]);
@@ -74,6 +80,13 @@ const MessageItem = ({
     },
     [showModal],
   );
+
+  // 处理PDF文档点击
+  const handlePdfClick = useCallback((documentId: string, chunk: IReferenceChunk) => {
+    setPdfDocumentId(documentId);
+    setPdfChunk(chunk);
+    setPdfVisible(true);
+  }, []);
 
   const handleRegenerateMessage = useCallback(() => {
     regenerateMessage?.(item);
@@ -179,6 +192,7 @@ const MessageItem = ({
                           documentName={item.doc_name}
                           prefix="document"
                           link={item.url}
+                          clickDocumentButton={handlePdfClick}
                         >
                           {item.doc_name}
                         </NewDocumentLink>
@@ -207,6 +221,7 @@ const MessageItem = ({
                             documentId={item.id}
                             documentName={item.name}
                             prefix="document"
+                            clickDocumentButton={handlePdfClick}
                           >
                             {item.name}
                           </NewDocumentLink>
@@ -239,6 +254,13 @@ const MessageItem = ({
           documentId={clickedDocumentId}
         ></IndentedTreeModal>
       )}
+      {/* PDF预览抽屉 */}
+      <PdfDrawer
+        visible={pdfVisible}
+        hideModal={() => setPdfVisible(false)}
+        documentId={pdfDocumentId}
+        chunk={pdfChunk}
+      />
     </div>
   );
 };

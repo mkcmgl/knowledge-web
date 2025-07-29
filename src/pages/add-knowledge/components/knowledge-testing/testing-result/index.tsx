@@ -296,28 +296,50 @@ const TestingResult = ({
                     </div>
                     {/* 渲染视频封面，点击弹窗播放指定区间 */}
                     {videoInfo && videoInfo.doc_id && (
-                      <div style={{ cursor: 'pointer', width: 200 }}
+                      <div 
+                        style={{ 
+                          position: 'relative', 
+                          cursor: 'pointer', 
+                          width: 200, 
+                          height: 100,
+                          borderRadius: 8,
+                          overflow: 'hidden'
+                        }}
                         onClick={async () => {
                           const { data } = await getMinioDownloadUrl(videoInfo.doc_id)
                           const videoUrl = data.data.replace('http://localhost:9000', 'http://119.84.128.68:6581/minio');
                           setCurrentVideoInfo({
                             ...videoInfo,
-                            // videoUrl: `https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_1MB.mp4`, // TODO: 替换为真实接口
-                            //  videoUrl : `http://119.84.128.68:6581/minio/cisdi-zqrag-documents/aa64c406d6374e0f933cd86ca5b03880.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=rag_flow%2F20250728%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250728T012228Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=0b31e1ec325c35dea1f1e9cd0d820d5babc91dfbeaa19bc99d5f1df9111b61d8`
                             videoUrl: videoUrl,
                             content_ltks:x.content_ltks
                           });
                           setModalVisible(true);
                         }}
                       >
-                        <video
-                          width={200}
-                          style={{ borderRadius: 8, background: '#000' }}
-                          poster={videoInfo.cover_url || undefined}
-                          src=""
-                          controls={false}
+                        <img 
+                          src={videoInfo.cover_url.replace('http://localhost:9000', 'http://119.84.128.68:6581/minio') || undefined}
+                          alt="视频封面"
+                          style={{ 
+                            width: '100%', 
+                            height: '100%', 
+                            objectFit: 'cover',
+                            borderRadius: 8
+                          }}
                         />
-                        <div style={{ position: 'absolute', bottom: 24, left: 24, borderRadius: 8, width: 200, height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 24, background: 'rgba(0,0,0,0.2)' }}>
+                        <div style={{ 
+                          position: 'absolute', 
+                          top: 0, 
+                          left: 0, 
+                          right: 0, 
+                          bottom: 0, 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'center', 
+                          color: '#fff', 
+                          fontSize: 24, 
+                          background: 'rgba(0,0,0,0.3)',
+                          borderRadius: 8
+                        }}>
                           ▶
                         </div>
                       </div>
@@ -346,7 +368,7 @@ const TestingResult = ({
               src={currentVideoInfo.videoUrl}
               controls
               width="100%"
-              poster={currentVideoInfo.cover_url || undefined}
+              poster={currentVideoInfo.cover_url.replace('http://localhost:9000', 'http://119.84.128.68:6581/minio') || undefined}
               style={{ borderRadius: 8, background: '#000' }}
             />
             <div style={{ marginTop: 16 }}>

@@ -99,9 +99,16 @@ export const getBase64FromUploadFileList = async (fileList?: UploadFile[]) => {
 };
 
 async function fetchDocumentBlob(id: string, mimeType?: FileMimeType) {
+  // 为下载文件设置5分钟超时时间
   const response = await fileManagerService.getDocumentFile({}, id);
+  
+  // 检查 response.data 是否存在
+  if (!response || !response.data) {
+    throw new Error('下载文件失败：响应数据为空');
+  }
+  
   const blob = new Blob([response.data], {
-    type: mimeType || response.data.type,
+    type: mimeType || (response.data.type || 'application/octet-stream'),
   });
 
   return blob;

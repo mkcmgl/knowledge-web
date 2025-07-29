@@ -16,12 +16,13 @@ import { Avatar, Menu, MenuProps, Space } from 'antd';
 import classNames from 'classnames';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate} from 'umi';
+import { useNavigate } from 'umi';
 import { KnowledgeRouteKey } from '../../constant';
 import { isEmpty } from 'lodash';
 import { GitGraph } from 'lucide-react';
 import styles from './index.less';
-import { cn,  } from '@/lib/utils';
+import { cn, } from '@/lib/utils';
+import { ReactComponent as TitleIcon } from '@/assets/svg/knowledge-title.svg';
 const KnowledgeSidebar = () => {
   let navigate = useNavigate();
   const activeKey = useSecondPathName();
@@ -64,7 +65,7 @@ const KnowledgeSidebar = () => {
   const items: MenuItem[] = useMemo(() => {
     const list = [
       getItem(
-        KnowledgeRouteKey.Dataset, 
+        KnowledgeRouteKey.Dataset,
         KnowledgeRouteKey.Dataset,
         <DatasetIcon />,
       ),
@@ -83,18 +84,18 @@ const KnowledgeSidebar = () => {
         KnowledgeRouteKey.KnowledgeGraph,
         <GraphIcon />,
       ),
-      
+
     ];
-console.log(`data?.graph,data`,data?.graph,data);
-    // if (!isEmpty(data?.graph)) {
-    //   list.push(
-    //     getItem(
-    //       KnowledgeRouteKey.KnowledgeGraph,
-    //       KnowledgeRouteKey.KnowledgeGraph,
-    //       <GitGraph />,
-    //     ),
-    //   );
-    // }
+    console.log(`data?.graph,data`, data?.graph, data);
+    if (!isEmpty(data?.graph)) {
+      list.push(
+        getItem(
+          KnowledgeRouteKey.KnowledgeGraph,
+          KnowledgeRouteKey.KnowledgeGraph,
+          <GitGraph />,
+        ),
+      );
+    }
 
     return list;
   }, [data, getItem]);
@@ -121,18 +122,23 @@ console.log(`data?.graph,data`,data?.graph,data);
 
   return (
     <div className={styles.sidebarWrapper}>
-      {/* <div className={styles.sidebarTop}>
-        <Space size={8} >
-         // <Avatar size={64} src={knowledgeDetails.avatar} /> 
+      <div className={styles.sidebarTop}>
+        <Space size={8} className='flex flex-col pt-5'>
+        
+          {knowledgeDetails.avatar ? (
+            <Avatar size={64} src={knowledgeDetails.avatar} />
+          ) : (
+            <Avatar size={64} icon={<TitleIcon />} />
+          )}
           <div className={styles.knowledgeTitle}>{knowledgeDetails.name}</div>
         </Space>
         <p className={cn(
-              'truncate', styles.knowledgeDescription)} >
+          'truncate', styles.knowledgeDescription)} >
           {knowledgeDetails.description}
         </p>
       </div>
-      <div className={styles.divider}></div> */}
-      
+      <div className={styles.divider}></div>
+
       <div className={styles.menuWrapper}>
         <Menu
           selectedKeys={[activeKey]}

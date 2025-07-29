@@ -18,12 +18,20 @@ export const PdfDrawer = ({
 
 console.log(`documentId,chunk----------`,documentId,chunk);
 
+  // 处理抽屉关闭，清空文档内容
+  const handleClose = () => {
+    // 可以在这里添加清空文档内容的逻辑
+    // DocumentPreviewer 会自动处理清空逻辑，因为 visible 会变为 false
+    hideModal?.();
+  };
+
   return (
     <Drawer
-      title="Document Previewer"
-      onClose={hideModal}
+      title="查看文档"
+      onClose={handleClose}
       open={visible}
       width={'50vw'}
+      destroyOnHidden
     >
       <DocumentPreviewer
         documentId={documentId}
