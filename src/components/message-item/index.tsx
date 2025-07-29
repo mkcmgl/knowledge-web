@@ -176,6 +176,7 @@ const MessageItem = ({
             </div>
             {isAssistant && referenceDocumentList.length > 0 && (
               <List
+              style={{border:'none',backgroundColor: '#fff'}}
                 bordered
                 dataSource={referenceDocumentList}
                 renderItem={(item) => {
@@ -204,6 +205,8 @@ const MessageItem = ({
             )}
             {isUser && documentList.length > 0 && (
               <List
+               
+                  style={{border:'none',backgroundColor: '#fff'}}
                 bordered
                 dataSource={documentList}
                 renderItem={(item) => {
@@ -212,7 +215,7 @@ const MessageItem = ({
                   //   documentThumbnails[item.id] || documentThumbnails[item.id];
                   const fileExtension = getExtension(item.name);
                   return (
-                    <List.Item>
+                    <List.Item >
                       <Flex gap={'small'} align="center">
                         <FileIcon id={item.id} name={item.name}></FileIcon>
 

@@ -249,13 +249,13 @@ const MarkdownContent = ({
 
   const getReferenceInfo = useCallback(
     (chunkIndex: number) => {
-      console.log(`reference?.chunks`,reference?.chunks);
+      console.log(`reference?.chunks`, reference?.chunks);
       const chunks = reference?.chunks ?? [];
       const chunkItem = chunks[chunkIndex];
       const document = reference?.doc_aggs?.find(
         (x) => x?.doc_id === chunkItem?.document_id,
       );
-      console.log(`--------document--------`,document);
+      console.log(`--------document--------`, document);
       const documentId = document?.doc_id;
       const documentUrl = document?.url;
       const fileThumbnail = documentId ? fileThumbnails[documentId] : '';
@@ -315,7 +315,7 @@ const MarkdownContent = ({
               className={classNames(styles.chunkContentText)}
             >{renderContentWithImagesAndVideos(chunkItem?.content ?? '')}</div>
             {documentId && (
-              <Flex gap={'small'}>
+              <Flex gap={'small'} >
                 {fileThumbnail ? (
                   <img
                     src={fileThumbnail}
@@ -409,7 +409,7 @@ const MarkdownContent = ({
     section: ({ className, children, ...rest }: { className?: string; children?: React.ReactNode }) => {
       if (className && className.includes('think')) {
         return (
-          <div style={{ marginBottom: 16 }}>
+          <div style={{ marginBottom: 16, marginTop: 10 }}>
             <div
               style={{
                 display: 'flex',
@@ -417,7 +417,9 @@ const MarkdownContent = ({
                 cursor: 'pointer',
                 userSelect: 'none',
                 justifyContent: "space-between",
-                marginBottom: 8,
+                background: '#f6f8fa',
+                height: '40px',
+                borderRadius: '6px',
               }}
               onClick={() => setThinkOpen(v => !v)}
             >
@@ -435,9 +437,9 @@ const MarkdownContent = ({
               style={{
                 display: thinkOpen ? 'block' : 'none',
                 background: '#f6f8fa',
-                padding: 12,
-                borderRadius: 6,
-                transition: 'all 0.2s'
+                padding: '0 12px 12px 12px' ,
+                borderRadius: 5,
+                transition: 'all 0.3s'
               }}
               {...rest}
             >
@@ -447,7 +449,7 @@ const MarkdownContent = ({
         );
       }
       // 其它 section 正常渲染
-      return <section className={className} {...rest}>{children}</section>;
+      return <section style={{ marginTop: 10 }} className={className} {...rest}>{children}</section>;
     },
     'custom-typography': ({ children }: { children: string }) =>
       renderReference(children),
