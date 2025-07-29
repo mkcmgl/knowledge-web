@@ -34,11 +34,11 @@ const TextSimilarity = () => {
           if (sim !== undefined) setSimilarity(sim);
           try {
             const data = JSON.parse(chunk);
-            console.log(`chunk,data22222222222222`, chunk, data);
-            if (data.choices !== undefined) {
-              const reasoningContent = data.choices[0]?.delta?.reasoning_content ?? data.choices[0]?.delta?.content ?? '';
+          
+            
+              const reasoningContent = data?.content ?? '';
+           
               setAnalysisResult(prev => prev + reasoningContent);
-            }
           } catch {
             setAnalysisResult(prev => prev + chunk);
           }

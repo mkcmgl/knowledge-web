@@ -17,7 +17,7 @@ const mainMenuMap: Record<string, string> = {
   '/tools': '工具集',
 };
 
-const DEFAULT_TITLE = '政企RAG';
+const DEFAULT_TITLE = '赛迪知源';
 
 const App: React.FC = () => {
   const {

@@ -3,8 +3,8 @@ import SvgIcon from '@/components/svg-icon';
 import { IReference, IReferenceChunk } from '@/interfaces/database/chat';
 import { getExtension } from '@/utils/document-util';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { Button, Flex, Popover, Image } from 'antd';
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { Button, Flex, Popover, Image, Modal } from 'antd';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import Markdown from 'react-markdown';
 import reactStringReplace from 'react-string-replace';
 import SyntaxHighlighter from 'react-syntax-highlighter';
@@ -16,6 +16,7 @@ import { visitParents } from 'unist-util-visit-parents';
 import { api_rag_host } from '@/utils/api';
 import { useFetchDocumentThumbnailsByIds } from '@/hooks/document-hooks';
 import { useTranslation } from 'react-i18next';
+import { fetchVideoChunks, getMinioDownloadUrl } from '@/services/knowledge-service';
 
 import 'katex/dist/katex.min.css'; // `rehype-katex` does not import the CSS for you
 
@@ -45,6 +46,12 @@ const MarkdownContent = ({
   const { t } = useTranslation();
   const { setDocumentIds, data: fileThumbnails } =
     useFetchDocumentThumbnailsByIds();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [currentVideoInfo, setCurrentVideoInfo] = useState<any>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoadingVideo, setIsLoadingVideo] = useState(false);
+
   const contentWithCursor = useMemo(() => {
     // let text = DOMPurify.sanitize(content);
     let text = content;
@@ -60,40 +67,137 @@ const MarkdownContent = ({
     setDocumentIds(Array.isArray(docAggs) ? docAggs.map((x) => x.doc_id) : []);
   }, [reference, setDocumentIds]);
 
-  function renderContentWithImages(content: string) {
+  // 时间字符串转秒
+  const timeStrToSeconds = (timeStr: string): number => {
+    if (!timeStr) return 0;
+    const parts = timeStr.split(':').map(Number);
+    if (parts.length === 4) {
+      const [hours, minutes, seconds, milliseconds] = parts;
+      return hours * 3600 + minutes * 60 + seconds + milliseconds / 1000;
+    }
+    if (parts.length === 3) {
+      const [hours, minutes, seconds] = parts;
+      return hours * 3600 + minutes * 60 + seconds;
+    }
+    return 0;
+  };
+
+  // 处理视频播放
+  const handlePlaySection = () => {
+    if (videoRef.current && currentVideoInfo) {
+      const startSec = timeStrToSeconds(currentVideoInfo.start_time);
+      const endSec = timeStrToSeconds(currentVideoInfo.end_time);
+      videoRef.current.currentTime = startSec;
+      videoRef.current.play().catch(e => console.error('播放失败:', e));
+      setIsPlaying(true);
+
+      const handleTimeUpdate = () => {
+        if (videoRef.current && videoRef.current.currentTime >= endSec) {
+          videoRef.current.pause();
+          videoRef.current.currentTime = startSec;
+          setIsPlaying(false);
+        }
+      };
+
+      videoRef.current.addEventListener('timeupdate', handleTimeUpdate);
+      return () => {
+        videoRef.current?.removeEventListener('timeupdate', handleTimeUpdate);
+      };
+    }
+  };
+
+  // 弹窗关闭时重置视频状态
+  useEffect(() => {
+    if (modalVisible) {
+      setIsPlaying(false);
+      if (videoRef.current && currentVideoInfo) {
+        const startSec = timeStrToSeconds(currentVideoInfo.start_time);
+        videoRef.current.currentTime = startSec;
+        videoRef.current.pause();
+      }
+    } else {
+      setIsPlaying(false);
+      if (videoRef.current && currentVideoInfo) {
+        videoRef.current.pause();
+        const startSec = timeStrToSeconds(currentVideoInfo.start_time);
+        videoRef.current.currentTime = startSec;
+      }
+    }
+  }, [modalVisible, currentVideoInfo]);
+
+  // 合并图片和视频的渲染，保证顺序
+  function renderContentWithImagesAndVideos(content: string) {
     if (!content) return null;
     const parts = [];
     let lastIndex = 0;
-    const regex = /\[IMG::([a-zA-Z0-9]+)\]/g;
+    // 匹配[{chunk_id:xxx}]或[IMG::xxx]
+    const regex = /\[\{chunk_id:([a-zA-Z0-9]+)\}\]|\[IMG::([a-zA-Z0-9]+)\]/g;
     let match;
     let key = 0;
     while ((match = regex.exec(content)) !== null) {
-      // 文本部分
       if (match.index > lastIndex) {
         parts.push(<span key={key++}>{content.slice(lastIndex, match.index)}</span>);
       }
-      // 图片部分
-      const imgId = match[1];
-      parts.push(
-        <div  key={key++} >
-          <Image
-           
-            src={`${api_rag_host}/file/download/${imgId}`}
-            alt='图片'
-            style={{ maxWidth: 120, maxHeight: 120, margin: '0 4px', verticalAlign: 'middle' }}
-            preview={true}
-          />
-          <br />
-        </div>
-      );
+      if (match[1]) {
+        // 视频按钮
+        const chunkId = match[1];
+        parts.push(
+          <Button
+            key={key++}
+            type="primary"
+            size="small"
+            style={{ margin: '0 4px' }}
+            onClick={async () => {
+              setModalVisible(true);
+              setIsLoadingVideo(true);
+              setCurrentVideoInfo(null);
+              try {
+                const { data: videoData } = await fetchVideoChunks([chunkId]);
+                if (videoData.data && videoData.data.length > 0) {
+                  const videoInfo = videoData.data[0];
+                  if (videoInfo.doc_id) {
+                    const { data: urlData } = await getMinioDownloadUrl(videoInfo.doc_id);
+                    const videoUrl = urlData.data.replace('http://localhost:9000', 'http://119.84.128.68:6581/minio');
+                    setCurrentVideoInfo({
+                      ...videoInfo,
+                      videoUrl: videoUrl
+                    });
+                  }
+                }
+              } catch (error) {
+                console.error('获取视频信息失败:', error);
+                setModalVisible(false);
+              } finally {
+                setIsLoadingVideo(false);
+              }
+            }}
+          >
+            查看视频
+          </Button>
+        );
+      } else if (match[2]) {
+        // 图片
+        const imgId = match[2];
+        parts.push(
+          <div key={key++}>
+            <Image
+              src={`${api_rag_host}/file/download/${imgId}`}
+              alt='图片'
+              style={{ maxWidth: 120, maxHeight: 120, margin: '0 4px', verticalAlign: 'middle' }}
+              preview={true}
+            />
+            <br />
+          </div>
+        );
+      }
       lastIndex = match.index + match[0].length;
     }
-    // 剩余文本
     if (lastIndex < content.length) {
       parts.push(<span key={key++}>{content.slice(lastIndex)}</span>);
     }
     return parts;
   }
+
   const handleDocumentButtonClick = useCallback(
     (
       documentId: string,
@@ -199,7 +303,7 @@ const MarkdownContent = ({
               //     chunkItem?.content ?? ''),
               // }}
               className={classNames(styles.chunkContentText)}
-            >{renderContentWithImages(chunkItem?.content ?? '')}</div>
+            >{renderContentWithImagesAndVideos(chunkItem?.content ?? '')}</div>
             {documentId && (
               <Flex gap={'small'}>
                 {fileThumbnail ? (
@@ -332,7 +436,7 @@ const MarkdownContent = ({
     'custom-typography': ({ children }: { children: string }) =>
       renderReference(children),
     code(props: any) {
-      const { children, className, node, ...rest } = props;
+      const { children, className, ...rest } = props;
       const match = /language-(\w+)/.exec(className || '');
       return match ? (
         <SyntaxHighlighter
@@ -361,6 +465,44 @@ const MarkdownContent = ({
       >
         {contentWithCursor}
       </Markdown>
+      {/* 视频弹窗 */}
+      <Modal
+        open={modalVisible}
+        onCancel={() => setModalVisible(false)}
+        footer={null}
+        width={600}
+        destroyOnHidden
+      >
+        {isLoadingVideo ? (
+          <div style={{ textAlign: 'center', padding: '40px' }}>
+            <div>正在加载视频...</div>
+          </div>
+        ) : currentVideoInfo ? (
+          <div style={{ textAlign: 'center' }}>
+            <video
+              ref={videoRef}
+              src={currentVideoInfo.videoUrl}
+              controls
+              width="100%"
+              poster={currentVideoInfo.cover_url || undefined}
+              style={{ borderRadius: 8, background: '#000' }}
+            />
+            <div style={{ marginTop: 16 }}>
+              当前播放区间: {currentVideoInfo.start_time} - {currentVideoInfo.end_time}
+            </div>
+            <div style={{ marginTop: 16 }}>
+              <button
+                type="button"
+                style={{ padding: '8px 16px', fontSize: 16, borderRadius: 4, background: '#306EFD', color: '#fff', border: 'none', cursor: isPlaying ? 'not-allowed' : 'pointer' }}
+                onClick={handlePlaySection}
+                disabled={isPlaying}
+              >
+                {isPlaying ? '播放中...' : '播放区间'}
+              </button>
+            </div>
+          </div>
+        ) : null}
+      </Modal>
     </div>
   );
 };
