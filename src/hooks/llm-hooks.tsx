@@ -29,7 +29,7 @@ export const useFetchLlmList = (
     initialData: {},
     queryFn: async () => {
       const { data } = await userService.llm_list({ model_type: modelType });
-
+      console.log(`data.data`,data.data);
       return data?.data ?? {};
     },
   });

@@ -111,7 +111,7 @@ const NewDocumentLink = ({
         {children}
       </a>
       <Modal
-        title="查看文件"
+        title={`查看文件:${documentName}`}
         open={modalVisible}
         onCancel={() => setModalVisible(false)}
         footer={null}

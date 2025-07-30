@@ -268,7 +268,7 @@ export const useTestChunkRetrieval = (): ResponsePostType<ITestingResult> & {
         keyword: false,
         document_ids: [],
         highlight: false,
-        rerank_id: '',
+        rerank_id: values.rerank_id,
         similarity_threshold: values.similarity_threshold,
         chunk_deduplication_coefficient: 0,
         retrieval_setting: {
@@ -356,7 +356,7 @@ export const useTestChunkAllRetrieval = (): ResponsePostType<ITestingResult> & {
         keyword: false,
         document_ids: [],
         highlight: false,
-        rerank_id: '',
+        rerank_id: values.rerank_id,
         similarity_threshold: values.similarity_threshold,
         chunk_deduplication_coefficient: 0,
         retrieval_setting: {

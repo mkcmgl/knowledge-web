@@ -23,6 +23,7 @@ type FieldType = {
 export const RerankItem = () => {
   const { t } = useTranslate('knowledgeDetails');
   const allOptions = useSelectLlmOptionsByModelType();
+  console.log(`allOptions`,allOptions);
   const [messageApi, contextHolder] = message.useMessage();
 
   const handleChange = useCallback(
@@ -72,6 +73,7 @@ const Rerank = () => {
       <RerankItem></RerankItem>
       <Form.Item noStyle dependencies={['rerank_id']}>
         {({ getFieldValue }) => {
+          console.log(`getFieldValue`,getFieldValue,getFieldValue('rerank_id'));
           const rerankId = getFieldValue('rerank_id');
           return (
             rerankId && (

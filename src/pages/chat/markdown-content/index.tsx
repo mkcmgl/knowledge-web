@@ -522,7 +522,7 @@ const MarkdownContent = ({
         onCancel={() => setModalVisible(false)}
         footer={null}
         width={600}
-        title={`查看文件${currentVideoInfo?.document_name}`}
+        title={`查看文件:${currentVideoInfo?.document_name}`}
         destroyOnHidden
         styles={{
           header: {

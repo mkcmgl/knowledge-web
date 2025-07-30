@@ -68,6 +68,7 @@ const MessageItem = ({
   const [pdfVisible, setPdfVisible] = useState(false);
   const [pdfDocumentId, setPdfDocumentId] = useState('');
   const [pdfChunk, setPdfChunk] = useState<IReferenceChunk>({} as IReferenceChunk);
+  const [pdfDocumentName, setPdfDocumentName] = useState('');
 
   const referenceDocumentList = useMemo(() => {
     return reference?.doc_aggs ?? [];
@@ -82,10 +83,12 @@ const MessageItem = ({
   );
 
   // 处理PDF文档点击
-  const handlePdfClick = useCallback((documentId: string, chunk: IReferenceChunk) => {
+  const handlePdfClick = useCallback((documentId: string, chunk: IReferenceChunk, documentName?: string) => {
     setPdfDocumentId(documentId);
     setPdfChunk(chunk);
     setPdfVisible(true);
+    // 保存文档名称用于显示
+    setPdfDocumentName(documentName || '');
   }, []);
 
   const handleRegenerateMessage = useCallback(() => {
@@ -193,7 +196,7 @@ const MessageItem = ({
                           documentName={item.doc_name}
                           prefix="document"
                           link={item.url}
-                          clickDocumentButton={handlePdfClick}
+                          clickDocumentButton={(documentId, chunk) => handlePdfClick(documentId, chunk, item.doc_name)}
                         >
                           {item.doc_name}
                         </NewDocumentLink>
@@ -224,7 +227,7 @@ const MessageItem = ({
                             documentId={item.id}
                             documentName={item.name}
                             prefix="document"
-                            clickDocumentButton={handlePdfClick}
+                            clickDocumentButton={(documentId, chunk) => handlePdfClick(documentId, chunk, item.name)}
                           >
                             {item.name}
                           </NewDocumentLink>
@@ -263,6 +266,7 @@ const MessageItem = ({
         hideModal={() => setPdfVisible(false)}
         documentId={pdfDocumentId}
         chunk={pdfChunk}
+        documentName={pdfDocumentName}
       />
     </div>
   );
