@@ -27,6 +27,7 @@ import { useCallback, useEffect, useState, useRef } from 'react';
 import { fetchVideoChunks, getMinioDownloadUrl } from '@/services/knowledge-service';
 import styles from './index.less';
 import { api_rag_host } from '@/utils/api';
+import { formatTimeDisplay } from '@/utils/document-util';
 
 const similarityList: Array<{ field: keyof ITestingChunk; label: string }> = [
   { field: 'similarity', label: 'Hybrid Similarity' },
@@ -379,7 +380,7 @@ const TestingResult = ({
                 : ''}
             </div>
             <div style={{ marginTop: 10,fontSize: 16,color: '#676767' }}>
-              相关片段: {currentVideoInfo.start_time} - {currentVideoInfo.end_time}
+              相关片段: {formatTimeDisplay(currentVideoInfo.start_time)} - {formatTimeDisplay(currentVideoInfo.end_time)}
             </div>
             <div style={{ marginTop: 16 }}>
               <button

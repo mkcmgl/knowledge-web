@@ -72,3 +72,11 @@ const ShowImageFields = ['image', 'table'];
 export function showImage(filed?: string) {
   return ShowImageFields.some((x) => x === filed);
 }
+
+// 判断是否为图片文件
+export function isImageFile(fileName?: string) {
+  if (!fileName) return false;
+  const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp', '.svg', '.jpe'];
+  const lowerFileName = fileName.toLowerCase();
+  return imageExtensions.some(ext => lowerFileName.endsWith(ext));
+}

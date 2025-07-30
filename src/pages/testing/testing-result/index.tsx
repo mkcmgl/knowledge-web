@@ -14,7 +14,7 @@ import {
 } from 'antd';
 import camelCase from 'lodash/camelCase';
 import SelectFiles from './select-files';
-
+import { formatTimeDisplay } from '@/utils/document-util';
 import {
   useAllTestingResult,
   useAllTestingSuccess,
@@ -373,7 +373,7 @@ const TestingResult = ({
                 : ''}
             </div>
             <div style={{ marginTop: 10,fontSize: 16,color: '#676767' }}>
-              相关片段: {currentVideoInfo.start_time} - {currentVideoInfo.end_time}
+              相关片段: {formatTimeDisplay(currentVideoInfo.start_time)} - {formatTimeDisplay(currentVideoInfo.end_time)}
             </div>
             <div style={{ marginTop: 16 }}>
               <button

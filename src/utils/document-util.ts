@@ -61,3 +61,23 @@ export const isSupportedPreviewDocumentType = (fileExtension: string) => {
 export const isImage = (image: string) => {
   return [...Images, 'svg'].some((x) => x === image);
 };
+export const  formatTimeDisplay = (timeStr: string): string => {
+  if (!timeStr) return '';
+  const parts = timeStr.split(':').map(Number);
+  let result = '';
+  
+  if (parts.length === 4) {
+    const [hours, minutes, seconds, milliseconds] = parts;
+    if (hours > 0) result += `${hours}小时`;
+    if (minutes > 0) result += `${minutes}分`;
+    if (seconds > 0) result += `${seconds}秒`;
+    if (milliseconds > 0) result += `${milliseconds}毫秒`;
+  } else if (parts.length === 3) {
+    const [hours, minutes, seconds] = parts;
+    if (hours > 0) result += `${hours}小时`;
+    if (minutes > 0) result += `${minutes}分`;
+    if (seconds > 0) result += `${seconds}秒`;
+  }
+  
+  return result || '0秒';
+};

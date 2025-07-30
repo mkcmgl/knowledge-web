@@ -1,7 +1,7 @@
 import MyImage from '@/components/image';
 import SvgIcon from '@/components/svg-icon';
 import { IReference, IReferenceChunk } from '@/interfaces/database/chat';
-import { getExtension } from '@/utils/document-util';
+import { getExtension,formatTimeDisplay } from '@/utils/document-util';
 import { InfoCircleOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { Button, Flex, Popover, Image, Modal } from 'antd';
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
@@ -21,6 +21,7 @@ import { fetchVideoChunks } from '@/services/knowledge-service';
 import 'katex/dist/katex.min.css'; // `rehype-katex` does not import the CSS for you
 
 import {
+  isImageFile,
   preprocessLaTeX,
   replaceThinkToSection,
   showImage,
@@ -82,27 +83,7 @@ const MarkdownContent = ({
     return 0;
   };
 
-  // 格式化时间显示
-  const formatTimeDisplay = (timeStr: string): string => {
-    if (!timeStr) return '';
-    const parts = timeStr.split(':').map(Number);
-    let result = '';
-    
-    if (parts.length === 4) {
-      const [hours, minutes, seconds, milliseconds] = parts;
-      if (hours > 0) result += `${hours}小时`;
-      if (minutes > 0) result += `${minutes}分`;
-      if (seconds > 0) result += `${seconds}秒`;
-      if (milliseconds > 0) result += `${milliseconds}毫秒`;
-    } else if (parts.length === 3) {
-      const [hours, minutes, seconds] = parts;
-      if (hours > 0) result += `${hours}小时`;
-      if (minutes > 0) result += `${minutes}分`;
-      if (seconds > 0) result += `${seconds}秒`;
-    }
-    
-    return result || '0秒';
-  };
+
 
   // 处理视频播放
   const handlePlaySection = () => {
@@ -394,6 +375,25 @@ const MarkdownContent = ({
         const docType = chunkItem?.doc_type;
         // console.log(`docType,documentUrl, fileExtension, imageId, chunkItem, documentId`, docType, documentUrl, fileExtension, imageId, chunkItem, documentId);
         if (showImage(docType)) {
+          return (
+            <MyImage
+              key={i}
+              id={imageId}
+              className={styles.referenceInnerChunkImage}
+              type={fileExtension === 'pdf'}
+              onClick={
+                documentId
+                  ? handleDocumentButtonClick(
+                    documentId,
+                    chunkItem,
+                    fileExtension === 'pdf',
+                    documentUrl,
+                  )
+                  : () => { console.log(`documentIdfalse`, documentId); }
+              }
+            />
+          );
+        }else if (isImageFile(document?.doc_name)) {
           return (
             <MyImage
               key={i}
