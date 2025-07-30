@@ -4,7 +4,7 @@ import {
 } from '@/utils/document-util';
 import React, { useState } from 'react';
 import { Modal, Image } from 'antd';
-import { getMinioDownloadUrl } from '@/services/knowledge-service';
+// import { getMinioDownloadUrl } from '@/services/knowledge-service';
 interface IProps extends React.PropsWithChildren {
   link?: string;
   preventDefault?: boolean;
@@ -59,27 +59,30 @@ const NewDocumentLink = ({
   const handleClick = async (e: React.MouseEvent) => {
     if (documentId && (isVideoFile(documentName) || isImageFile(documentName) || isPdfFile(documentName))) {
       e.preventDefault();
-      
+
       // PDF文件使用clickDocumentButton
       if (isPdfFile(documentName)) {
         clickDocumentButton?.(documentId, {} as any);
         return;
       }
-      
+
       // 图片和视频文件使用弹窗
       setModalVisible(true);
       setLoading(true);
       if (isVideoFile(documentName)) {
-        try {
-          const { data } = await getMinioDownloadUrl([documentId]);
-          let url = data.data;
-          url = url.replace('http://localhost:9000', 'http://119.84.128.68:6581/minio');
-          setVideoUrl(url);
-        } catch (err) {
-          setVideoUrl(undefined);
-        } finally {
-          setLoading(false);
-        }
+        // try {
+        //   const { data } = await getMinioDownloadUrl([documentId]);
+        //   let url = data.data;
+        //   url = url.replace('http://localhost:9000', 'http://119.84.128.68:6581/minio');
+        //   setVideoUrl(url);
+        // } catch (err) {
+        //   setVideoUrl(undefined);
+        // } finally {
+        //   setLoading(false);
+        // }
+        const url = `/api/file/download/${documentId}`;
+        setVideoUrl(url);
+        setLoading(false);
       } else {
         // 图片文件直接使用documentId构建URL
         const imageUrl = `/api/file/download/${documentId}`;
@@ -97,8 +100,8 @@ const NewDocumentLink = ({
           documentName && (isVideoFile(documentName) || isImageFile(documentName) || isPdfFile(documentName))
             ? handleClick
             : (!preventDefault || isSupportedPreviewDocumentType(extension)
-                ? undefined
-                : (e) => e.preventDefault())
+              ? undefined
+              : (e) => e.preventDefault())
         }
         href={nextLink}
         rel="noreferrer"
@@ -108,11 +111,17 @@ const NewDocumentLink = ({
         {children}
       </a>
       <Modal
+        title="查看文件"
         open={modalVisible}
         onCancel={() => setModalVisible(false)}
         footer={null}
         width={600}
         destroyOnHidden
+        styles={{
+          header: {
+            textAlign: 'center'
+          }
+        }}
       >
         {loading ? (
           <div style={{ textAlign: 'center', padding: '40px' }}>加载中...</div>
@@ -126,9 +135,12 @@ const NewDocumentLink = ({
           ) : (
             <video
               src={videoUrl}
+              crossOrigin="anonymous"
               controls
+              muted
+              playsInline
               width="100%"
-              style={{ borderRadius: 8, background: '#000' }}
+              style={{ borderRadius: 8, background: '#000',maxHeight:'75vh' }}
             />
           )
         ) : (

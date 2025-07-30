@@ -296,47 +296,47 @@ const TestingResult = ({
                     </div>
                     {/* 渲染视频封面，点击弹窗播放指定区间 */}
                     {videoInfo && videoInfo.doc_id && (
-                      <div 
-                        style={{ 
-                          position: 'relative', 
-                          cursor: 'pointer', 
-                          width: 200, 
+                      <div
+                        style={{
+                          position: 'relative',
+                          cursor: 'pointer',
+                          width: 200,
                           height: 100,
                           borderRadius: 8,
                           overflow: 'hidden'
                         }}
-                        onClick={async () => {
-                          const { data } = await getMinioDownloadUrl(videoInfo.doc_id)
-                          const videoUrl = data.data.replace('http://localhost:9000', 'http://119.84.128.68:6581/minio');
+                        onClick={() => {
+                          // const { data } = await getMinioDownloadUrl(videoInfo.doc_id)
+                          // const videoUrl = data.data.replace('http://localhost:9000', 'http://119.84.128.68:6581/minio');
                           setCurrentVideoInfo({
                             ...videoInfo,
-                            videoUrl: videoUrl,
-                            content_ltks:x.content_ltks
+                            videoUrl: `/api/file/download/${videoInfo.doc_id}`,
+                            content_ltks: x.content_ltks
                           });
                           setModalVisible(true);
                         }}
                       >
-                        <img 
-                          src={videoInfo.cover_url.replace('http://localhost:9000', 'http://119.84.128.68:6581/minio') || undefined}
+                        <img
+                          src= {`/api/file/download/${videoInfo.cover_id}`}
                           alt="视频封面"
-                          style={{ 
-                            width: '100%', 
-                            height: '100%', 
+                          style={{
+                            width: '100%',
+                            height: '100%',
                             objectFit: 'cover',
                             borderRadius: 8
                           }}
                         />
-                        <div style={{ 
-                          position: 'absolute', 
-                          top: 0, 
-                          left: 0, 
-                          right: 0, 
-                          bottom: 0, 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          justifyContent: 'center', 
-                          color: '#fff', 
-                          fontSize: 24, 
+                        <div style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#fff',
+                          fontSize: 24,
                           background: 'rgba(0,0,0,0.3)',
                           borderRadius: 8
                         }}>
@@ -368,17 +368,18 @@ const TestingResult = ({
               src={currentVideoInfo.videoUrl}
               controls
               width="100%"
-              poster={currentVideoInfo.cover_url.replace('http://localhost:9000', 'http://119.84.128.68:6581/minio') || undefined}
-              style={{ borderRadius: 8, background: '#000' }}
+              // poster={currentVideoInfo.cover_url.replace('http://localhost:9000', 'http://119.84.128.68:6581/minio') || undefined}
+              style={{ borderRadius: 8, background: '#000', maxHeight: '70vh' }}
             />
-            <div style={{ marginTop: 16 }}>
-              当前播放区间: {currentVideoInfo.start_time} - {currentVideoInfo.end_time}
-            </div>
+
             {/* 渲染内容时去除所有 '[{chunk_id:...}]' 结构的文本 */}
-            <div style={{ flex: 1 }}>
+            <div style={{ flex: 1,marginTop: 16  }}>
               {currentVideoInfo.content_ltks
                 ? renderContentWithImages(currentVideoInfo.content_ltks.replace(/\[\{chunk_id:[^}]+\}\]/g, ''))
                 : ''}
+            </div>
+            <div style={{ marginTop: 10,fontSize: 16,color: '#676767' }}>
+              相关片段: {currentVideoInfo.start_time} - {currentVideoInfo.end_time}
             </div>
             <div style={{ marginTop: 16 }}>
               <button
@@ -387,7 +388,7 @@ const TestingResult = ({
                 onClick={handlePlaySection}
                 disabled={isPlaying}
               >
-                {isPlaying ? '播放中...' : '播放区间'}
+                {isPlaying ? '播放中...' : '播放相关片段'}
               </button>
             </div>
           </div>

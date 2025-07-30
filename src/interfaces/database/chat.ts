@@ -77,7 +77,7 @@ export interface Message {
 
 export interface IReferenceChunk {
   id: string;
-  content: null;
+  content: string;
   document_id: string;
   document_name: string;
   dataset_id: string;

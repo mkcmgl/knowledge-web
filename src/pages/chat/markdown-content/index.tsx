@@ -16,7 +16,7 @@ import { visitParents } from 'unist-util-visit-parents';
 import { api_rag_host } from '@/utils/api';
 import { useFetchDocumentThumbnailsByIds } from '@/hooks/document-hooks';
 import { useTranslation } from 'react-i18next';
-import { fetchVideoChunks, getMinioDownloadUrl } from '@/services/knowledge-service';
+import { fetchVideoChunks } from '@/services/knowledge-service';
 
 import 'katex/dist/katex.min.css'; // `rehype-katex` does not import the CSS for you
 
@@ -82,6 +82,28 @@ const MarkdownContent = ({
     return 0;
   };
 
+  // 格式化时间显示
+  const formatTimeDisplay = (timeStr: string): string => {
+    if (!timeStr) return '';
+    const parts = timeStr.split(':').map(Number);
+    let result = '';
+    
+    if (parts.length === 4) {
+      const [hours, minutes, seconds, milliseconds] = parts;
+      if (hours > 0) result += `${hours}小时`;
+      if (minutes > 0) result += `${minutes}分`;
+      if (seconds > 0) result += `${seconds}秒`;
+      if (milliseconds > 0) result += `${milliseconds}毫秒`;
+    } else if (parts.length === 3) {
+      const [hours, minutes, seconds] = parts;
+      if (hours > 0) result += `${hours}小时`;
+      if (minutes > 0) result += `${minutes}分`;
+      if (seconds > 0) result += `${seconds}秒`;
+    }
+    
+    return result || '0秒';
+  };
+
   // 处理视频播放
   const handlePlaySection = () => {
     if (videoRef.current && currentVideoInfo) {
@@ -125,8 +147,37 @@ const MarkdownContent = ({
     }
   }, [modalVisible, currentVideoInfo]);
 
+  // 处理视频点击的方法
+  const handleVideoClick = useCallback(async (chunkId: string, content: string, chunkItem?: any) => {
+    console.log(`handleVideoClick///////////////////`, chunkId, content, chunkItem);
+    setModalVisible(true);
+    setIsLoadingVideo(true);
+    setCurrentVideoInfo(null);
+    try {
+      const { data: videoData } = await fetchVideoChunks([chunkId]);
+      if (videoData.data && videoData.data.length > 0) {
+        const videoInfo = videoData.data[0];
+        if (videoInfo.doc_id) {
+          setCurrentVideoInfo({
+            ...videoInfo,
+            videoUrl: `/api/file/download/${videoInfo.doc_id}`,
+            content_ltks: content, // 传入当前内容用于显示
+            document_id: chunkItem?.document_id, // 保存文档ID用于未来扩展
+            document_name:chunkItem?.document_name
+          });
+        }
+      }
+    } catch (error) {
+      console.error('获取视频信息失败:', error);
+      setModalVisible(false);
+    } finally {
+      setIsLoadingVideo(false);
+    }
+  }, []);
+
   // 合并图片和视频的渲染，保证顺序
-  function renderContentWithImagesAndVideos(content: string) {
+  // chunkItem 参数用于未来扩展，目前通过 videoInfo.doc_id 设置视频 URL
+  function renderContentWithImagesAndVideos(content: string, chunkItem?: any) {
     if (!content) return null;
     const parts = [];
     let lastIndex = 0;
@@ -147,30 +198,7 @@ const MarkdownContent = ({
             type="primary"
             size="small"
             style={{ margin: '0 4px' }}
-            onClick={async () => {
-              setModalVisible(true);
-              setIsLoadingVideo(true);
-              setCurrentVideoInfo(null);
-              try {
-                const { data: videoData } = await fetchVideoChunks([chunkId]);
-                if (videoData.data && videoData.data.length > 0) {
-                  const videoInfo = videoData.data[0];
-                  if (videoInfo.doc_id) {
-                    const { data: urlData } = await getMinioDownloadUrl(videoInfo.doc_id);
-                    const videoUrl = urlData.data.replace('http://localhost:9000', 'http://119.84.128.68:6581/minio');
-                    setCurrentVideoInfo({
-                      ...videoInfo,
-                      videoUrl: videoUrl
-                    });
-                  }
-                }
-              } catch (error) {
-                console.error('获取视频信息失败:', error);
-                setModalVisible(false);
-              } finally {
-                setIsLoadingVideo(false);
-              }
-            }}
+            onClick={() => handleVideoClick(chunkId, content, chunkItem)}
           >
             查看视频
           </Button>
@@ -206,11 +234,16 @@ const MarkdownContent = ({
       documentUrl?: string,
     ) =>
       () => {
-        // console.log(`handleDocumentButtonClick`, documentId, chunk, isPdf, documentUrl)
+        console.log(`********handleDocumentButtonClick**********`, documentId, chunk, isPdf, documentUrl);
         if (!isPdf) {
           if (!documentUrl) {
-            //  clickDocumentButton?.(documentId, chunk);
-            return;
+            if (chunk.document_name.includes('mp4')) {
+              handleVideoClick(chunk.id, chunk.content, chunk)
+              return;
+            } else {
+              return;
+            }
+
           }
 
           window.open(documentUrl, '_blank');
@@ -219,7 +252,7 @@ const MarkdownContent = ({
           clickDocumentButton?.(documentId, chunk);
         }
       },
-    [clickDocumentButton],
+    [clickDocumentButton, handleVideoClick],
   );
 
   const rehypeWrapReference = () => {
@@ -313,7 +346,7 @@ const MarkdownContent = ({
               //     chunkItem?.content ?? ''),
               // }}
               className={classNames(styles.chunkContentText)}
-            >{renderContentWithImagesAndVideos(chunkItem?.content ?? '')}</div>
+            >{renderContentWithImagesAndVideos(chunkItem?.content ?? '', chunkItem)}</div>
             {documentId && (
               <Flex gap={'small'} >
                 {fileThumbnail ? (
@@ -437,7 +470,7 @@ const MarkdownContent = ({
               style={{
                 display: thinkOpen ? 'block' : 'none',
                 background: '#f6f8fa',
-                padding: '0 12px 12px 12px' ,
+                padding: '0 12px 12px 12px',
                 borderRadius: 5,
                 transition: 'all 0.3s'
               }}
@@ -489,7 +522,13 @@ const MarkdownContent = ({
         onCancel={() => setModalVisible(false)}
         footer={null}
         width={600}
+        title={`查看文件${currentVideoInfo?.document_name}`}
         destroyOnHidden
+        styles={{
+          header: {
+            textAlign: 'center'
+          }
+        }}
       >
         {isLoadingVideo ? (
           <div style={{ textAlign: 'center', padding: '40px' }}>
@@ -502,11 +541,18 @@ const MarkdownContent = ({
               src={currentVideoInfo.videoUrl}
               controls
               width="100%"
-              poster={currentVideoInfo.cover_url.replace('http://localhost:9000', 'http://119.84.128.68:6581/minio') || undefined}
-              style={{ borderRadius: 8, background: '#000' }}
+              style={{ borderRadius: 8, background: '#000', maxHeight: '70vh' }}
             />
-            <div style={{ marginTop: 16 }}>
-              当前播放区间: {currentVideoInfo.start_time} - {currentVideoInfo.end_time}
+
+            {/* 渲染内容时去除所有 '[{chunk_id:...}]' 结构的文本 */}
+            <div style={{ flex: 1, marginTop: 16,fontSize: 16,textAlign:'left' }}>
+              {currentVideoInfo.content_ltks
+                ? renderContentWithImagesAndVideos(currentVideoInfo.content_ltks.replace(/\[\{chunk_id:[^}]+\}\]/g, ''))
+                : ''}
+            </div>
+
+            <div style={{ marginTop: 10, fontSize: 14, color: '#676767' }}>
+              相关片段: {formatTimeDisplay(currentVideoInfo.start_time)} - {formatTimeDisplay(currentVideoInfo.end_time)}
             </div>
             <div style={{ marginTop: 16 }}>
               <button
@@ -515,7 +561,7 @@ const MarkdownContent = ({
                 onClick={handlePlaySection}
                 disabled={isPlaying}
               >
-                {isPlaying ? '播放中...' : '播放区间'}
+                {isPlaying ? '播放中...' : '播放相关片段'}
               </button>
             </div>
           </div>
