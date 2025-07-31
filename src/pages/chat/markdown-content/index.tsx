@@ -1,10 +1,11 @@
 import MyImage from '@/components/image';
 import SvgIcon from '@/components/svg-icon';
 import { IReference, IReferenceChunk } from '@/interfaces/database/chat';
-import { getExtension,formatTimeDisplay } from '@/utils/document-util';
+import { getExtension, formatTimeDisplay } from '@/utils/document-util';
 import { InfoCircleOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { Button, Flex, Popover, Image, Modal } from 'antd';
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
+import { Spin } from 'antd';
 import Markdown from 'react-markdown';
 import reactStringReplace from 'react-string-replace';
 import SyntaxHighlighter from 'react-syntax-highlighter';
@@ -17,6 +18,7 @@ import { api_rag_host } from '@/utils/api';
 import { useFetchDocumentThumbnailsByIds } from '@/hooks/document-hooks';
 import { useTranslation } from 'react-i18next';
 import { fetchVideoChunks } from '@/services/knowledge-service';
+import { getAuthorization } from '@/utils/authorization-util';
 
 import 'katex/dist/katex.min.css'; // `rehype-katex` does not import the CSS for you
 
@@ -44,7 +46,7 @@ const MarkdownContent = ({
   reference: IReference;
   clickDocumentButton?: (documentId: string, chunk: IReferenceChunk) => void;
 }) => {
-  console.log(`content@@@@@@@@@@@@@@@@@@@@@@@@@`,content);
+  console.log(`content@@@@@@@@@@@@@@@@@@@@@@@@@`, content);
   const { t } = useTranslation();
   const { setDocumentIds, data: fileThumbnails } =
     useFetchDocumentThumbnailsByIds();
@@ -61,21 +63,21 @@ const MarkdownContent = ({
       text = t('chat.searching');
     }
     const nextText = replaceTextByOldReg(text);
-    console.log(`nextText`,nextText);
-    
+    console.log(`nextText`, nextText);
+
     // 预处理 IMG:: 格式，将其转换为标准 URL 格式
     const processedText = nextText.replace(/!\[([^\]]*)\]\(IMG::([a-zA-Z0-9]+)\)/g, (match, alt, imgId) => {
       return `![${alt}](${api_rag_host}/file/download/${imgId})`;
     });
-    
+
     // 预处理 [{chunk_id:xxx}] 格式，将其转换为视频按钮
     const processedTextWithVideos = processedText.replace(/\[\{chunk_id:([a-zA-Z0-9]+)\}\]/g, (match, chunkId) => {
       return `<video-button chunk-id="${chunkId}">查看视频</video-button>`;
     });
-    
+
     return pipe(replaceThinkToSection, preprocessLaTeX)(processedTextWithVideos);
   }, [content, t]);
-console.log(`contentWithCursor`,contentWithCursor);
+  console.log(`contentWithCursor`, contentWithCursor);
   useEffect(() => {
     const docAggs = reference?.doc_aggs;
     setDocumentIds(Array.isArray(docAggs) ? docAggs.map((x) => x.doc_id) : []);
@@ -141,7 +143,36 @@ console.log(`contentWithCursor`,contentWithCursor);
     }
   }, [modalVisible, currentVideoInfo]);
 
-  // 处理视频点击的方法
+  // 获取图片 blob URL
+  const getImageBlobUrl = async (url: string): Promise<string> => {
+    try {
+      const token = getAuthorization();
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ragflow-${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const blob = await response.blob();
+      return URL.createObjectURL(blob);
+    } catch (error) {
+      console.error('获取图片失败:', error);
+      return url; // 失败时返回原始 URL
+    }
+  };
+
+ 
+  const getUrlWithToken = (url: string) => {
+    const token = getAuthorization();
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}token=Bearer ragflow-${token}`;
+  };
+
+
   const handleVideoClick = useCallback(async (chunkId: string, content: string, chunkItem?: any) => {
     console.log(`handleVideoClick///////////////////`, chunkId, content, chunkItem);
     setModalVisible(true);
@@ -157,7 +188,7 @@ console.log(`contentWithCursor`,contentWithCursor);
             videoUrl: `/api/file/download/${videoInfo.doc_id}`,
             content_ltks: content, // 传入当前内容用于显示
             document_id: chunkItem?.document_id, // 保存文档ID用于未来扩展
-            document_name:chunkItem?.document_name
+            document_name: chunkItem?.document_name
           });
         }
       }
@@ -169,8 +200,55 @@ console.log(`contentWithCursor`,contentWithCursor);
     }
   }, []);
 
-  // 合并图片和视频的渲染，保证顺序
-  // chunkItem 参数用于未来扩展，目前通过 videoInfo.doc_id 设置视频 URL
+ 
+  const AuthenticatedImage = ({ src, alt, style, preview }: { src: string; alt: string; style?: any; preview?: boolean }) => {
+    const [blobUrl, setBlobUrl] = useState<string>('');
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
+
+    useEffect(() => {
+      const loadImage = async () => {
+        try {
+          setLoading(true);
+          const url = await getImageBlobUrl(src);
+          setBlobUrl(url);
+        } catch (err) {
+          console.error('加载图片失败:', err);
+          setError(true);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      loadImage();
+
+     
+      return () => {
+        if (blobUrl) {
+          URL.revokeObjectURL(blobUrl);
+        }
+      };
+    }, [src]);
+
+    if (loading) {
+      return <Spin size="small" />;
+    }
+
+    if (error) {
+      return <span style={{ color: 'red' }}>图片加载失败</span>;
+    }
+
+    return (
+      <Image
+        src={blobUrl}
+        alt={alt}
+        style={style}
+        preview={preview}
+      />
+    );
+  };
+
+  
   function renderContentWithImagesAndVideos(content: string, chunkItem?: any) {
     if (!content) return null;
     const parts = [];
@@ -187,15 +265,49 @@ console.log(`contentWithCursor`,contentWithCursor);
         // 视频按钮
         const chunkId = match[1];
         parts.push(
-          <Button
+
+          <div
+            style={{
+              position: 'relative',
+              cursor: 'pointer',
+              width: 200,
+              height: 100,
+              borderRadius: 8,
+              overflow: 'hidden'
+            }}
             key={key++}
-            type="primary"
-            size="small"
-            style={{ margin: '0 4px' }}
             onClick={() => handleVideoClick(chunkId, content, chunkItem)}
           >
-            查看视频
-          </Button>
+
+            <AuthenticatedImage
+              src={`/api/file/getFirstFrameByChunkId?chunkId=${chunkId}`}
+              alt="视频封面" style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                borderRadius: 8
+              }}
+            />
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#fff',
+              fontSize: 24,
+              background: 'rgba(0,0,0,0.3)',
+              borderRadius: 8
+            }} >
+              ▶
+            </div>
+            <br />
+          </div>
+
+
         );
       } else if (match[2]) {
         // 图片
@@ -406,7 +518,7 @@ console.log(`contentWithCursor`,contentWithCursor);
               }
             />
           );
-        }else if (isImageFile(document?.doc_name)) {
+        } else if (isImageFile(document?.doc_name)) {
           return (
             <MyImage
               key={i}
@@ -498,13 +610,13 @@ console.log(`contentWithCursor`,contentWithCursor);
         {typeof children === 'string' ? renderContentWithImagesAndVideos(children) : children}
       </section>;
     },
-    'custom-typography': ({ children }: { children: string }) =>{
-      console.log(`children,custom-typography`,children);
+    'custom-typography': ({ children }: { children: string }) => {
+      console.log(`children,custom-typography`, children);
       return renderReference(children)
     },
     // 处理普通文本中的图片
     p: ({ children, ...props }: any) => {
-      console.log(`children,p.props`,children,props);
+      console.log(`children,p.props`, children, props);
       if (typeof children === 'string') {
         return <p {...props}>{renderContentWithImagesAndVideos(children)}</p>;
       }
@@ -512,7 +624,7 @@ console.log(`contentWithCursor`,contentWithCursor);
     },
     // 处理 div 中的图片
     div: ({ children, ...props }: any) => {
-      console.log(`children,.divprops`,children,props);
+      console.log(`children,.divprops`, children, props);
       if (typeof children === 'string') {
         return <div {...props}>{renderContentWithImagesAndVideos(children)}</div>;
       }
@@ -520,39 +632,39 @@ console.log(`contentWithCursor`,contentWithCursor);
     },
     // 处理 span 中的图片
     span: ({ children, ...props }: any) => {
-      console.log(`children,spanprops`,children,props);
+      console.log(`children,spanprops`, children, props);
       if (typeof children === 'string') {
         return <span {...props}>{renderContentWithImagesAndVideos(children)}</span>;
       }
       return <span {...props}>{children}</span>;
     },
-           // 处理 img 中的图片
-      img: ({ src, alt, ...props }: any) => {
-        console.log(`img src, alt`, src, alt,props);
-        // 现在 src 已经是完整的 URL，直接使用 Image 组件
-        return (
-          <Image
-            src={src}
-            alt={alt || '图片'}
-            style={{ maxWidth: 120, maxHeight: 120, margin: '0 4px', verticalAlign: 'middle' }}
-            preview={true}
-          />
-        );
-      },
-      // 处理视频按钮
-      'video-button': ({ 'chunk-id': chunkId, children }: any) => {
-        console.log(`video-button chunkId`, chunkId);
-        return (
-          <Button
-            type="primary"
-            size="small"
-            style={{ margin: '0 4px' }}
-            onClick={() => handleVideoClick(chunkId, children || '', null)}
-          >
-            {children || '查看视频'}
-          </Button>
-        );
-      },
+   
+    img: ({ src, alt, ...props }: any) => {
+      console.log(`img src, alt`, src, alt, props);
+     
+      return (
+        <Image
+          src={src}
+          alt={alt || '图片'}
+          style={{ maxWidth: 120, maxHeight: 120, margin: '0 4px', verticalAlign: 'middle' }}
+          preview={true}
+        />
+      );
+    },
+ 
+    'video-button': ({ 'chunk-id': chunkId, children }: any) => {
+      console.log(`video-button chunkId`, chunkId);
+      return (
+        <Button
+          type="primary"
+          size="small"
+          style={{ margin: '0 4px' }}
+          onClick={() => handleVideoClick(chunkId, children || '', null)}
+        >
+          {children || '查看视频'}
+        </Button>
+      );
+    },
 
 
     code(props: any) {
@@ -573,7 +685,7 @@ console.log(`contentWithCursor`,contentWithCursor);
         </code>
       );
     },
-     }), [renderContentWithImagesAndVideos, thinkOpen, renderReference]);
+  }), [renderContentWithImagesAndVideos, thinkOpen, renderReference]);
 
   return (
     <div>
@@ -614,7 +726,7 @@ console.log(`contentWithCursor`,contentWithCursor);
             />
 
             {/* 渲染内容时去除所有 '[{chunk_id:...}]' 结构的文本 */}
-            <div style={{ flex: 1, marginTop: 16,fontSize: 16,textAlign:'left' }}>
+            <div style={{ flex: 1, marginTop: 16, fontSize: 16, textAlign: 'left' }}>
               {currentVideoInfo.content_ltks
                 ? renderContentWithImagesAndVideos(currentVideoInfo.content_ltks.replace(/\[\{chunk_id:[^}]+\}\]/g, ''))
                 : ''}
