@@ -44,6 +44,7 @@ const MarkdownContent = ({
   reference: IReference;
   clickDocumentButton?: (documentId: string, chunk: IReferenceChunk) => void;
 }) => {
+  console.log(`content@@@@@@@@@@@@@@@@@@@@@@@@@`,content);
   const { t } = useTranslation();
   const { setDocumentIds, data: fileThumbnails } =
     useFetchDocumentThumbnailsByIds();
@@ -60,9 +61,21 @@ const MarkdownContent = ({
       text = t('chat.searching');
     }
     const nextText = replaceTextByOldReg(text);
-    return pipe(replaceThinkToSection, preprocessLaTeX)(nextText);
+    console.log(`nextText`,nextText);
+    
+    // 预处理 IMG:: 格式，将其转换为标准 URL 格式
+    const processedText = nextText.replace(/!\[([^\]]*)\]\(IMG::([a-zA-Z0-9]+)\)/g, (match, alt, imgId) => {
+      return `![${alt}](${api_rag_host}/file/download/${imgId})`;
+    });
+    
+    // 预处理 [{chunk_id:xxx}] 格式，将其转换为视频按钮
+    const processedTextWithVideos = processedText.replace(/\[\{chunk_id:([a-zA-Z0-9]+)\}\]/g, (match, chunkId) => {
+      return `<video-button chunk-id="${chunkId}">查看视频</video-button>`;
+    });
+    
+    return pipe(replaceThinkToSection, preprocessLaTeX)(processedTextWithVideos);
   }, [content, t]);
-
+console.log(`contentWithCursor`,contentWithCursor);
   useEffect(() => {
     const docAggs = reference?.doc_aggs;
     setDocumentIds(Array.isArray(docAggs) ? docAggs.map((x) => x.doc_id) : []);
@@ -365,7 +378,7 @@ const MarkdownContent = ({
 
   const renderReference = useCallback(
     (text: string) => {
-      console.log(`test`, text);
+      console.log(`test---`, text);
       let replacedText = reactStringReplace(text, currentReg, (match, i) => {
         const chunkIndex = getChunkIndex(match);
 
@@ -456,7 +469,6 @@ const MarkdownContent = ({
               }}
               onClick={() => setThinkOpen(v => !v)}
             >
-
               <span style={{ marginLeft: 8, fontWeight: 500 }}>思考过程</span>
               <svg width="16" height="16" style={{ verticalAlign: 'middle', transition: 'transform 0.2s' }} viewBox="0 0 1024 1024">
                 <path d={thinkOpen
@@ -476,16 +488,73 @@ const MarkdownContent = ({
               }}
               {...rest}
             >
-              {children}
+              {typeof children === 'string' ? renderContentWithImagesAndVideos(children) : children}
             </section>
           </div>
         );
       }
       // 其它 section 正常渲染
-      return <section style={{ marginTop: 10 }} className={className} {...rest}>{children}</section>;
+      return <section style={{ marginTop: 10 }} className={className} {...rest}>
+        {typeof children === 'string' ? renderContentWithImagesAndVideos(children) : children}
+      </section>;
     },
-    'custom-typography': ({ children }: { children: string }) =>
-      renderReference(children),
+    'custom-typography': ({ children }: { children: string }) =>{
+      console.log(`children,custom-typography`,children);
+      return renderReference(children)
+    },
+    // 处理普通文本中的图片
+    p: ({ children, ...props }: any) => {
+      console.log(`children,p.props`,children,props);
+      if (typeof children === 'string') {
+        return <p {...props}>{renderContentWithImagesAndVideos(children)}</p>;
+      }
+      return <p {...props}>{children}</p>;
+    },
+    // 处理 div 中的图片
+    div: ({ children, ...props }: any) => {
+      console.log(`children,.divprops`,children,props);
+      if (typeof children === 'string') {
+        return <div {...props}>{renderContentWithImagesAndVideos(children)}</div>;
+      }
+      return <div {...props}>{children}</div>;
+    },
+    // 处理 span 中的图片
+    span: ({ children, ...props }: any) => {
+      console.log(`children,spanprops`,children,props);
+      if (typeof children === 'string') {
+        return <span {...props}>{renderContentWithImagesAndVideos(children)}</span>;
+      }
+      return <span {...props}>{children}</span>;
+    },
+           // 处理 img 中的图片
+      img: ({ src, alt, ...props }: any) => {
+        console.log(`img src, alt`, src, alt,props);
+        // 现在 src 已经是完整的 URL，直接使用 Image 组件
+        return (
+          <Image
+            src={src}
+            alt={alt || '图片'}
+            style={{ maxWidth: 120, maxHeight: 120, margin: '0 4px', verticalAlign: 'middle' }}
+            preview={true}
+          />
+        );
+      },
+      // 处理视频按钮
+      'video-button': ({ 'chunk-id': chunkId, children }: any) => {
+        console.log(`video-button chunkId`, chunkId);
+        return (
+          <Button
+            type="primary"
+            size="small"
+            style={{ margin: '0 4px' }}
+            onClick={() => handleVideoClick(chunkId, children || '', null)}
+          >
+            {children || '查看视频'}
+          </Button>
+        );
+      },
+
+
     code(props: any) {
       const { children, className, ...rest } = props;
       const match = /language-(\w+)/.exec(className || '');
@@ -504,7 +573,7 @@ const MarkdownContent = ({
         </code>
       );
     },
-  }), [thinkOpen, renderReference]);
+     }), [renderContentWithImagesAndVideos, thinkOpen, renderReference]);
 
   return (
     <div>
