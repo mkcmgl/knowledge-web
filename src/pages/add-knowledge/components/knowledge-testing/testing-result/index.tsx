@@ -239,30 +239,36 @@ const TestingResult = ({
       let progressInterval: NodeJS.Timeout | null = null;
 
       // 创建新的 Video.js 播放器
-      const player = videojs(videoRef.current, {
-        controls: true,
-        fluid: false,
-        responsive: false,
-        preload: 'auto', // 改为 auto，确保视频完全加载
-        playbackRates: [0.5, 1, 1.25, 1.5, 2],
-        controlBar: {
-          children: [
-            'playToggle',
-            'volumePanel',
-            'currentTimeDisplay',
-            'timeDivider',
-            'durationDisplay',
-            'progressControl',
-            'remainingTimeDisplay',
-            'playbackRateMenuButton',
-            'fullscreenToggle'
-          ]
-        },
-        sources: [{
-          src: URL.createObjectURL(videoBlob),
-          type: 'video/mp4'
-        }]
-      });
+      let player;
+      try {
+        player = videojs(videoRef.current, {
+          controls: true,
+          fluid: false,
+          responsive: false,
+          preload: 'auto', // 改为 auto，确保视频完全加载
+          playbackRates: [0.5, 1, 1.25, 1.5, 2],
+          controlBar: {
+            children: [
+              'playToggle',
+              'volumePanel',
+              'currentTimeDisplay',
+              'timeDivider',
+              'durationDisplay',
+              'progressControl',
+              'remainingTimeDisplay',
+              'playbackRateMenuButton',
+              'fullscreenToggle'
+            ]
+          },
+          sources: [{
+            src: URL.createObjectURL(videoBlob),
+            type: 'video/mp4'
+          }]
+        });
+      } catch (error) {
+        console.error('Video.js 播放器创建失败:', error);
+        return;
+      }
 
       console.log('Video.js 播放器创建成功:', player);
 
@@ -293,12 +299,16 @@ const TestingResult = ({
         
         // 监听可以播放事件
         player.on('canplay', () => {
-          console.log('视频可以播放，当前时间:', player.currentTime());
-          console.log('视频时长:', player.duration());
-          console.log('视频就绪状态:', player.readyState());
-          // 由于视频已经下载完成，直接设置为准备就绪
-          setIsVideoLoading(false);
-          setIsVideoReady(true);
+          try {
+            console.log('视频可以播放，当前时间:', player.currentTime());
+            console.log('视频时长:', player.duration());
+            console.log('视频就绪状态:', player.readyState());
+            // 由于视频已经下载完成，直接设置为准备就绪
+            setIsVideoLoading(false);
+            setIsVideoReady(true);
+          } catch (error) {
+            console.error('canplay 事件处理错误:', error);
+          }
         });
         
         // 监听可以播放通过事件（更高级的缓冲状态）
@@ -309,39 +319,47 @@ const TestingResult = ({
           setIsVideoReady(true);
         });
         
+        // 监听进度条拖动事件
+        player.on('seeking', () => {
+          try {
+            const currentTime = player.currentTime();
+            console.log('用户拖动进度条到:', currentTime);
+            // 用户自由拖动，不进行任何纠正
+          } catch (error) {
+            console.error('seeking 事件处理错误:', error);
+          }
+        });
+        
         // 监听时间更新
         player.on('timeupdate', () => {
-          if (player && typeof player.currentTime === 'function' && player.currentTime() >= end) {
-            console.log('播放到结束时间，重新开始:', end);
-            player.pause();
-            player.currentTime(start);
-            // 使用 setTimeout 延迟设置状态，避免 DOM 冲突
-            setTimeout(() => {
-              setIsPlaying(false); // 重置播放状态
-            }, 50);
+          try {
+            // 用户自由播放，不进行任何时间限制
+            console.log('播放时间更新:', player.currentTime());
+          } catch (error) {
+            console.error('timeupdate 事件处理错误:', error);
           }
         });
         
         // 监听播放开始事件
         player.on('play', () => {
-          console.log('播放开始，当前时间:', player.currentTime());
-          // 使用 setTimeout 延迟设置状态，避免 DOM 冲突
-          setTimeout(() => {
-            setIsPlaying(true); // 设置播放状态
-          }, 50);
-          // 确保从正确的时间开始播放
-          if (player.currentTime() < start) {
-            console.log('当前时间小于开始时间，重新设置:', start);
-            player.currentTime(start);
+          try {
+            console.log('播放开始，当前时间:', player.currentTime());
+            // 使用 setTimeout 延迟设置状态，避免 DOM 冲突
+            setTimeout(() => {
+              setIsPlaying(true); // 设置播放状态
+            }, 50);
+            // 用户自由播放，不进行任何时间纠正
+          } catch (error) {
+            console.error('play 事件处理错误:', error);
           }
         });
         
         // 监听等待事件（视频缓冲中）
-        player.on('waiting', () => {
-          console.log('视频等待数据加载...');
-          setIsVideoLoading(true); // 缓冲时显示loading
-          setLoadingProgress(0); // 重置进度
-        });
+        // player.on('waiting', () => {
+        //   console.log('视频等待数据加载...');
+        //   setIsVideoLoading(true); // 缓冲时显示loading
+        //   setLoadingProgress(0); // 重置进度
+        // });
         
         // 监听进度事件（视频加载中）
         player.on('progress', () => {
@@ -354,13 +372,19 @@ const TestingResult = ({
         // 监听播放暂停事件
         player.on('pause', () => {
           console.log('播放暂停');
-          setIsPlaying(false); // 重置播放状态
+          // 使用 setTimeout 延迟设置状态，避免 DOM 冲突
+          setTimeout(() => {
+            setIsPlaying(false); // 重置播放状态
+          }, 50);
         });
         
         // 监听播放结束事件
         player.on('ended', () => {
           console.log('播放结束');
-          setIsPlaying(false); // 重置播放状态
+          // 使用 setTimeout 延迟设置状态，避免 DOM 冲突
+          setTimeout(() => {
+            setIsPlaying(false); // 重置播放状态
+          }, 50);
         });
         
         // 确保控制栏可见
@@ -400,13 +424,20 @@ const TestingResult = ({
 
       // 清理函数
       return () => {
-        if (playerRef.current) {
-          playerRef.current.dispose();
-          playerRef.current = null;
-        }
-        // 清理定时器
-        if (progressInterval) {
-          clearInterval(progressInterval);
+        try {
+          if (playerRef.current) {
+            // 先移除所有事件监听器
+            playerRef.current.off();
+            // 然后销毁播放器
+            playerRef.current.dispose();
+            playerRef.current = null;
+          }
+          // 清理定时器
+          if (progressInterval) {
+            clearInterval(progressInterval);
+          }
+        } catch (error) {
+          console.error('播放器清理错误:', error);
         }
       };
     };
@@ -632,6 +663,7 @@ const TestingResult = ({
                           setCurrentVideoInfo({
                             ...videoInfo,
                             videoUrl: `/api/file/download/${videoInfo.doc_id}`,
+                            // videoUrl: `/api/file/playVideo?docId=${videoInfo.doc_id}&duration=12&endTime=9&startTime=6`,
                             content_ltks: x.content_ltks
                           });
                           setModalVisible(true);
