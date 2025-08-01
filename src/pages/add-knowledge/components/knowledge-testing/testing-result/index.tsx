@@ -333,8 +333,26 @@ const TestingResult = ({
         // 监听时间更新
         player.on('timeupdate', () => {
           try {
-            // 用户自由播放，不进行任何时间限制
-            console.log('播放时间更新:', player.currentTime());
+            // 检查是否播放到结束时间
+            if (player && typeof player.currentTime === 'function' && player.currentTime() >= end) {
+              console.log('播放到结束时间，重新开始:', end);
+              setTimeout(() => {
+                try {
+                  if (player && typeof player.pause === 'function') {
+                    player.pause();
+                  }
+                  if (player && typeof player.currentTime === 'function') {
+                    player.currentTime(start);
+                  }
+                  setIsPlaying(false); // 重置播放状态
+                } catch (error) {
+                  console.error('时间更新处理错误:', error);
+                }
+              }, 100);
+            } else {
+              // 用户自由播放，记录时间更新
+              console.log('播放时间更新:', player.currentTime());
+            }
           } catch (error) {
             console.error('timeupdate 事件处理错误:', error);
           }
