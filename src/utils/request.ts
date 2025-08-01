@@ -127,7 +127,7 @@ request.interceptors.response.use(async (response: Response, options) => {
       };
     } catch (error) {
       console.error('处理 blob 响应时出错:', error);
-      return response;
+    return response;
     }
   }
 

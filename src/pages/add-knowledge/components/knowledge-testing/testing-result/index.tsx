@@ -17,17 +17,17 @@ import SelectFiles from './select-files';
 
 import {
   useAllTestingResult,
-  useAllTestingSuccess,
   useSelectIsTestingSuccess,
-  useSelectTestingResult,
 } from '@/hooks/knowledge-hooks';
 import { useGetPaginationWithRouter } from '@/hooks/logic-hooks';
 import { showImage } from '@/utils/chat';
 import { useCallback, useEffect, useState, useRef } from 'react';
-import { fetchVideoChunks, getMinioDownloadUrl } from '@/services/knowledge-service';
+import { fetchVideoChunks } from '@/services/knowledge-service';
 import styles from './index.less';
 import { api_rag_host } from '@/utils/api';
 import { formatTimeDisplay } from '@/utils/document-util';
+import videojs from 'video.js';
+import 'video.js/dist/video-js.css';
 
 const similarityList: Array<{ field: keyof ITestingChunk; label: string }> = [
   { field: 'similarity', label: 'Hybrid Similarity' },
@@ -69,7 +69,6 @@ const TestingResult = ({
   const { t } = useTranslate('knowledgeDetails');
   const { pagination, setPagination } = useGetPaginationWithRouter();
   const isSuccess = useSelectIsTestingSuccess();
-  const isAllSuccess = useAllTestingSuccess();
   console.log(chunks)
   const onChange: PaginationProps['onChange'] = (pageNumber, pageSize) => {
     pagination.onChange?.(pageNumber, pageSize);
@@ -89,7 +88,9 @@ const TestingResult = ({
   const [modalVisible, setModalVisible] = useState(false);
   const [currentVideoInfo, setCurrentVideoInfo] = useState<any>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const playerRef = useRef<any>(null);
   const [isPlaying, setIsPlaying] = useState(false); // 新增：控制视频是否正在播放
+
 
   // 弹窗打开后收集 chunks 的 id，调用 fetchVideoChunks
   useEffect(() => {
@@ -111,61 +112,227 @@ const TestingResult = ({
     }
   }, [isSuccess, chunks]);
 
-  // 时间字符串转秒，如 0:0:4:17 => 4
+  // 时间字符串转秒，如 0:0:4:17 => 4.017
   const timeStrToSeconds = (timeStr: string): number => {
     if (!timeStr) return 0;
     const parts = timeStr.split(':').map(Number);
+    console.log('时间转换:', timeStr, 'parts:', parts);
+    
     // 处理"时:分:秒:毫秒"格式
     if (parts.length === 4) {
       const [hours, minutes, seconds, milliseconds] = parts;
-      return hours * 3600 + minutes * 60 + seconds + milliseconds / 1000;
+      const totalSeconds = hours * 3600 + minutes * 60 + seconds + milliseconds / 1000;
+      console.log('4段格式转换结果:', totalSeconds);
+      return totalSeconds;
     }
     // 处理"时:分:秒"格式
     if (parts.length === 3) {
       const [hours, minutes, seconds] = parts;
-      return hours * 3600 + minutes * 60 + seconds;
+      const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+      console.log('3段格式转换结果:', totalSeconds);
+      return totalSeconds;
+    }
+    // 处理"分:秒"格式
+    if (parts.length === 2) {
+      const [minutes, seconds] = parts;
+      const totalSeconds = minutes * 60 + seconds;
+      console.log('2段格式转换结果:', totalSeconds);
+      return totalSeconds;
     }
 
+    console.log('无法解析时间格式:', timeStr);
     return 0;
   };
 
-  // 弹窗视频起止时间控制
+  // 初始化 Video.js 播放器
   useEffect(() => {
-    if (!modalVisible || !videoRef.current || !currentVideoInfo) return;
-    const video = videoRef.current;
-    const start = timeStrToSeconds(currentVideoInfo.start_time);
-    const end = timeStrToSeconds(currentVideoInfo.end_time);
-    console.log(`start,end`, start, end);
-    const handleTimeUpdate = () => {
-      if (video.currentTime >= end) {
-        video.pause();
-        video.currentTime = start;
+    console.log(`modalVisible: ${modalVisible}, currentVideoInfo: ${currentVideoInfo}`);
+    if (!modalVisible || !currentVideoInfo) return;
+
+    // 使用 requestAnimationFrame 确保 DOM 元素已经渲染
+    const initPlayer = () => {
+      if (!videoRef.current) {
+        console.log('videoRef.current 仍然为 null，重试...');
+        // 如果还没有渲染，继续等待
+        requestAnimationFrame(initPlayer);
+        return;
       }
+
+      console.log('videoRef.current 已找到，开始初始化 Video.js');
+
+      // 销毁之前的播放器
+      if (playerRef.current) {
+        playerRef.current.dispose();
+        playerRef.current = null;
+      }
+
+      // 创建新的 Video.js 播放器
+      const player = videojs(videoRef.current, {
+        controls: true,
+        fluid: false,
+        responsive: false,
+        preload: 'metadata',
+        playbackRates: [0.5, 1, 1.25, 1.5, 2],
+        controlBar: {
+          children: [
+            'playToggle',
+            'volumePanel',
+            'currentTimeDisplay',
+            'timeDivider',
+            'durationDisplay',
+            'progressControl',
+            'remainingTimeDisplay',
+            'playbackRateMenuButton',
+            'fullscreenToggle'
+          ]
+        },
+        sources: [{
+          src: currentVideoInfo.videoUrl,
+          type: 'video/mp4'
+        }]
+      });
+
+      console.log('Video.js 播放器创建成功:', player);
+
+      playerRef.current = player;
+
+      // 设置初始时间
+      const start = timeStrToSeconds(currentVideoInfo.start_time);
+      const end = timeStrToSeconds(currentVideoInfo.end_time);
+
+      player.ready(() => {
+        console.log('Video.js 播放器准备就绪');
+
+        
+        // 等待元数据加载完成后再设置时间
+        player.on('loadedmetadata', () => {
+          console.log('视频元数据加载完成，设置初始时间:', start);
+          player.currentTime(start);
+        });
+        
+        // 监听数据加载完成事件
+        player.on('loadeddata', () => {
+          console.log('视频数据加载完成，确保设置初始时间:', start);
+          player.currentTime(start);
+        });
+        
+        // 监听可以播放事件
+        player.on('canplay', () => {
+          console.log('视频可以播放，当前时间:', player.currentTime());
+
+        });
+        
+        // 监听时间更新
+        player.on('timeupdate', () => {
+          if (player && typeof player.currentTime === 'function' && player.currentTime() >= end) {
+            console.log('播放到结束时间，重新开始:', end);
+            player.pause();
+            player.currentTime(start);
+            setIsPlaying(false); // 重置播放状态
+          }
+        });
+        
+        // 监听播放开始事件
+        player.on('play', () => {
+          console.log('播放开始，当前时间:', player.currentTime());
+          setIsPlaying(true); // 设置播放状态
+          // 确保从正确的时间开始播放
+          if (player.currentTime() < start) {
+            console.log('当前时间小于开始时间，重新设置:', start);
+            player.currentTime(start);
+          }
+        });
+        
+        // 监听等待事件（视频缓冲中）
+        player.on('waiting', () => {
+          console.log('视频等待数据加载...');
+        });
+        
+        // 监听进度事件（视频加载中）
+        player.on('progress', () => {
+          console.log('视频加载进度，当前时间:', player.currentTime());
+        });
+        
+        // 监听播放暂停事件
+        player.on('pause', () => {
+          console.log('播放暂停');
+          setIsPlaying(false); // 重置播放状态
+        });
+        
+        // 监听播放结束事件
+        player.on('ended', () => {
+          console.log('播放结束');
+          setIsPlaying(false); // 重置播放状态
+        });
+        
+        // 确保控制栏可见
+        setTimeout(() => {
+          const videoElement = player.el() as HTMLElement;
+          if (videoElement) {
+            // 添加自定义样式
+            videoElement.style.position = 'relative';
+            videoElement.style.width = '100%';
+            videoElement.style.height = '100%';
+            
+            const controlBar = videoElement.querySelector('.vjs-control-bar');
+            const progressBar = videoElement.querySelector('.vjs-progress-control');
+            const playButton = videoElement.querySelector('.vjs-play-control');
+            
+            if (controlBar) {
+              (controlBar as HTMLElement).style.display = 'flex';
+              (controlBar as HTMLElement).style.visibility = 'visible';
+              (controlBar as HTMLElement).style.opacity = '1';
+              (controlBar as HTMLElement).style.position = 'absolute';
+              (controlBar as HTMLElement).style.bottom = '0';
+              (controlBar as HTMLElement).style.left = '0';
+              (controlBar as HTMLElement).style.right = '0';
+              (controlBar as HTMLElement).style.backgroundColor = 'rgba(0,0,0,0.7)';
+            }
+            if (progressBar) {
+              (progressBar as HTMLElement).style.display = 'block';
+              (progressBar as HTMLElement).style.visibility = 'visible';
+            }
+            if (playButton) {
+              (playButton as HTMLElement).style.display = 'block';
+              (playButton as HTMLElement).style.visibility = 'visible';
+            }
+          }
+        }, 100);
+      });
+
+      // 清理函数
+      return () => {
+        if (playerRef.current) {
+          playerRef.current.dispose();
+          playerRef.current = null;
+        }
+      };
     };
 
-    video.addEventListener('timeupdate', handleTimeUpdate);
-    return () => video.removeEventListener('timeupdate', handleTimeUpdate);
+    // 开始初始化
+    requestAnimationFrame(initPlayer);
+
+    // 清理函数
+    return () => {
+      if (playerRef.current) {
+        playerRef.current.dispose();
+        playerRef.current = null;
+      }
+    };
   }, [modalVisible, currentVideoInfo]);
 
   // 弹窗关闭时重置视频状态
   useEffect(() => {
-
     if (modalVisible) {
       // 弹窗刚打开，重置播放状态
       setIsPlaying(false);
-      // 也可以重置视频 currentTime
-      if (videoRef.current && currentVideoInfo) {
-        const startSec = timeStrToSeconds(currentVideoInfo.start_time);
-        videoRef.current.currentTime = startSec;
-        videoRef.current.pause();
-      }
     } else {
       // 弹窗刚关闭，重置播放状态
       setIsPlaying(false);
-      if (videoRef.current && currentVideoInfo) {
-        videoRef.current.pause();
-        const startSec = timeStrToSeconds(currentVideoInfo.start_time);
-        videoRef.current.currentTime = startSec;
+      // 销毁播放器
+      if (playerRef.current) {
+        playerRef.current.dispose();
+        playerRef.current = null;
       }
     }
   }, [modalVisible, currentVideoInfo]);
@@ -173,26 +340,52 @@ const TestingResult = ({
 
 
   const handlePlaySection = () => {
-    if (videoRef.current && currentVideoInfo) {
+    if (playerRef.current && currentVideoInfo) {
       const startSec = timeStrToSeconds(currentVideoInfo.start_time);
       const endSec = timeStrToSeconds(currentVideoInfo.end_time);
-      videoRef.current.currentTime = startSec;
-      videoRef.current.play().catch(e => console.error('播放失败:', e));
-      setIsPlaying(true);
-
-      const handleTimeUpdate = () => {
-        if (videoRef.current && videoRef.current.currentTime >= endSec) {
-          videoRef.current.pause();
-          videoRef.current.currentTime = startSec; // 可选：重置到开始位置
-          setIsPlaying(false);
-        }
-      };
-
-      videoRef.current.addEventListener('timeupdate', handleTimeUpdate);
-
-      return () => {
-        videoRef.current?.removeEventListener('timeupdate', handleTimeUpdate);
-      };
+      
+      console.log(`Video.js 播放片段:`, startSec, '到', endSec);
+      
+      // 确保播放器已准备就绪
+      if (playerRef.current.readyState() >= 1) {
+        // 使用 Video.js API 设置时间和播放
+        console.log('设置播放时间:', startSec);
+        playerRef.current.currentTime(startSec);
+        
+        // 延迟一点时间确保时间设置生效
+        setTimeout(() => {
+          console.log('当前播放时间:', playerRef.current.currentTime());
+          playerRef.current.play().then(() => {
+            console.log('Video.js 开始播放');
+          }).catch((e: any) => {
+            console.error('Video.js 播放失败:', e);
+            setIsPlaying(false);
+          });
+        }, 200);
+      } else {
+        console.log('播放器未准备就绪，等待元数据加载...');
+        // 等待元数据加载完成
+        playerRef.current.one('loadedmetadata', () => {
+          console.log('设置播放时间:', startSec);
+          playerRef.current.currentTime(startSec);
+          
+          // 再等待数据加载完成
+          playerRef.current.one('loadeddata', () => {
+            console.log('数据加载完成，再次设置时间:', startSec);
+            playerRef.current.currentTime(startSec);
+            
+            setTimeout(() => {
+              console.log('当前播放时间:', playerRef.current.currentTime());
+              playerRef.current.play().then(() => {
+                console.log('Video.js 开始播放');
+              }).catch((e: any) => {
+                console.error('Video.js 播放失败:', e);
+                setIsPlaying(false);
+              });
+            }, 200);
+          });
+        });
+      }
     }
   };
 
@@ -357,24 +550,43 @@ const TestingResult = ({
       {/* 视频弹窗 */}
       <Modal
         open={modalVisible}
-        onCancel={() => setModalVisible(false)}
+        onCancel={() => {
+          setModalVisible(false);
+          // 销毁播放器
+          if (playerRef.current) {
+            playerRef.current.dispose();
+            playerRef.current = null;
+          }
+        }}
         footer={null}
         width={600}
         destroyOnHidden
       >
         {currentVideoInfo && (
-          <div style={{ textAlign: 'center' }}>
+          <div style={{ textAlign: 'center', maxHeight: '80vh', overflow: 'auto' }}>
+            <div style={{ 
+              borderRadius: 8, 
+              overflow: 'hidden',
+              backgroundColor: '#000',
+              height: '400px',
+              width: '100%',
+              position: 'relative',
+              marginBottom: '16px'
+            }}>
             <video
               ref={videoRef}
-              src={currentVideoInfo.videoUrl}
-              controls
-              width="100%"
-              // poster={currentVideoInfo.cover_url.replace('http://localhost:9000', 'http://119.84.128.68:6581/minio') || undefined}
-              style={{ borderRadius: 8, background: '#000', maxHeight: '70vh' }}
-            />
+                className="video-js vjs-default-skin vjs-big-play-centered"
+                data-setup="{}"
+                style={{ 
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain'
+                }}
+              />
+            </div>
 
             {/* 渲染内容时去除所有 '[{chunk_id:...}]' 结构的文本 */}
-            <div style={{ flex: 1,marginTop: 16  }}>
+            <div style={{ marginTop: 16, fontSize: 16, textAlign: 'left' }}>
               {currentVideoInfo.content_ltks
                 ? renderContentWithImages(currentVideoInfo.content_ltks.replace(/\[\{chunk_id:[^}]+\}\]/g, ''))
                 : ''}
@@ -385,7 +597,15 @@ const TestingResult = ({
             <div style={{ marginTop: 16 }}>
               <button
                 type="button"
-                style={{ padding: '8px 16px', fontSize: 16, borderRadius: 4, background: '#306EFD', color: '#fff', border: 'none', cursor: isPlaying ? 'not-allowed' : 'pointer' }}
+                style={{ 
+                  padding: '8px 16px', 
+                  fontSize: 16, 
+                  borderRadius: 4, 
+                  background: '#306EFD', 
+                  color: '#fff', 
+                  border: 'none', 
+                  cursor: isPlaying ? 'not-allowed' : 'pointer' 
+                }}
                 onClick={handlePlaySection}
                 disabled={isPlaying}
               >
