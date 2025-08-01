@@ -90,6 +90,11 @@ const TestingResult = ({
   const videoRef = useRef<HTMLVideoElement>(null);
   const playerRef = useRef<any>(null);
   const [isPlaying, setIsPlaying] = useState(false); // 新增：控制视频是否正在播放
+  const [isVideoLoading, setIsVideoLoading] = useState(false); // 新增：控制视频是否正在加载
+  const [isVideoReady, setIsVideoReady] = useState(false); // 新增：控制视频是否准备就绪
+  const [loadingProgress, setLoadingProgress] = useState(0); // 新增：加载进度百分比
+  const [videoBlob, setVideoBlob] = useState<Blob | null>(null); // 新增：存储下载的视频blob
+  const [isDownloading, setIsDownloading] = useState(false); // 新增：是否正在下载视频
 
 
   // 弹窗打开后收集 chunks 的 id，调用 fetchVideoChunks
@@ -144,13 +149,76 @@ const TestingResult = ({
     return 0;
   };
 
+  // 下载视频文件
+  useEffect(() => {
+    if (modalVisible && currentVideoInfo && !videoBlob && !isDownloading) {
+      const downloadVideo = async () => {
+        try {
+          setIsDownloading(true);
+          setLoadingProgress(0);
+          
+          console.log('开始下载视频:', currentVideoInfo.videoUrl);
+          
+          const response = await fetch(currentVideoInfo.videoUrl);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          
+          const reader = response.body?.getReader();
+          if (!reader) {
+            throw new Error('无法获取响应流');
+          }
+          
+          const contentLength = response.headers.get('content-length');
+          const total = contentLength ? parseInt(contentLength, 10) : 0;
+          let receivedLength = 0;
+          const chunks: Uint8Array[] = [];
+          
+          while (true) {
+            const { done, value } = await reader.read();
+            
+            if (done) break;
+            
+            chunks.push(value);
+            receivedLength += value.length;
+            
+            if (total > 0) {
+              const progress = (receivedLength / total) * 100;
+              setLoadingProgress(progress);
+              console.log(`下载进度: ${progress.toFixed(1)}%`);
+            }
+          }
+          
+          const blob = new Blob(chunks as BlobPart[], { type: 'video/mp4' });
+          setVideoBlob(blob);
+          setIsDownloading(false);
+          setLoadingProgress(100);
+          setIsVideoReady(true); // 下载完成后立即设置为准备就绪
+          console.log('视频下载完成，大小:', blob.size, 'bytes');
+          
+        } catch (error) {
+          console.error('视频下载失败:', error);
+          setIsDownloading(false);
+          setLoadingProgress(0);
+        }
+      };
+      
+      downloadVideo();
+    }
+  }, [modalVisible, currentVideoInfo, videoBlob, isDownloading]);
+
   // 初始化 Video.js 播放器
   useEffect(() => {
-    console.log(`modalVisible: ${modalVisible}, currentVideoInfo: ${currentVideoInfo}`);
-    if (!modalVisible || !currentVideoInfo) return;
+    console.log(`modalVisible: ${modalVisible}, currentVideoInfo: ${currentVideoInfo}, videoBlob: ${videoBlob}`);
+    console.log('videoBlob size:', videoBlob?.size);
+    if (!modalVisible || !currentVideoInfo || !videoBlob) {
+      console.log('播放器初始化条件不满足，退出');
+      return;
+    }
 
     // 使用 requestAnimationFrame 确保 DOM 元素已经渲染
     const initPlayer = () => {
+      console.log('initPlayer 被调用');
       if (!videoRef.current) {
         console.log('videoRef.current 仍然为 null，重试...');
         // 如果还没有渲染，继续等待
@@ -159,19 +227,23 @@ const TestingResult = ({
       }
 
       console.log('videoRef.current 已找到，开始初始化 Video.js');
+      console.log('videoRef.current:', videoRef.current);
 
       // 销毁之前的播放器
       if (playerRef.current) {
         playerRef.current.dispose();
         playerRef.current = null;
       }
+      
+      // 声明定时器变量
+      let progressInterval: NodeJS.Timeout | null = null;
 
       // 创建新的 Video.js 播放器
       const player = videojs(videoRef.current, {
         controls: true,
         fluid: false,
         responsive: false,
-        preload: 'metadata',
+        preload: 'auto', // 改为 auto，确保视频完全加载
         playbackRates: [0.5, 1, 1.25, 1.5, 2],
         controlBar: {
           children: [
@@ -187,7 +259,7 @@ const TestingResult = ({
           ]
         },
         sources: [{
-          src: currentVideoInfo.videoUrl,
+          src: URL.createObjectURL(videoBlob),
           type: 'video/mp4'
         }]
       });
@@ -202,7 +274,7 @@ const TestingResult = ({
 
       player.ready(() => {
         console.log('Video.js 播放器准备就绪');
-
+        setIsVideoLoading(false); // 播放器准备就绪，停止加载状态
         
         // 等待元数据加载完成后再设置时间
         player.on('loadedmetadata', () => {
@@ -214,12 +286,27 @@ const TestingResult = ({
         player.on('loadeddata', () => {
           console.log('视频数据加载完成，确保设置初始时间:', start);
           player.currentTime(start);
+          console.log('当前播放时间:', player.currentTime());
+          console.log('视频时长:', player.duration());
+          console.log('缓冲状态:', player.buffered());
         });
         
         // 监听可以播放事件
         player.on('canplay', () => {
           console.log('视频可以播放，当前时间:', player.currentTime());
-
+          console.log('视频时长:', player.duration());
+          console.log('视频就绪状态:', player.readyState());
+          // 由于视频已经下载完成，直接设置为准备就绪
+          setIsVideoLoading(false);
+          setIsVideoReady(true);
+        });
+        
+        // 监听可以播放通过事件（更高级的缓冲状态）
+        player.on('canplaythrough', () => {
+          console.log('视频可以流畅播放，当前时间:', player.currentTime());
+          // 由于视频已经下载完成，直接设置为准备就绪
+          setIsVideoLoading(false);
+          setIsVideoReady(true);
         });
         
         // 监听时间更新
@@ -228,14 +315,20 @@ const TestingResult = ({
             console.log('播放到结束时间，重新开始:', end);
             player.pause();
             player.currentTime(start);
-            setIsPlaying(false); // 重置播放状态
+            // 使用 setTimeout 延迟设置状态，避免 DOM 冲突
+            setTimeout(() => {
+              setIsPlaying(false); // 重置播放状态
+            }, 50);
           }
         });
         
         // 监听播放开始事件
         player.on('play', () => {
           console.log('播放开始，当前时间:', player.currentTime());
-          setIsPlaying(true); // 设置播放状态
+          // 使用 setTimeout 延迟设置状态，避免 DOM 冲突
+          setTimeout(() => {
+            setIsPlaying(true); // 设置播放状态
+          }, 50);
           // 确保从正确的时间开始播放
           if (player.currentTime() < start) {
             console.log('当前时间小于开始时间，重新设置:', start);
@@ -246,11 +339,16 @@ const TestingResult = ({
         // 监听等待事件（视频缓冲中）
         player.on('waiting', () => {
           console.log('视频等待数据加载...');
+          setIsVideoLoading(true); // 缓冲时显示loading
+          setLoadingProgress(0); // 重置进度
         });
         
         // 监听进度事件（视频加载中）
         player.on('progress', () => {
           console.log('视频加载进度，当前时间:', player.currentTime());
+          // 由于视频已经下载完成，不需要再检查缓冲状态
+          setIsVideoLoading(false);
+          setIsVideoReady(true);
         });
         
         // 监听播放暂停事件
@@ -306,6 +404,10 @@ const TestingResult = ({
           playerRef.current.dispose();
           playerRef.current = null;
         }
+        // 清理定时器
+        if (progressInterval) {
+          clearInterval(progressInterval);
+        }
       };
     };
 
@@ -319,16 +421,26 @@ const TestingResult = ({
         playerRef.current = null;
       }
     };
-  }, [modalVisible, currentVideoInfo]);
+  }, [modalVisible, currentVideoInfo, videoBlob]);
 
   // 弹窗关闭时重置视频状态
   useEffect(() => {
     if (modalVisible) {
       // 弹窗刚打开，重置播放状态
       setIsPlaying(false);
+      setIsVideoLoading(false);
+      setIsVideoReady(false);
+      setLoadingProgress(0);
+      setVideoBlob(null);
+      setIsDownloading(false);
     } else {
       // 弹窗刚关闭，重置播放状态
       setIsPlaying(false);
+      setIsVideoLoading(false);
+      setIsVideoReady(false);
+      setLoadingProgress(0);
+      setVideoBlob(null);
+      setIsDownloading(false);
       // 销毁播放器
       if (playerRef.current) {
         playerRef.current.dispose();
@@ -340,11 +452,18 @@ const TestingResult = ({
 
 
   const handlePlaySection = () => {
-    if (playerRef.current && currentVideoInfo) {
+    console.log('handlePlaySection 被调用');
+    console.log('playerRef.current:', !!playerRef.current);
+    console.log('currentVideoInfo:', !!currentVideoInfo);
+    console.log('videoBlob:', !!videoBlob);
+    console.log('isVideoReady:', isVideoReady);
+    
+    if (playerRef.current && currentVideoInfo && videoBlob && isVideoReady) {
       const startSec = timeStrToSeconds(currentVideoInfo.start_time);
       const endSec = timeStrToSeconds(currentVideoInfo.end_time);
       
       console.log(`Video.js 播放片段:`, startSec, '到', endSec);
+      console.log('播放器状态:', playerRef.current.readyState());
       
       // 确保播放器已准备就绪
       if (playerRef.current.readyState() >= 1) {
@@ -386,6 +505,14 @@ const TestingResult = ({
           });
         });
       }
+    } else if (isDownloading) {
+      console.log('视频正在下载中，请稍候...');
+    } else if (isVideoLoading) {
+      console.log('视频正在加载中，请稍候...');
+    } else if (!videoBlob) {
+      console.log('视频尚未下载完成，请等待下载...');
+    } else if (!isVideoReady) {
+      console.log('视频尚未准备就绪，请等待加载完成...');
     }
   };
 
@@ -573,16 +700,44 @@ const TestingResult = ({
               position: 'relative',
               marginBottom: '16px'
             }}>
-            <video
-              ref={videoRef}
-                className="video-js vjs-default-skin vjs-big-play-centered"
-                data-setup="{}"
-                style={{ 
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain'
-                }}
-              />
+              {(!videoBlob || isDownloading || !isVideoReady || isVideoLoading) && (
+                <div style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: 'rgba(0,0,0,0.8)',
+                  zIndex: 10,
+                  color: '#fff',
+                  fontSize: 16
+                }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ marginBottom: 8 }}>
+                      {isDownloading ? '正在下载视频...' : isVideoLoading ? '视频加载中...' : '等待视频准备...'}
+                    </div>
+                    <div style={{ fontSize: 12, opacity: 0.8 }}>
+                      {isDownloading ? `请稍候，正在下载视频文件 (${loadingProgress.toFixed(1)}%)` : 
+                       isVideoLoading ? `请稍候，正在初始化播放器 (${loadingProgress.toFixed(1)}%)` : 
+                       '正在准备视频播放器'}
+                    </div>
+                  </div>
+                </div>
+              )}
+              <video
+                ref={videoRef}
+                  className="video-js vjs-default-skin vjs-big-play-centered"
+                  data-setup="{}"
+                  style={{ 
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    backgroundColor: '#000'
+                  }}
+                />
             </div>
 
             {/* 渲染内容时去除所有 '[{chunk_id:...}]' 结构的文本 */}
@@ -601,15 +756,15 @@ const TestingResult = ({
                   padding: '8px 16px', 
                   fontSize: 16, 
                   borderRadius: 4, 
-                  background: '#306EFD', 
+                  background: (!videoBlob || isDownloading || !isVideoReady || isVideoLoading) ? '#ccc' : '#306EFD', 
                   color: '#fff', 
                   border: 'none', 
-                  cursor: isPlaying ? 'not-allowed' : 'pointer' 
+                  cursor: (isPlaying || isVideoLoading || !isVideoReady || isDownloading || !videoBlob) ? 'not-allowed' : 'pointer' 
                 }}
                 onClick={handlePlaySection}
-                disabled={isPlaying}
+                disabled={isPlaying || isVideoLoading || !isVideoReady || isDownloading || !videoBlob}
               >
-                {isPlaying ? '播放中...' : '播放相关片段'}
+                {isDownloading ? '正在下载视频...' : isVideoLoading ? '视频加载中...' : !videoBlob ? '等待视频下载...' : !isVideoReady ? '等待视频准备...' : isPlaying ? '播放中...' : '播放相关片段'}
               </button>
             </div>
           </div>
