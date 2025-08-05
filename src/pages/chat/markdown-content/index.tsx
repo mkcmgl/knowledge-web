@@ -36,7 +36,9 @@ import classNames from 'classnames';
 import { pipe } from 'lodash/fp';
 import styles from './index.less';
 
-const getChunkIndex = (match: string) => Number(match.slice(2, -2));
+const getChunkIndex = (match: string) => {
+  return Number(match)
+};
 // TODO: The display of the table is inconsistent with the display previously placed in the MessageItem.
 const MarkdownContent = ({
   reference,
@@ -97,7 +99,7 @@ const MarkdownContent = ({
     if (!timeStr) return 0;
     const parts = timeStr.split(':').map(Number);
     console.log('时间转换:', timeStr, 'parts:', parts);
-    
+
     // 处理"时:分:秒:毫秒"格式
     if (parts.length === 4) {
       const [hours, minutes, seconds, milliseconds] = parts;
@@ -131,53 +133,53 @@ const MarkdownContent = ({
         try {
           setIsDownloading(true);
           setLoadingProgress(0);
-          
+
           console.log('开始下载视频:', currentVideoInfo.videoUrl);
-          
+
           const response = await fetch(currentVideoInfo.videoUrl);
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
-          
+
           const reader = response.body?.getReader();
           if (!reader) {
             throw new Error('无法获取响应流');
           }
-          
+
           const contentLength = response.headers.get('content-length');
           const total = contentLength ? parseInt(contentLength, 10) : 0;
           let receivedLength = 0;
           const chunks: Uint8Array[] = [];
-          
+
           while (true) {
             const { done, value } = await reader.read();
-            
+
             if (done) break;
-            
+
             chunks.push(value);
             receivedLength += value.length;
-            
+
             if (total > 0) {
               const progress = (receivedLength / total) * 100;
               setLoadingProgress(progress);
               console.log(`下载进度: ${progress.toFixed(1)}%`);
             }
           }
-          
+
           const blob = new Blob(chunks as BlobPart[], { type: 'video/mp4' });
           setVideoBlob(blob);
           setIsDownloading(false);
           setLoadingProgress(100);
           setIsVideoReady(true); // 下载完成后立即设置为准备就绪
           console.log('视频下载完成，大小:', blob.size, 'bytes');
-          
+
         } catch (error) {
           console.error('视频下载失败:', error);
           setIsDownloading(false);
           setLoadingProgress(0);
         }
       };
-      
+
       downloadVideo();
     }
   }, [modalVisible, currentVideoInfo, videoBlob, isDownloading]);
@@ -209,7 +211,7 @@ const MarkdownContent = ({
         playerRef.current.dispose();
         playerRef.current = null;
       }
-      
+
       // 声明定时器变量
       let progressInterval: NodeJS.Timeout | null = null;
 
@@ -256,13 +258,13 @@ const MarkdownContent = ({
       player.ready(() => {
         console.log('Video.js 播放器准备就绪');
         setIsVideoLoading(false); // 播放器准备就绪，停止加载状态
-        
+
         // 等待元数据加载完成后再设置时间
         player.on('loadedmetadata', () => {
           console.log('视频元数据加载完成，设置初始时间:', start);
           player.currentTime(start);
         });
-        
+
         // 监听数据加载完成事件
         player.on('loadeddata', () => {
           console.log('视频数据加载完成，确保设置初始时间:', start);
@@ -271,7 +273,7 @@ const MarkdownContent = ({
           console.log('视频时长:', player.duration());
           console.log('缓冲状态:', player.buffered());
         });
-        
+
         // 监听可以播放事件
         player.on('canplay', () => {
           try {
@@ -285,7 +287,7 @@ const MarkdownContent = ({
             console.error('canplay 事件处理错误:', error);
           }
         });
-        
+
         // 监听可以播放通过事件（更高级的缓冲状态）
         player.on('canplaythrough', () => {
           console.log('视频可以流畅播放，当前时间:', player.currentTime());
@@ -293,7 +295,7 @@ const MarkdownContent = ({
           setIsVideoLoading(false);
           setIsVideoReady(true);
         });
-        
+
         // 监听进度条拖动事件
         player.on('seeking', () => {
           try {
@@ -304,7 +306,7 @@ const MarkdownContent = ({
             console.error('seeking 事件处理错误:', error);
           }
         });
-        
+
         // 监听时间更新
         player.on('timeupdate', () => {
           try {
@@ -334,7 +336,7 @@ const MarkdownContent = ({
             console.error('timeupdate 事件处理错误:', error);
           }
         });
-        
+
         // 监听播放开始事件
         player.on('play', () => {
           try {
@@ -348,7 +350,7 @@ const MarkdownContent = ({
             console.error('play 事件处理错误:', error);
           }
         });
-        
+
         // 监听进度事件（视频加载中）
         player.on('progress', () => {
           console.log('视频加载进度，当前时间:', player.currentTime());
@@ -356,7 +358,7 @@ const MarkdownContent = ({
           setIsVideoLoading(false);
           setIsVideoReady(true);
         });
-        
+
         // 监听播放暂停事件
         player.on('pause', () => {
           console.log('播放暂停');
@@ -365,7 +367,7 @@ const MarkdownContent = ({
             setIsPlaying(false); // 重置播放状态
           }, 50);
         });
-        
+
         // 监听播放结束事件
         player.on('ended', () => {
           console.log('播放结束');
@@ -374,7 +376,7 @@ const MarkdownContent = ({
             setIsPlaying(false); // 重置播放状态
           }, 50);
         });
-        
+
         // 确保控制栏可见
         setTimeout(() => {
           const videoElement = player.el() as HTMLElement;
@@ -383,11 +385,11 @@ const MarkdownContent = ({
             videoElement.style.position = 'relative';
             videoElement.style.width = '100%';
             videoElement.style.height = '100%';
-            
+
             const controlBar = videoElement.querySelector('.vjs-control-bar');
             const progressBar = videoElement.querySelector('.vjs-progress-control');
             const playButton = videoElement.querySelector('.vjs-play-control');
-            
+
             if (controlBar) {
               (controlBar as HTMLElement).style.display = 'flex';
               (controlBar as HTMLElement).style.visibility = 'visible';
@@ -475,20 +477,20 @@ const MarkdownContent = ({
     console.log('currentVideoInfo:', !!currentVideoInfo);
     console.log('videoBlob:', !!videoBlob);
     console.log('isVideoReady:', isVideoReady);
-    
+
     if (playerRef.current && currentVideoInfo && videoBlob && isVideoReady) {
       const startSec = timeStrToSeconds(currentVideoInfo.start_time);
       const endSec = timeStrToSeconds(currentVideoInfo.end_time);
-      
+
       console.log(`Video.js 播放片段:`, startSec, '到', endSec);
       console.log('播放器状态:', playerRef.current.readyState());
-      
+
       // 确保播放器已准备就绪
       if (playerRef.current.readyState() >= 1) {
         // 使用 Video.js API 设置时间和播放
         console.log('设置播放时间:', startSec);
         playerRef.current.currentTime(startSec);
-        
+
         // 延迟一点时间确保时间设置生效
         setTimeout(() => {
           console.log('当前播放时间:', playerRef.current.currentTime());
@@ -505,12 +507,12 @@ const MarkdownContent = ({
         playerRef.current.one('loadedmetadata', () => {
           console.log('设置播放时间:', startSec);
           playerRef.current.currentTime(startSec);
-          
+
           // 再等待数据加载完成
           playerRef.current.one('loadeddata', () => {
             console.log('数据加载完成，再次设置时间:', startSec);
             playerRef.current.currentTime(startSec);
-            
+
             setTimeout(() => {
               console.log('当前播放时间:', playerRef.current.currentTime());
               playerRef.current.play().then(() => {
@@ -543,11 +545,11 @@ const MarkdownContent = ({
           'Authorization': `Bearer ragflow-${token}`
         }
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const blob = await response.blob();
       return URL.createObjectURL(blob);
     } catch (error) {
@@ -584,7 +586,7 @@ const MarkdownContent = ({
     }
   }, []);
 
- 
+
   const AuthenticatedImage = ({ src, alt, style, preview }: { src: string; alt: string; style?: any; preview?: boolean }) => {
     const [blobUrl, setBlobUrl] = useState<string>('');
     const [loading, setLoading] = useState(true);
@@ -606,7 +608,7 @@ const MarkdownContent = ({
 
       loadImage();
 
-     
+
       return () => {
         if (blobUrl) {
           URL.revokeObjectURL(blobUrl);
@@ -632,7 +634,7 @@ const MarkdownContent = ({
     );
   };
 
-  
+
   function renderContentWithImagesAndVideos(content: string, chunkItem?: any) {
     if (!content) return null;
     const parts = [];
@@ -696,17 +698,17 @@ const MarkdownContent = ({
       } else if (match[2]) {
         // 图片
         const imgId = match[2];
-      parts.push(
+        parts.push(
           <div key={key++}>
-        <Image
-          src={`${api_rag_host}/file/download/${imgId}`}
+            <Image
+              src={`${api_rag_host}/file/download/${imgId}`}
               alt='图片'
-          style={{ maxWidth: 120, maxHeight: 120, margin: '0 4px', verticalAlign: 'middle' }}
-          preview={true}
-        />
+              style={{ maxWidth: 120, maxHeight: 120, margin: '0 4px', verticalAlign: 'middle' }}
+              preview={true}
+            />
             <br />
           </div>
-      );
+        );
       }
       lastIndex = match.index + match[0].length;
     }
@@ -731,12 +733,12 @@ const MarkdownContent = ({
               handleVideoClick(chunk.id, chunk.content, chunk)
               return;
             } else {
-            return;
+              return;
             }
 
           }
 
-           window.open(documentUrl, '_blank');
+          window.open(documentUrl, '_blank');
         } else {
 
           clickDocumentButton?.(documentId, chunk);
@@ -809,7 +811,9 @@ const MarkdownContent = ({
         documentId,
         document,
       } = getReferenceInfo(chunkIndex);
-      // console.log(`getPopoverContent`, documentUrl, fileThumbnail, fileExtension, imageId, chunkItem, documentId, document);
+      console.log(`getPopoverContent-------------------chunkIndex`, chunkIndex,
+        documentUrl, fileThumbnail, fileExtension,
+        imageId, chunkItem, documentId, document);
       return (
         <div key={chunkItem?.id} className="flex gap-2">
           {imageId && (
@@ -876,8 +880,7 @@ const MarkdownContent = ({
     (text: string) => {
       console.log(`test---`, text);
       let replacedText = reactStringReplace(text, currentReg, (match, i) => {
-        const chunkIndex = getChunkIndex(match);
-
+        let chunkIndex = getChunkIndex(match);
         const { documentUrl, fileExtension, imageId, chunkItem, documentId, document } =
           getReferenceInfo(chunkIndex);
 
@@ -912,11 +915,11 @@ const MarkdownContent = ({
               onClick={
                 documentId
                   ? handleDocumentButtonClick(
-                      documentId,
-                      chunkItem,
-                      fileExtension === 'pdf',
-                      documentUrl,
-                    )
+                    documentId,
+                    chunkItem,
+                    fileExtension === 'pdf',
+                    documentUrl,
+                  )
                   : () => { console.log(`documentIdfalse`, documentId); }
               }
             />
@@ -929,7 +932,7 @@ const MarkdownContent = ({
               {isVideo ? (
                 <PlayCircleOutlined className={styles.referenceIcon} />
               ) : (
-              <InfoCircleOutlined className={styles.referenceIcon} />
+                <InfoCircleOutlined className={styles.referenceIcon} />
               )}
             </Popover>
           );
@@ -1022,10 +1025,10 @@ const MarkdownContent = ({
       }
       return <span {...props}>{children}</span>;
     },
-   
+
     img: ({ src, alt, ...props }: any) => {
       console.log(`img src, alt`, src, alt, props);
-     
+
       return (
         <Image
           src={src}
@@ -1035,10 +1038,10 @@ const MarkdownContent = ({
         />
       );
     },
- 
+
     'video-button': ({ 'chunk-id': chunkId, children }: any) => {
       console.log(`video-button chunkId`, chunkId);
-  return (
+      return (
         <Button
           type="primary"
           size="small"
@@ -1051,24 +1054,24 @@ const MarkdownContent = ({
     },
 
 
-          code(props: any) {
+    code(props: any) {
       const { children, className, ...rest } = props;
-            const match = /language-(\w+)/.exec(className || '');
-            return match ? (
-              <SyntaxHighlighter
-                {...rest}
-                PreTag="div"
-                language={match[1]}
-                wrapLongLines
-              >
-                {String(children).replace(/\n$/, '')}
-              </SyntaxHighlighter>
-            ) : (
-              <code {...rest} className={classNames(className, 'text-wrap')}>
-                {children}
-              </code>
-            );
-          },
+      const match = /language-(\w+)/.exec(className || '');
+      return match ? (
+        <SyntaxHighlighter
+          {...rest}
+          PreTag="div"
+          language={match[1]}
+          wrapLongLines
+        >
+          {String(children).replace(/\n$/, '')}
+        </SyntaxHighlighter>
+      ) : (
+        <code {...rest} className={classNames(className, 'text-wrap')}>
+          {children}
+        </code>
+      );
+    },
   }), [renderContentWithImagesAndVideos, thinkOpen, renderReference]);
 
   return (
@@ -1078,9 +1081,9 @@ const MarkdownContent = ({
         remarkPlugins={[remarkGfm, remarkMath]}
         className={styles.markdownContentWrapper}
         components={markdownComponents as any}
-    >
-      {contentWithCursor}
-    </Markdown>
+      >
+        {contentWithCursor}
+      </Markdown>
       {/* 视频弹窗 */}
       <Modal
         open={modalVisible}
@@ -1108,8 +1111,8 @@ const MarkdownContent = ({
           </div>
         ) : currentVideoInfo ? (
           <div style={{ textAlign: 'center' }}>
-            <div style={{ 
-              borderRadius: 8, 
+            <div style={{
+              borderRadius: 8,
               overflow: 'hidden',
               backgroundColor: '#000',
               height: '400px',
@@ -1137,9 +1140,9 @@ const MarkdownContent = ({
                       {isDownloading ? '正在下载视频...' : isVideoLoading ? '视频加载中...' : '等待视频准备...'}
                     </div>
                     <div style={{ fontSize: 12, opacity: 0.8 }}>
-                      {isDownloading ? `请稍候，正在下载视频文件 (${loadingProgress.toFixed(1)}%)` : 
-                       isVideoLoading ? `请稍候，正在初始化播放器 (${loadingProgress.toFixed(1)}%)` : 
-                       '正在准备视频播放器'}
+                      {isDownloading ? `请稍候，正在下载视频文件 (${loadingProgress.toFixed(1)}%)` :
+                        isVideoLoading ? `请稍候，正在初始化播放器 (${loadingProgress.toFixed(1)}%)` :
+                          '正在准备视频播放器'}
                     </div>
                   </div>
                 </div>
@@ -1148,7 +1151,7 @@ const MarkdownContent = ({
                 ref={videoRef}
                 className="video-js vjs-default-skin vjs-big-play-centered"
                 data-setup="{}"
-                style={{ 
+                style={{
                   width: '100%',
                   height: '100%',
                   objectFit: 'contain',
@@ -1170,14 +1173,14 @@ const MarkdownContent = ({
             <div style={{ marginTop: 16 }}>
               <button
                 type="button"
-                style={{ 
-                  padding: '8px 16px', 
-                  fontSize: 16, 
-                  borderRadius: 4, 
-                  background: (!videoBlob || isDownloading || !isVideoReady || isVideoLoading) ? '#ccc' : '#306EFD', 
-                  color: '#fff', 
-                  border: 'none', 
-                  cursor: (isPlaying || isVideoLoading || !isVideoReady || isDownloading || !videoBlob) ? 'not-allowed' : 'pointer' 
+                style={{
+                  padding: '8px 16px',
+                  fontSize: 16,
+                  borderRadius: 4,
+                  background: (!videoBlob || isDownloading || !isVideoReady || isVideoLoading) ? '#ccc' : '#306EFD',
+                  color: '#fff',
+                  border: 'none',
+                  cursor: (isPlaying || isVideoLoading || !isVideoReady || isDownloading || !videoBlob) ? 'not-allowed' : 'pointer'
                 }}
                 onClick={handlePlaySection}
                 disabled={isPlaying || isVideoLoading || !isVideoReady || isDownloading || !videoBlob}
