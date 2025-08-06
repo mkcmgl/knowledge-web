@@ -26,7 +26,7 @@ const KnowledgeCreatingModal = ({
     onOk(ret.name);
   };
 
-  const handleKeyDown = async (e) => {
+  const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       await handleOk();
     }
@@ -39,6 +39,8 @@ const KnowledgeCreatingModal = ({
       onOk={handleOk}
       onCancel={hideModal}
       okButtonProps={{ loading }}
+      cancelText="取消"
+      okText="确认"
     >
       <Form
         name="Create"

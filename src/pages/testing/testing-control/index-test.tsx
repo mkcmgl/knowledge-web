@@ -308,7 +308,7 @@ const TestingControl = ({
                 )}
               </Form.List>
             </Form.Item>
-            <Form.Item<FieldType>
+            {/* <Form.Item<FieldType>
               label={'topk设置'}
               name={'top_k'}
               tooltip={'设置返回切片数最大值，不设置默认全部返回'}
@@ -322,7 +322,7 @@ const TestingControl = ({
                 precision={1}
                 style={{ width: '100%' }}
               />
-            </Form.Item>
+            </Form.Item> */}
 
             <Button
               type="primary"
