@@ -1120,7 +1120,8 @@ const MarkdownContent = ({
               position: 'relative',
               marginBottom: '16px'
             }}>
-              {(!videoBlob || isDownloading || !isVideoReady || isVideoLoading) && (
+              {/* 视频未加载完成时显示封面图和加载文字 */}
+              {(!videoBlob || isDownloading || !isVideoReady || isVideoLoading) ? (
                 <div style={{
                   position: 'absolute',
                   top: 0,
@@ -1133,24 +1134,29 @@ const MarkdownContent = ({
                   backgroundColor: 'rgba(0,0,0,0.8)',
                   zIndex: 10,
                   color: '#fff',
-                  fontSize: 16
+                  fontSize: 16,
+                  flexDirection: 'column'
                 }}>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ marginBottom: 8 }}>
-                      {isDownloading ? '正在下载视频...' : isVideoLoading ? '视频加载中...' : '等待视频准备...'}
-                    </div>
-                    <div style={{ fontSize: 12, opacity: 0.8 }}>
-                      {isDownloading ? `请稍候，正在下载视频文件 (${loadingProgress.toFixed(1)}%)` :
-                        isVideoLoading ? `请稍候，正在初始化播放器 (${loadingProgress.toFixed(1)}%)` :
-                          '正在准备视频播放器'}
-                    </div>
-                  </div>
+
+                  <AuthenticatedImage
+                    src={currentVideoInfo?.id ? `/api/file/getFirstFrameByChunkId?chunkId=${currentVideoInfo.id}` : ''}
+                    alt="视频封面" style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      borderRadius: 8
+                    }}
+                    preview={false}
+                  />
+                  <div>视频加载中...</div>
                 </div>
-              )}
+              ) : null}
+              {/* 加载完成后显示视频 */}
               <video
                 ref={videoRef}
                 className="video-js vjs-default-skin vjs-big-play-centered"
-                data-setup="{}"
+                  data-setup="{}"
+                  
                 style={{
                   width: '100%',
                   height: '100%',
@@ -1159,14 +1165,12 @@ const MarkdownContent = ({
                 }}
               />
             </div>
-
             {/* 渲染内容时去除所有 '[{chunk_id:...}]' 结构的文本 */}
             <div style={{ flex: 1, marginTop: 16, fontSize: 16, textAlign: 'left' }}>
               {currentVideoInfo.content_ltks
                 ? renderContentWithImagesAndVideos(currentVideoInfo.content_ltks.replace(/\[\{chunk_id:[^}]+\}\]/g, ''))
                 : ''}
             </div>
-
             <div style={{ marginTop: 10, fontSize: 14, color: '#676767' }}>
               相关片段: {formatTimeDisplay(currentVideoInfo.start_time)} - {formatTimeDisplay(currentVideoInfo.end_time)}
             </div>

@@ -119,6 +119,7 @@ export interface ITestingChunk {
   content_with_weight: string;
   doc_id: string;
   doc_name: string;
+  title?: string;
   img_id: string;
   image_id: string;
   important_kwd: any[];

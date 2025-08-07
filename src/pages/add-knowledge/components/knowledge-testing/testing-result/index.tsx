@@ -122,7 +122,7 @@ const TestingResult = ({
     if (!timeStr) return 0;
     const parts = timeStr.split(':').map(Number);
     console.log('时间转换:', timeStr, 'parts:', parts);
-    
+
     // 处理"时:分:秒:毫秒"格式
     if (parts.length === 4) {
       const [hours, minutes, seconds, milliseconds] = parts;
@@ -156,53 +156,53 @@ const TestingResult = ({
         try {
           setIsDownloading(true);
           setLoadingProgress(0);
-          
+
           console.log('开始下载视频:', currentVideoInfo.videoUrl);
-          
+
           const response = await fetch(currentVideoInfo.videoUrl);
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
-          
+
           const reader = response.body?.getReader();
           if (!reader) {
             throw new Error('无法获取响应流');
           }
-          
+
           const contentLength = response.headers.get('content-length');
           const total = contentLength ? parseInt(contentLength, 10) : 0;
           let receivedLength = 0;
           const chunks: Uint8Array[] = [];
-          
+
           while (true) {
             const { done, value } = await reader.read();
-            
+
             if (done) break;
-            
+
             chunks.push(value);
             receivedLength += value.length;
-            
+
             if (total > 0) {
               const progress = (receivedLength / total) * 100;
               setLoadingProgress(progress);
               console.log(`下载进度: ${progress.toFixed(1)}%`);
             }
           }
-          
+
           const blob = new Blob(chunks as BlobPart[], { type: 'video/mp4' });
           setVideoBlob(blob);
           setIsDownloading(false);
           setLoadingProgress(100);
           setIsVideoReady(true); // 下载完成后立即设置为准备就绪
           console.log('视频下载完成，大小:', blob.size, 'bytes');
-          
+
         } catch (error) {
           console.error('视频下载失败:', error);
           setIsDownloading(false);
           setLoadingProgress(0);
         }
       };
-      
+
       downloadVideo();
     }
   }, [modalVisible, currentVideoInfo, videoBlob, isDownloading]);
@@ -234,7 +234,7 @@ const TestingResult = ({
         playerRef.current.dispose();
         playerRef.current = null;
       }
-      
+
       // 声明定时器变量
       let progressInterval: NodeJS.Timeout | null = null;
 
@@ -281,13 +281,13 @@ const TestingResult = ({
       player.ready(() => {
         console.log('Video.js 播放器准备就绪');
         setIsVideoLoading(false); // 播放器准备就绪，停止加载状态
-        
+
         // 等待元数据加载完成后再设置时间
         player.on('loadedmetadata', () => {
           console.log('视频元数据加载完成，设置初始时间:', start);
           player.currentTime(start);
         });
-        
+
         // 监听数据加载完成事件
         player.on('loadeddata', () => {
           console.log('视频数据加载完成，确保设置初始时间:', start);
@@ -296,7 +296,7 @@ const TestingResult = ({
           console.log('视频时长:', player.duration());
           console.log('缓冲状态:', player.buffered());
         });
-        
+
         // 监听可以播放事件
         player.on('canplay', () => {
           try {
@@ -310,7 +310,7 @@ const TestingResult = ({
             console.error('canplay 事件处理错误:', error);
           }
         });
-        
+
         // 监听可以播放通过事件（更高级的缓冲状态）
         player.on('canplaythrough', () => {
           console.log('视频可以流畅播放，当前时间:', player.currentTime());
@@ -318,7 +318,7 @@ const TestingResult = ({
           setIsVideoLoading(false);
           setIsVideoReady(true);
         });
-        
+
         // 监听进度条拖动事件
         player.on('seeking', () => {
           try {
@@ -329,7 +329,7 @@ const TestingResult = ({
             console.error('seeking 事件处理错误:', error);
           }
         });
-        
+
         // 监听时间更新
         player.on('timeupdate', () => {
           try {
@@ -357,7 +357,7 @@ const TestingResult = ({
             console.error('timeupdate 事件处理错误:', error);
           }
         });
-        
+
         // 监听播放开始事件
         player.on('play', () => {
           try {
@@ -371,14 +371,14 @@ const TestingResult = ({
             console.error('play 事件处理错误:', error);
           }
         });
-        
+
         // 监听等待事件（视频缓冲中）
         // player.on('waiting', () => {
         //   console.log('视频等待数据加载...');
         //   setIsVideoLoading(true); // 缓冲时显示loading
         //   setLoadingProgress(0); // 重置进度
         // });
-        
+
         // 监听进度事件（视频加载中）
         player.on('progress', () => {
           console.log('视频加载进度，当前时间:', player.currentTime());
@@ -386,7 +386,7 @@ const TestingResult = ({
           setIsVideoLoading(false);
           setIsVideoReady(true);
         });
-        
+
         // 监听播放暂停事件
         player.on('pause', () => {
           console.log('播放暂停');
@@ -395,7 +395,7 @@ const TestingResult = ({
             setIsPlaying(false); // 重置播放状态
           }, 50);
         });
-        
+
         // 监听播放结束事件
         player.on('ended', () => {
           console.log('播放结束');
@@ -404,7 +404,7 @@ const TestingResult = ({
             setIsPlaying(false); // 重置播放状态
           }, 50);
         });
-        
+
         // 确保控制栏可见
         setTimeout(() => {
           const videoElement = player.el() as HTMLElement;
@@ -413,11 +413,11 @@ const TestingResult = ({
             videoElement.style.position = 'relative';
             videoElement.style.width = '100%';
             videoElement.style.height = '100%';
-            
+
             const controlBar = videoElement.querySelector('.vjs-control-bar');
             const progressBar = videoElement.querySelector('.vjs-progress-control');
             const playButton = videoElement.querySelector('.vjs-play-control');
-            
+
             if (controlBar) {
               (controlBar as HTMLElement).style.display = 'flex';
               (controlBar as HTMLElement).style.visibility = 'visible';
@@ -506,20 +506,20 @@ const TestingResult = ({
     console.log('currentVideoInfo:', !!currentVideoInfo);
     console.log('videoBlob:', !!videoBlob);
     console.log('isVideoReady:', isVideoReady);
-    
+
     if (playerRef.current && currentVideoInfo && videoBlob && isVideoReady) {
       const startSec = timeStrToSeconds(currentVideoInfo.start_time);
       const endSec = timeStrToSeconds(currentVideoInfo.end_time);
-      
+
       console.log(`Video.js 播放片段:`, startSec, '到', endSec);
       console.log('播放器状态:', playerRef.current.readyState());
-      
+
       // 确保播放器已准备就绪
       if (playerRef.current.readyState() >= 1) {
         // 使用 Video.js API 设置时间和播放
         console.log('设置播放时间:', startSec);
         playerRef.current.currentTime(startSec);
-        
+
         // 延迟一点时间确保时间设置生效
         setTimeout(() => {
           console.log('当前播放时间:', playerRef.current.currentTime());
@@ -536,12 +536,12 @@ const TestingResult = ({
         playerRef.current.one('loadedmetadata', () => {
           console.log('设置播放时间:', startSec);
           playerRef.current.currentTime(startSec);
-          
+
           // 再等待数据加载完成
           playerRef.current.one('loadeddata', () => {
             console.log('数据加载完成，再次设置时间:', startSec);
             playerRef.current.currentTime(startSec);
-            
+
             setTimeout(() => {
               console.log('当前播放时间:', playerRef.current.currentTime());
               playerRef.current.play().then(() => {
@@ -682,13 +682,14 @@ const TestingResult = ({
                             ...videoInfo,
                             videoUrl: `/api/file/download/${videoInfo.doc_id}`,
                             // videoUrl: `/api/file/playVideo?docId=${videoInfo.doc_id}&duration=12&endTime=9&startTime=6`,
-                            content_ltks: x.content_ltks
+                            content_ltks: x.content_ltks,
+                            document_name: x.title
                           });
                           setModalVisible(true);
                         }}
                       >
                         <img
-                          src= {`/api/file/download/${videoInfo.cover_id}`}
+                          src={`/api/file/download/${videoInfo.cover_id}`}
                           alt="视频封面"
                           style={{
                             width: '100%',
@@ -736,13 +737,14 @@ const TestingResult = ({
           }
         }}
         footer={null}
+        title={`查看文件:${currentVideoInfo?.document_name}`}
         width={600}
         destroyOnHidden
       >
         {currentVideoInfo && (
           <div style={{ textAlign: 'center', maxHeight: '80vh', overflow: 'auto' }}>
-            <div style={{ 
-              borderRadius: 8, 
+            <div style={{
+              borderRadius: 8,
               overflow: 'hidden',
               backgroundColor: '#000',
               height: '400px',
@@ -750,44 +752,40 @@ const TestingResult = ({
               position: 'relative',
               marginBottom: '16px'
             }}>
-              {(!videoBlob || isDownloading || !isVideoReady || isVideoLoading) && (
+              {/* 视频未加载完成时显示封面图和加载文字 */}
+              {(!videoBlob || isDownloading || !isVideoReady || isVideoLoading) ? (
                 <div style={{
                   position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  top: 0, left: 0, right: 0, bottom: 0,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
                   backgroundColor: 'rgba(0,0,0,0.8)',
-                  zIndex: 10,
-                  color: '#fff',
-                  fontSize: 16
+                  zIndex: 10, color: '#fff', fontSize: 16, flexDirection: 'column'
                 }}>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ marginBottom: 8 }}>
-                      {isDownloading ? '正在下载视频...' : isVideoLoading ? '视频加载中...' : '等待视频准备...'}
-                    </div>
-                    <div style={{ fontSize: 12, opacity: 0.8 }}>
-                      {isDownloading ? `请稍候，正在下载视频文件 (${loadingProgress.toFixed(1)}%)` : 
-                       isVideoLoading ? `请稍候，正在初始化播放器 (${loadingProgress.toFixed(1)}%)` : 
-                       '正在准备视频播放器'}
-                    </div>
-                  </div>
+                  <img
+                    src={currentVideoInfo.cover_id ? `/api/file/download/${currentVideoInfo.cover_id}` : ''}
+                    alt="视频封面"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      borderRadius: 8
+                    }}
+                  />
+                  <div>视频加载中...</div>
                 </div>
-              )}
+              ) : null}
+              {/* 加载完成后显示视频 */}
               <video
                 ref={videoRef}
-                  className="video-js vjs-default-skin vjs-big-play-centered"
-                  data-setup="{}"
-                  style={{ 
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
-                    backgroundColor: '#000'
-                  }}
-                />
+                className="video-js vjs-default-skin vjs-big-play-centered"
+                data-setup="{}"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  backgroundColor: '#000'
+                }}
+              />
             </div>
 
             {/* 渲染内容时去除所有 '[{chunk_id:...}]' 结构的文本 */}
@@ -796,20 +794,20 @@ const TestingResult = ({
                 ? renderContentWithImages(currentVideoInfo.content_ltks.replace(/\[\{chunk_id:[^}]+\}\]/g, ''))
                 : ''}
             </div>
-            <div style={{ marginTop: 10,fontSize: 16,color: '#676767' }}>
+            <div style={{ marginTop: 10, fontSize: 16, color: '#676767' }}>
               相关片段: {formatTimeDisplay(currentVideoInfo.start_time)} - {formatTimeDisplay(currentVideoInfo.end_time)}
             </div>
             <div style={{ marginTop: 16 }}>
               <button
                 type="button"
-                style={{ 
-                  padding: '8px 16px', 
-                  fontSize: 16, 
-                  borderRadius: 4, 
-                  background: (!videoBlob || isDownloading || !isVideoReady || isVideoLoading) ? '#ccc' : '#306EFD', 
-                  color: '#fff', 
-                  border: 'none', 
-                  cursor: (isPlaying || isVideoLoading || !isVideoReady || isDownloading || !videoBlob) ? 'not-allowed' : 'pointer' 
+                style={{
+                  padding: '8px 16px',
+                  fontSize: 16,
+                  borderRadius: 4,
+                  background: (!videoBlob || isDownloading || !isVideoReady || isVideoLoading) ? '#ccc' : '#306EFD',
+                  color: '#fff',
+                  border: 'none',
+                  cursor: (isPlaying || isVideoLoading || !isVideoReady || isDownloading || !videoBlob) ? 'not-allowed' : 'pointer'
                 }}
                 onClick={handlePlaySection}
                 disabled={isPlaying || isVideoLoading || !isVideoReady || isDownloading || !videoBlob}
