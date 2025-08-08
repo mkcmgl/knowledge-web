@@ -61,18 +61,26 @@ export const useFetchNextChunkList = (options?: {
         available_int: available,
         keywords: searchString,
       });
+      // if (data.code === 0) {
+      //   const res = data.data;
+      //   // 去除content_with_weight中的html标签
+      //   const cleanChunks = (res.chunks || []).map((chunk: any) => ({
+      //     ...chunk,
+      //     content_with_weight:
+      //       typeof chunk.content_with_weight === 'string'
+      //         ? chunk.content_with_weight.replace(/<[^>]+>/g, '')
+      //         : chunk.content_with_weight,
+      //   }));
+      //   return {
+      //     data: cleanChunks,
+      //     total: res.total,
+      //     documentInfo: res.doc,
+      //   };
+      // }
       if (data.code === 0) {
         const res = data.data;
-        // 去除content_with_weight中的html标签
-        const cleanChunks = (res.chunks || []).map((chunk: any) => ({
-          ...chunk,
-          content_with_weight:
-            typeof chunk.content_with_weight === 'string'
-              ? chunk.content_with_weight.replace(/<[^>]+>/g, '')
-              : chunk.content_with_weight,
-        }));
         return {
-          data: cleanChunks,
+          data: res.chunks,
           total: res.total,
           documentInfo: res.doc,
         };
