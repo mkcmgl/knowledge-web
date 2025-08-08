@@ -760,7 +760,17 @@ const TestingResult = ({
                       borderRadius: 8
                     }}
                   />
-                  <div>视频加载中...</div>
+                  <div style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    color: '#fff',
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
+                    zIndex: 11
+                  }} >视频加载中...</div>
                 </div>
               ) : null}
               {/* 加载完成后显示视频 */}
