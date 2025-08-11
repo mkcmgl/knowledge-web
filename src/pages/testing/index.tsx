@@ -85,12 +85,17 @@ const KnowledgeTesting = () => {
           />
         </div>
         <Modal
-          title="测试结果"
+          title="测试详情"
           open={isModalOpen}
           onCancel={handleModalClose}
           width="80%"
           footer={null}
           destroyOnHidden
+          styles={{
+            header: {
+              textAlign: 'center'
+            }
+          }}
         >
           <TestingResult
             handleTesting={handleTesting}

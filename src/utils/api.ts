@@ -59,6 +59,7 @@ export default {
   rm_chunk: `${api_host}/chunk/rm`,
   // retrieval_test: `${api_host}/chunk/retrieval_test`,
   retrieval_test: `${api_rag_host}/query/retrieval`,
+  batch_retrieval_test:`${api_rag_host}/query/batchRetrieval`,
   knowledge_graph: `${api_host}/chunk/knowledge_graph`,
   getVideoChunks: `${api_rag_host}/chunk/getVideoChunks`,
   minioGetDownloadUrl: `${api_rag_host}/minio/getDownloadUrl`,

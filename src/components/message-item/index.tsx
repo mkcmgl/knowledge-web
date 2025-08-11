@@ -193,12 +193,13 @@ const MessageItem = ({
 
                         <NewDocumentLink
                           documentId={item.doc_id}
-                          documentName={item.doc_name}
+                          documentName={item.doc_name ? item.doc_name.replace('_modified', '') : ''}
                           prefix="document"
                           link={item.url}
                           clickDocumentButton={(documentId, chunk) => handlePdfClick(documentId, chunk, item.doc_name)}
                         >
-                          {item.doc_name}
+                          {/* 只删除 _modifie 字符串，保留后缀等内容 */}
+                          {item.doc_name ? item.doc_name.replace('_modified', '') : ''}
                         </NewDocumentLink>
                       </Flex>
                     </List.Item>
@@ -225,11 +226,12 @@ const MessageItem = ({
                         {isImage(fileExtension) ? (
                           <NewDocumentLink
                             documentId={item.id}
-                            documentName={item.name}
+                            documentName= {item.name ? item.name.replace('_modified', '') : ''}
                             prefix="document"
                             clickDocumentButton={(documentId, chunk) => handlePdfClick(documentId, chunk, item.name)}
                           >
-                            {item.name}
+                             {item.name ? item.name.replace('_modified', '') : ''}
+                           
                           </NewDocumentLink>
                         ) : (
                           <Button
@@ -240,7 +242,7 @@ const MessageItem = ({
                               style={{ maxWidth: '40vw' }}
                               ellipsis={{ tooltip: item.name }}
                             >
-                              {item.name}
+                               {item.name ? item.name.replace('_modified', '') : ''}
                             </Text>
                           </Button>
                         )}
@@ -266,7 +268,8 @@ const MessageItem = ({
         hideModal={() => setPdfVisible(false)}
         documentId={pdfDocumentId}
         chunk={pdfChunk}
-        documentName={pdfDocumentName}
+        documentName={pdfDocumentName ? pdfDocumentName.replace('_modified', '') : ''}
+        
       />
     </div>
   );

@@ -145,6 +145,12 @@ export interface ITestingResult {
   documents: ITestingDocument[];
   total: number;
   labels?: Record<string, number>;
+  allResults?: Array<{
+    query: string;
+    chunks: ITestingChunk[];
+    documents: ITestingDocument[];
+    total: number;
+  }>;
 }
 
 export interface INextTestingResult {
