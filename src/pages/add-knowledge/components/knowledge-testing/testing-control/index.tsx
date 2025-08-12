@@ -1,27 +1,18 @@
 import Rerank from '@/components/rerank';
-import SimilaritySlider from '@/components/similarity-slider';
 import { useTranslate } from '@/hooks/common-hooks';
 import { useChunkIsTesting } from '@/hooks/knowledge-hooks';
-import { Button, Divider, Flex, Form, Input, InputNumber, Space, message } from 'antd';
+import { Button, Flex, Form, Input, InputNumber, message } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { LabelWordCloud } from './label-word-cloud';
 
-import { CrossLanguageItem } from '@/components/cross-language-item';
 import { UseKnowledgeGraphItem } from '@/components/use-knowledge-graph-item';
 import styles from './index.less';
 import DOMPurify from 'dompurify';
 import { PlusOutlined, MinusCircleOutlined, DeleteOutlined } from '@ant-design/icons';
-import Editor, { loader } from '@monaco-editor/react';
 import { useState } from 'react';
 
 
-loader.config({ paths: { vs: '/vs' } });
-type FieldType = {
-  similarity_threshold?: number;
-  vector_similarity_weight?: number;
-  question: string;
-  meta?: string;
-};
+
 
 interface IProps {
   form: FormInstance;
@@ -34,15 +25,12 @@ const TestingControl = ({
   handleTesting,
   selectedDocumentIds,
 }: IProps) => {
-  const question = Form.useWatch('question', { form, preserve: true });
   const loading = useChunkIsTesting();
   const { t } = useTranslate('knowledgeDetails');
   const [isAdvancedFilterVisible, setIsAdvancedFilterVisible] = useState(false);
   const [questionInput, setQuestionInput] = useState('');
   const [questionList, setQuestionList] = useState<string[]>([]);
   const [questionInputError, setQuestionInputError] = useState<string | null>(null);
-  const buttonDisabled =
-    !question || (typeof question === 'string' && question.trim() === '');
   const handleAddQuestion = () => {
     const value = questionInput.trim();
     if (!value) {
@@ -84,8 +72,19 @@ const TestingControl = ({
         message.warning('请至少输入一个问题');
         return;
       }
+
+
+
       // 调用原有的handleTesting函数
       handleTesting(selectedDocumentIds);
+
+      // // 测试完成后恢复百分比值
+      // if (formValues.similarity_threshold !== undefined) {
+      //   form.setFieldsValue({ similarity_threshold: formValues.similarity_threshold });
+      // }
+      // if (formValues.vector_similarity_weight !== undefined) {
+      //   form.setFieldsValue({ vector_similarity_weight: formValues.vector_similarity_weight });
+      // }
     } catch (error) { }
 
   };
@@ -163,16 +162,18 @@ const TestingControl = ({
               label={t('similarityThreshold')}
               name={'similarity_threshold'}
               tooltip={t('similarityThresholdTip')}
-              initialValue={0.2}
+              initialValue={20}
               rules={[
-                { required: true, message: t('pleaseInput') },
+                { required: true, message: '请输入相似度阈值' },
                 {
                   validator: (_, value) => {
-                    if (value < 0 || value > 1) {
-                      return Promise.reject('请输入0-1之间的数值');
+                    console.log(`objectvalue`, value, typeof (value))
+                    const numValue = Number(value);
+                    if (isNaN(numValue) || numValue < 1 || numValue > 100) {
+                      return Promise.reject('请输入1-100之间的数值');
                     }
-                    if (Math.round(value * 10) % 1 !== 0) {
-                      return Promise.reject('请输入0.1的倍数，如0.1、0.2、0.3等');
+                    if (!Number.isInteger(numValue)) {
+                      return Promise.reject('请输入整数');
                     }
                     return Promise.resolve();
                   },
@@ -180,28 +181,34 @@ const TestingControl = ({
               ]}
 
             >
-              <InputNumber
-                min={0.1}
-                max={1}
-                step={0.1}
-                precision={1}
-                style={{ width: '100%' }}
-              />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <InputNumber
+                  min={1}
+                  max={100}
+                  step={1}
+                  precision={0}
+                  style={{ width: '100%' }}
+                  defaultValue={20}
+                />
+                <span style={{ width: 32 }}>分</span>
+              </div>
+
             </Form.Item>
             <Form.Item
               label={t('vectorSimilarityWeight')}
               name={'vector_similarity_weight'}
-              initialValue={0.7}
+              initialValue={70}
               tooltip={t('vectorSimilarityWeightTip')}
               rules={[
-                { required: true, message: t('pleaseInput') },
+                { required: true, message: '请输入关键字相似度权重' },
                 {
                   validator: (_, value) => {
-                    if (value < 0 || value > 1) {
-                      return Promise.reject('请输入0-1之间的数值');
+                    const numValue = Number(value);
+                    if (isNaN(numValue) || numValue < 1 || numValue > 100) {
+                      return Promise.reject('请输入1-100之间的数值');
                     }
-                    if (Math.round(value * 10) % 1 !== 0) {
-                      return Promise.reject('请输入0.1的倍数，如0.1、0.2、0.3等');
+                    if (!Number.isInteger(numValue)) {
+                      return Promise.reject('请输入整数');
                     }
                     return Promise.resolve();
                   },
@@ -209,13 +216,18 @@ const TestingControl = ({
               ]}
 
             >
-              <InputNumber
-                min={0.1}
-                max={1}
-                step={0.1}
-                precision={1}
-                style={{ width: '100%' }}
-              />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <InputNumber
+                  min={1}
+                  max={100}
+                  step={1}
+                  precision={0}
+                  style={{ width: '100%' }}
+                  defaultValue={70}
+                />
+                <span style={{ width: 32 }}>%</span>
+              </div>
+
             </Form.Item>
 
             <Form.Item
@@ -240,18 +252,17 @@ const TestingControl = ({
                     marginLeft: 8, cursor: 'pointer',
                     userSelect: 'none'
                   }}
-                  t="1754459741571" className="icon" viewBox="0 0 1024 1024" version="1.1"
-                  xmlns="http://www.w3.org/2000/svg" p-id="2340" width="16" height="16"
-                  xlink="http://www.w3.org/1999/xlink">
-                  <path d="M325.456471 862.280661" fill="#272636" p-id="2341" />
-                  <path d="M882.057788 862.280661" fill="#272636" p-id="2342" />
-                  <path d="M236.028491 877.160382" fill="#272636" p-id="2343" />
-                  <path d="M960.132455 877.160382" fill="#272636" p-id="2344" />
-                  <path d="M63.683483 788.736998" fill="#272636" p-id="2345" />
-                  <path d="M958.469023 788.736998" fill="#272636" p-id="2346" />
-                  <path d="M64.77753 858.792098" fill="#272636" p-id="2347" />
-                  <path d="M163.396533 289.168875c-40.577772 0-66.525252 54.184545-35.441258 85.258218L477.217578 723.704878c20.031716 20.031716 49.823841 20.031716 69.853837 0l349.274345-349.277785c30.304744-30.294423 6.677812-85.258218-34.928639-85.258218L163.396533 289.168875 163.396533 289.168875z" fill="#575B66" p-id="2348" />
-                  <path d="M959.523505 858.792098" fill="#272636" p-id="2349" />
+                  className="icon" viewBox="0 0 1024 1024" version="1.1"
+                  xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                  <path d="M325.456471 862.280661" fill="#272636" />
+                  <path d="M882.057788 862.280661" fill="#272636" />
+                  <path d="M236.028491 877.160382" fill="#272636" />
+                  <path d="M960.132455 877.160382" fill="#272636" />
+                  <path d="M63.683483 788.736998" fill="#272636" />
+                  <path d="M958.469023 788.736998" fill="#272636" />
+                  <path d="M64.77753 858.792098" fill="#272636" />
+                  <path d="M163.396533 289.168875c-40.577772 0-66.525252 54.184545-35.441258 85.258218L477.217578 723.704878c20.031716 20.031716 49.823841 20.031716 69.853837 0l349.274345-349.277785c30.304744-30.294423 6.677812-85.258218-34.928639-85.258218L163.396533 289.168875 163.396533 289.168875z" fill="#575B66" />
+                  <path d="M959.523505 858.792098" fill="#272636" />
                 </svg>
                 :
 
@@ -260,86 +271,87 @@ const TestingControl = ({
                     marginLeft: 8, cursor: 'pointer',
                     userSelect: 'none'
                   }}
-                  t="1754459876883" classname="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4177" width="16" height="16">
+                  className="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
                   <path d="M385.536 102.4l398.848 364.544c12.288 10.752 19.456 26.624 19.456 43.008s-7.168 32.256-19.456 43.008l-398.848 364.544c-18.944 17.92-46.08 23.552-70.656 14.336s-40.96-31.232-43.52-57.344V145.408c2.048-26.112 18.944-48.128 43.52-57.344 24.064-9.216 51.712-3.584 70.656 14.336z"
-                    fill="#575B66" p-id="4178" />
+                    fill="#575B66" />
                 </svg>
 
               }
             </Form.Item>
-            {isAdvancedFilterVisible && (<div>
-              <Rerank></Rerank>
-              <UseKnowledgeGraphItem filedName={['use_kg']}></UseKnowledgeGraphItem>
-              <Form.Item
-                label={t('setMetaData')}
-                tooltip={
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(t('documentMetaTips')),
-                    }}
-                  />
-                }
+            {isAdvancedFilterVisible && (
+              <div style={{width:'calc(100% - 38px)'}}>
+                <Rerank></Rerank>
+                <UseKnowledgeGraphItem filedName={['use_kg']}></UseKnowledgeGraphItem>
+                <Form.Item
+                  label={t('setMetaData')}
+                  tooltip={
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(t('documentMetaTips')),
+                      }}
+                    />
+                  }
 
-              >
-                <Form.List name="metaList">
-                  {(fields, { add, remove }) => (
-                    <>
-                      {fields.map(({ key, name, ...restField }) => (
-                        <Flex key={key} style={{ marginBottom: 8, width: '100%' }} align="center" gap={8}>
-                          <Form.Item
-                            label="字段名"
-                            {...restField}
-                            name={[name, 'key']}
-                            rules={[
-                              {
-                                pattern: /^[a-zA-Z]*$/,
-                                message: '字段名只能输入英文字母'
+                >
+                  <Form.List name="metaList">
+                    {(fields, { add, remove }) => (
+                      <>
+                        {fields.map(({ key, name, ...restField }) => (
+                          <Flex key={key} style={{ marginBottom: 8, width: '100%' }} align="center" gap={8}>
+                            <Form.Item
+                              label="字段名"
+                              {...restField}
+                              name={[name, 'key']}
+                              rules={[
+                                {
+                                  pattern: /^[a-zA-Z]*$/,
+                                  message: '字段名只能输入英文字母'
+                                }
+                              ]}
+                              style={{ flex: 1, marginBottom: 0 }}
+                              labelCol={{ span: 6 }}
+                              wrapperCol={{ span: 18 }}
+                            >
+                              <Input placeholder="请输入字段名" allowClear />
+                            </Form.Item>
+                            <Form.Item
+                              {...restField}
+                              label="数据"
+                              name={[name, 'value']}
+                              rules={[{ message: '请输入数据' }]}
+                              style={{ flex: 1, marginBottom: 0 }}
+                              labelCol={{ span: 6 }}
+                              wrapperCol={{ span: 18 }}
+                            >
+                              <Input placeholder="请输入数据" allowClear />
+                            </Form.Item>
+                            <MinusCircleOutlined
+                              onClick={() => remove(name)}
+                              style={{ cursor: 'pointer', color: '#ff4d4f' }}
+                            />
+                          </Flex>
+                        ))}
+                        <Form.Item>
+                          <Button
+                            type="dashed"
+                            onClick={() => {
+                              if (fields.length < 50) {
+                                add();
+                              } else {
+                                message.warning('最多只能添加50行数据');
                               }
-                            ]}
-                            style={{ flex: 1, marginBottom: 0 }}
-                            labelCol={{ span: 6 }}
-                            wrapperCol={{ span: 18 }}
+                            }}
+                            block
+                            icon={<PlusOutlined />}
                           >
-                            <Input placeholder="请输入字段名" allowClear />
-                          </Form.Item>
-                          <Form.Item
-                            {...restField}
-                            label="数据"
-                            name={[name, 'value']}
-                            rules={[{ message: '请输入数据' }]}
-                            style={{ flex: 1, marginBottom: 0 }}
-                            labelCol={{ span: 6 }}
-                            wrapperCol={{ span: 18 }}
-                          >
-                            <Input placeholder="请输入数据" allowClear />
-                          </Form.Item>
-                          <MinusCircleOutlined
-                            onClick={() => remove(name)}
-                            style={{ cursor: 'pointer', color: '#ff4d4f' }}
-                          />
-                        </Flex>
-                      ))}
-                      <Form.Item>
-                        <Button
-                          type="dashed"
-                          onClick={() => {
-                            if (fields.length < 50) {
-                              add();
-                            } else {
-                              message.warning('最多只能添加50行数据');
-                            }
-                          }}
-                          block
-                          icon={<PlusOutlined />}
-                        >
-                          添加元数据
-                        </Button>
-                      </Form.Item>
-                    </>
-                  )}
-                </Form.List>
-              </Form.Item>
-            </div>)}
+                            添加元数据
+                          </Button>
+                        </Form.Item>
+                      </>
+                    )}
+                  </Form.List>
+                </Form.Item>
+              </div>)}
 
 
             <Button

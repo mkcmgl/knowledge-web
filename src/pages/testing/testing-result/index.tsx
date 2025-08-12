@@ -62,7 +62,7 @@ const TestingResult = ({
   selectedDocumentIds,
   setSelectedDocumentIds,
 }: IProps) => {
-  const { documents: documentsAll, allResults } = useAllTestingResult();
+  const { allResults } = useAllTestingResult();
   const { t } = useTranslate('knowledgeDetails');
   const { pagination, setPagination } = useGetPaginationWithRouter();
   const isSuccess = useSelectIsTestingSuccess();
@@ -81,6 +81,9 @@ const TestingResult = ({
   const currentChunks = currentQuestionData.chunks || [];
   const currentDocuments = currentQuestionData.documents || [];
   const currentTotal = currentQuestionData.total || 0;
+  
+  // 获取当前问题对应的文档总数
+  const currentDocumentsCount = currentDocuments?.length || 0;
 
   const onChange: PaginationProps['onChange'] = (pageNumber, pageSize) => {
     pagination.onChange?.(pageNumber, pageSize);
@@ -611,7 +614,7 @@ const TestingResult = ({
 
       {/* 新增：问题列表和结果显示的布局 */}
       {isSuccess && allResults && allResults.length > 0 ? (
-        <div style={{ display: 'flex', gap: '20px', }}>
+        <div style={{ display: 'flex', gap: '20px', height:'100%'}}>
           {/* 左边：问题列表 */}
           <div style={{
             width: '200px',
@@ -679,25 +682,26 @@ const TestingResult = ({
                   {
                     key: '1',
                     label: (
-                      <Flex
-                        justify={'space-between'}
-                        align="center"
-                        className={styles.selectFilesTitle}
-                      >
-                        <Space>
-                          <span>
-                            {selectedDocumentIds?.length ?? 0}/
-                            {documentsAll?.length ?? 0}
-                          </span>
-                          {t('filesSelected')}
-                        </Space>
-                      </Flex>
+                                              <Flex
+                          justify={'space-between'}
+                          align="center"
+                          className={styles.selectFilesTitle}
+                        >
+                          <Space>
+                            <span>
+                              {selectedDocumentIds?.length ?? 0}/
+                              {currentDocumentsCount}
+                            </span>
+                            {t('filesSelected')}
+                          </Space>
+                        </Flex>
                     ),
                     children: (
                       <div>
                         <SelectFiles
                           setSelectedDocumentIds={setSelectedDocumentIds}
                           handleTesting={onTesting}
+                          documents={currentDocuments}
                         ></SelectFiles>
                       </div>
                     ),

@@ -15,7 +15,6 @@ import kbService, {
   removeTag,
   renameTag,
     batch_retrieval_test,
-  retrieval_test,
 } from '@/services/knowledge-service';
 import {
   useInfiniteQuery,

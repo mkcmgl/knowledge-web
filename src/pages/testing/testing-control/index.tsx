@@ -162,8 +162,11 @@ const TestingControl = ({
             <Form.Item name="question" hidden>
               <Input />
             </Form.Item>
-            <Form.Item label={t('testText')} required validateStatus={questionInputError ? 'error' : ''} help={questionInputError}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <Form.Item style={{ flex: 1 }} label={t('testText')} required 
+               rules={[
+                { required: true, message: '请输入问题' }]}
+              validateStatus={questionInputError ? 'error' : ''} help={questionInputError}>
                 <Input
                   value={questionInput}
                   onChange={e => {
@@ -172,28 +175,102 @@ const TestingControl = ({
                   }}
                   placeholder={t('testTextPlaceholder')}
                   allowClear
-                  style={{ flex: 1 }}
+
                   onPressEnter={handleAddQuestion}
                 />
-                <Button type="primary" icon={<PlusOutlined />} onClick={handleAddQuestion} />
-              </div>
-              {questionList.length > 0 && (
-                <div >
-                  {questionList.map((q, idx) => (
-                    <div key={idx} style={{ display: 'flex', alignItems: 'center', margin: '4px 0', background: '#f6f8fa', borderRadius: 4, padding: '4px 8px' }}>
-                      <span style={{ flex: 1 }}>{q}</span>
-                      <DeleteOutlined style={{ color: '#ff4d4f', cursor: 'pointer' }} onClick={() => handleDeleteQuestion(idx)} />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </Form.Item>
 
+                {questionList.length > 0 && (
+                  <div >
+                    {questionList.map((q, idx) => (
+                      <div key={idx} style={{ display: 'flex', alignItems: 'center', margin: '4px 0', background: '#f6f8fa', borderRadius: 4, padding: '4px 8px' }}>
+                        <span style={{ flex: 1 }}>{q}</span>
+                        <DeleteOutlined style={{ color: '#ff4d4f', cursor: 'pointer' }} onClick={() => handleDeleteQuestion(idx)} />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Form.Item>
+              <Button type="primary" icon={<PlusOutlined />} onClick={handleAddQuestion} />
+            </div>
+
+
+
+
+            <Form.Item
+              label='相似度阈值'
+              name={'similarity_threshold'}
+              tooltip={t('similarityThresholdTip')}
+              initialValue={20}
+              rules={[
+                { required: true, message: '请输入相似度阈值'},
+                {
+                  validator: (_, value) => {
+                    console.log(`objectvalue`, value, typeof (value))
+                    const numValue = Number(value);
+                    if (isNaN(numValue) || numValue < 1 || numValue > 100) {
+                      return Promise.reject('请输入1-100之间的数值');
+                    }
+                    if (!Number.isInteger(numValue)) {
+                      return Promise.reject('请输入整数');
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
+
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <InputNumber
+                  min={1}
+                  max={100}
+                  step={1}
+                  precision={0}
+                  style={{ width: '100%' }}
+                  defaultValue={20}
+                />
+                <span style={{ width: 32 }}>分</span>
+              </div>
+            </Form.Item>
+            <Form.Item
+              label={t('vectorSimilarityWeight')}
+              name={'vector_similarity_weight'}
+              initialValue={70}
+              tooltip={t('vectorSimilarityWeightTip')}
+              rules={[
+                { required: true, message: '请输入关键字相似度权重'},
+                {
+                  validator: (_, value) => {
+                    const numValue = Number(value);
+                    if (isNaN(numValue) || numValue < 1 || numValue > 100) {
+                      return Promise.reject('请输入1-100之间的数值');
+                    }
+                    if (!Number.isInteger(numValue)) {
+                      return Promise.reject('请输入整数');
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
+
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <InputNumber
+                  min={1}
+                  max={100}
+                  step={1}
+                  precision={0}
+                  style={{ width: '100%' }}
+                  defaultValue={70}
+                />
+                <span style={{ width: 32 }}>%</span>
+              </div>
+            </Form.Item>
             <Form.Item
               label="测试知识库"
               name={'test_kb_ids'}
               tooltip={'请根据不同的Embedding模型选择知识库，不支持跨模型选择知识库。'}
               rules={[{ required: true, message: "请选择一个或多个知识库" }]}
+              style={{width:'calc(100% - 38px)'}}
             >
               <TreeSelect
                 treeData={treeData}
@@ -222,66 +299,6 @@ const TestingControl = ({
                 styles={{ popup: { root: { maxHeight: 400, overflow: 'auto' } } }}
               />
             </Form.Item>
-
-            <Form.Item
-              label='相似度阈值'
-              name={'similarity_threshold'}
-              tooltip={t('similarityThresholdTip')}
-              initialValue={0.2}
-              rules={[
-                { required: true, message: t('pleaseInput') },
-                {
-                  validator: (_, value) => {
-                    if (value < 0 || value > 1) {
-                      return Promise.reject('请输入0-1之间的数值');
-                    }
-                    if (Math.round(value * 10) % 1 !== 0) {
-                      return Promise.reject('请输入0.1的倍数，如0.1、0.2、0.3等');
-                    }
-                    return Promise.resolve();
-                  },
-                },
-              ]}
-
-            >
-              <InputNumber
-                min={0.1}
-                max={1}
-                step={0.1}
-                precision={1}
-                style={{ width: '100%' }}
-              />
-            </Form.Item>
-            <Form.Item
-              label={t('vectorSimilarityWeight')}
-              name={'vector_similarity_weight'}
-              initialValue={0.7}
-              tooltip={t('vectorSimilarityWeightTip')}
-              rules={[
-                { required: true, message: t('pleaseInput') },
-                {
-                  validator: (_, value) => {
-                    if (value < 0 || value > 1) {
-                      return Promise.reject('请输入0-1之间的数值');
-                    }
-                    if (Math.round(value * 10) % 1 !== 0) {
-                      return Promise.reject('请输入0.1的倍数，如0.1、0.2、0.3等');
-                    }
-                    return Promise.resolve();
-                  },
-                },
-              ]}
-
-            >
-              <InputNumber
-                min={0.1}
-                max={1}
-                step={0.1}
-                precision={1}
-                style={{ width: '100%' }}
-              />
-            </Form.Item>
-
             <Form.Item
               // label={
               //   <div
@@ -324,7 +341,7 @@ const TestingControl = ({
                     marginLeft: 8, cursor: 'pointer',
                     userSelect: 'none'
                   }}
-                  t="1754459876883" classname="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4177" width="16" height="16">
+                  t="1754459876883" className="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4177" width="16" height="16">
                   <path d="M385.536 102.4l398.848 364.544c12.288 10.752 19.456 26.624 19.456 43.008s-7.168 32.256-19.456 43.008l-398.848 364.544c-18.944 17.92-46.08 23.552-70.656 14.336s-40.96-31.232-43.52-57.344V145.408c2.048-26.112 18.944-48.128 43.52-57.344 24.064-9.216 51.712-3.584 70.656 14.336z"
                     fill="#575B66" p-id="4178" />
                 </svg>
@@ -333,8 +350,8 @@ const TestingControl = ({
             </Form.Item>
 
             {isAdvancedFilterVisible && (
-              <div>
-                <Rerank></Rerank>
+              <div  style={{width:'calc(100% - 38px)'}}>
+                <Rerank ></Rerank>
                 <UseKnowledgeGraphItem filedName={['use_kg']}></UseKnowledgeGraphItem>
 
 
