@@ -94,7 +94,7 @@ export default {
   getConversationSSE: `${api_host}/conversation/getsse`,
   listConversation: `${api_rag_host}/conversation/completion/list`,
   removeConversation: `${api_host}/conversation/rm`,
-  completeConversation: `${api_host}/conversation/completion`,
+  completeConversation: `${api_rag_host}/conversation/completion`,
   deleteMessage: `${api_host}/conversation/delete_msg`,
   thumbup: `${api_host}/conversation/thumbup`,
   tts: `${api_host}/conversation/tts`,

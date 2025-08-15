@@ -1165,8 +1165,8 @@ const MarkdownContent = ({
               <video
                 ref={videoRef}
                 className="video-js vjs-default-skin vjs-big-play-centered"
-                  data-setup="{}"
-                  
+                data-setup="{}"
+
                 style={{
                   width: '100%',
                   height: '100%',
@@ -1177,7 +1177,8 @@ const MarkdownContent = ({
             </div>
             {/* 渲染内容时去除所有 '[{chunk_id:...}]' 结构的文本 */}
             <div style={{ flex: 1, marginTop: 16, fontSize: 16, textAlign: 'left' }}>
-              {currentVideoInfo.content_ltks
+
+              {currentVideoInfo.content_ltks && typeof currentVideoInfo.content_ltks === 'string'
                 ? renderContentWithImagesAndVideos(currentVideoInfo.content_ltks.replace(/\[\{chunk_id:[^}]+\}\]/g, ''))
                 : ''}
             </div>

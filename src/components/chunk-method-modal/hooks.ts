@@ -124,11 +124,12 @@ export const useFetchParserListOnMount = (
         DocumentParserType.One,
         DocumentParserType.Qa,
         DocumentParserType.Table,
+        DocumentParserType.video,
+        
       ],
       parserList,
     );
   }, [parserList, documentExtension]);
-
   useEffect(() => {
     setSelectedTag(parserId);
   }, [parserId, documentId]);
