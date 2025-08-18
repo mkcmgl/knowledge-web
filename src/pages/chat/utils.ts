@@ -29,16 +29,20 @@ export const buildMessageItemReference = (
   conversation: { message: IMessage[]; reference: IReference[] },
   message: IMessage,
 ) => {
+
+  console.log(`conversationmessage`,conversation,message)
   const assistantMessages = conversation.message
     ?.filter((x) => x.role === MessageType.Assistant)
     .slice(1);
+    console.log(`assistantMessages`,assistantMessages)
   const referenceIndex = assistantMessages.findIndex(
     (x) => x.id === message.id,
   );
+  console.log(`assistantMessages,referenceIndex`,assistantMessages,referenceIndex)
   const reference = !isEmpty(message?.reference)
     ? message?.reference
     : (conversation?.reference ?? [])[referenceIndex];
-
+console.log(`reference`,reference)
   return reference ?? { doc_aggs: [], chunks: [], total: 0 };
 };
 
