@@ -272,7 +272,7 @@ export const useTestChunkRetrieval = (): ResponsePostType<ITestingResult> & {
               },
             }
           : {}),
-        vector_similarity_weight: values.vector_similarity_weight,
+        vector_similarity_weight:1- values.vector_similarity_weight,
         metadata_condition: {
           conditions: (
             values.metaList as Array<{ key: string; value: string }>
@@ -365,7 +365,7 @@ export const useTestChunkAllRetrieval = (): ResponsePostType<ITestingResult> & {
               },
             }
           : {}),
-        vector_similarity_weight: values.vector_similarity_weight,
+        vector_similarity_weight: 1- values.vector_similarity_weight,
         metadata_condition: {
           conditions: (
             values.metaList as Array<{ key: string; value: string }>
