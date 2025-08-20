@@ -38,7 +38,7 @@ const TestingControl = ({
       return;
     }
     setQuestionInputError(null);
-    const newQuestionList = [...questionList, value];
+    const newQuestionList = [value, ...questionList];
     setQuestionList(newQuestionList);
     // 同步到 form 的 question 字段
     form.setFieldsValue({ question: newQuestionList });
@@ -60,7 +60,7 @@ const TestingControl = ({
           return;
         } else {
           setQuestionInputError(null);
-          const newQuestionList = [...questionList, questionInput.trim()];
+          const newQuestionList = [questionInput.trim(), ...questionList]; 
           setQuestionList(newQuestionList);
           form.setFieldsValue({ question: newQuestionList });
           setQuestionInput('');
@@ -243,7 +243,7 @@ const TestingControl = ({
 
               //   </div>
               // }
-              label='高级筛选'
+              label='高级配置'
               colon={false}
             >
               {isAdvancedFilterVisible ?
