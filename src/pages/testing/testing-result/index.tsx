@@ -648,6 +648,8 @@ const TestingResult = ({
                 onClick={() => {
                   setCurrentQuestionIndex(index);
                   setSelectedDocumentIds([]);
+                  // 切换问题后调用接口获取新数据
+                  handleTesting([], index);
                 }}
               >
                 <div style={{

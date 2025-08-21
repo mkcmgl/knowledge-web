@@ -653,6 +653,7 @@ const TestingResult = ({
                 onClick={() => {
                   setCurrentQuestionIndex(index);
                   setSelectedDocumentIds([]);
+                  handleTesting([], index);
                 }}
               >
                 <div style={{

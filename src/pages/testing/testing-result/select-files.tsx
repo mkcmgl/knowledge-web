@@ -58,14 +58,17 @@ const SelectFiles = ({ setSelectedDocumentIds, handleTesting, documents , select
 
   const rowSelection = {
     selectedRowKeys: selectedDocumentIds,
-    preserveSelectedRowKeys: true,
+    preserveSelectedRowKeys: false, 
     onChange: (selectedRowKeys: React.Key[]) => {
       const ids = selectedRowKeys as string[];
       setSelectedDocumentIds(ids);
-      handleTesting(ids);
+      // 只有在有选择时才调用测试
+      if (ids.length > 0) {
+        handleTesting(ids);
+      }
     },
     getCheckboxProps: (record: ITestingDocument) => ({
-      disabled: record.doc_name === 'Disabled User', // Column configuration not to be checked
+      disabled: record.doc_name === 'Disabled User',
       name: record.doc_name,
     }),
   };
