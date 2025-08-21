@@ -62,10 +62,7 @@ const SelectFiles = ({ setSelectedDocumentIds, handleTesting, documents , select
     onChange: (selectedRowKeys: React.Key[]) => {
       const ids = selectedRowKeys as string[];
       setSelectedDocumentIds(ids);
-      // 只有在有选择时才调用测试
-      if (ids.length > 0) {
         handleTesting(ids);
-      }
     },
     getCheckboxProps: (record: ITestingDocument) => ({
       disabled: record.doc_name === 'Disabled User',

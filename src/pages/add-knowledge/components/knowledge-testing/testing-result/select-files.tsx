@@ -49,13 +49,11 @@ const SelectFiles = ({ setSelectedDocumentIds, handleTesting, documents, selecte
 
   const rowSelection = {
     selectedRowKeys: selectedDocumentIds,
-    preserveSelectedRowKeys: false, 
+    preserveSelectedRowKeys: false,
     onChange: (selectedRowKeys: React.Key[]) => {
       const ids = selectedRowKeys as string[];
       setSelectedDocumentIds(ids);
-      if (ids.length > 0) {
-        handleTesting(ids);
-      }
+      handleTesting(ids);
     },
     getCheckboxProps: (record: ITestingDocument) => ({
       disabled: record.doc_name === 'Disabled User',

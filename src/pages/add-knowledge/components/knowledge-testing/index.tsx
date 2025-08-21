@@ -48,6 +48,7 @@ const KnowledgeTesting = () => {
         meta: metaJsonString
       });
       const document_ids = Array.isArray(documentIds) ? documentIds : [];
+      setIsModalOpen(true);
       await testChunkAll({
           ...values,
           meta: metaJsonString,
