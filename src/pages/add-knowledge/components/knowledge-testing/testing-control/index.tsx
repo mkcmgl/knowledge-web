@@ -16,7 +16,7 @@ import { useState } from 'react';
 
 interface IProps {
   form: FormInstance;
-  handleTesting: (documentIds?: string[]) => Promise<any>;
+  handleTesting: (documentIds?: string[], idOfQuery?: number) => Promise<any>;
   selectedDocumentIds: string[];
 }
 
@@ -76,7 +76,7 @@ const TestingControl = ({
 
 
       // 调用原有的handleTesting函数
-      handleTesting(selectedDocumentIds);
+      handleTesting(selectedDocumentIds, undefined);
 
       // // 测试完成后恢复百分比值
       // if (formValues.similarity_threshold !== undefined) {

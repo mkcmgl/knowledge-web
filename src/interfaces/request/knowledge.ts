@@ -34,9 +34,8 @@ export interface IFetchKnowledgeListRequestParams {
     score_threshold?: string|number;
     top_k?: number;
   };
-  metadata_condition?: any
-
-
+  metadata_condition?: any;
+  idOfQuery?: number; // 添加问题索引参数
 }
 
 export interface IFetchDocumentListRequestBody {

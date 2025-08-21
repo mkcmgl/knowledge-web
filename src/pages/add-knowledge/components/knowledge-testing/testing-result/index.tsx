@@ -56,7 +56,7 @@ const ChunkTitle = ({ item }: { item: ITestingChunk }) => {
 };
 
 interface IProps {
-  handleTesting: (documentIds?: string[]) => Promise<any>;
+  handleTesting: (documentIds?: string[], idOfQuery?: number) => Promise<any>;
   selectedDocumentIds: string[];
   setSelectedDocumentIds: (ids: string[]) => void;
 }
@@ -88,15 +88,15 @@ const TestingResult = ({
   const currentDocumentsCount = currentDocuments?.length || 0;
   const onChange: PaginationProps['onChange'] = (pageNumber, pageSize) => {
     pagination.onChange?.(pageNumber, pageSize);
-    handleTesting(selectedDocumentIds);
+    handleTesting(selectedDocumentIds, currentQuestionIndex);
   };
 
   const onTesting = useCallback(
     (ids: string[]) => {
       setPagination({ page: 1 });
-      handleTesting(ids);
+      handleTesting(ids, currentQuestionIndex);
     },
-    [setPagination, handleTesting],
+    [setPagination, handleTesting,currentQuestionIndex],
   );
 
   const [videoChunkInfo, setVideoChunkInfo] = useState<any[]>([]);

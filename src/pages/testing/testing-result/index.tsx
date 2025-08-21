@@ -52,7 +52,7 @@ const ChunkTitle = ({ item }: { item: ITestingChunk }) => {
 };
 
 interface IProps {
-  handleTesting: (documentIds?: string[]) => Promise<any>;
+  handleTesting: (documentIds?: string[], idOfQuery?: number) => Promise<any>;
   selectedDocumentIds: string[];
   setSelectedDocumentIds: (ids: string[]) => void;
 }
@@ -87,15 +87,19 @@ const TestingResult = ({
 
   const onChange: PaginationProps['onChange'] = (pageNumber, pageSize) => {
     pagination.onChange?.(pageNumber, pageSize);
-    handleTesting(selectedDocumentIds);
+    // 分页改变时调用接口，传递当前选中的文档ID和问题索引
+    handleTesting(selectedDocumentIds, currentQuestionIndex);
   };
+
   const onTesting = useCallback(
     (ids: string[]) => {
       setPagination({ page: 1 });
-      handleTesting(ids);
+      // 传递当前问题索引作为 idOfQuery
+      handleTesting(ids, currentQuestionIndex);
     },
-    [setPagination, handleTesting],
+    [setPagination, handleTesting, currentQuestionIndex],
   );
+
   const [videoChunkInfo, setVideoChunkInfo] = useState<any[]>([]);
   // 新增：弹窗控制和当前视频信息
   const [modalVisible, setModalVisible] = useState(false);

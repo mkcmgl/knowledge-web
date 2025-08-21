@@ -282,6 +282,7 @@ export const useTestChunkRetrieval = (): ResponsePostType<ITestingResult> & {
         },
         page,
         page_size: pageSize,
+        idOfQuery: values.idOfQuery !== undefined ? values.idOfQuery : 0, 
       });
       console.log('data312312',data)
       if (data.code === 0) {
@@ -378,6 +379,7 @@ export const useTestChunkAllRetrieval = (): ResponsePostType<ITestingResult> & {
         },
         page,
         page_size: pageSize,
+        idOfQuery: values.idOfQuery !== undefined ? values.idOfQuery : 0, // 添加 idOfQuery 参数
       });
       if (data.code === 0) {
         const res = data.data;

@@ -29,7 +29,7 @@ type FieldType = {
 
 interface IProps {
   form: FormInstance;
-  handleTesting: (documentIds?: string[], questions?: string[]) => Promise<any>;
+  handleTesting: (documentIds?: string[], idOfQuery?: number) => Promise<any>;
   selectedDocumentIds: string[];
 }
 
@@ -115,7 +115,7 @@ const TestingControl = ({
         message.warning('请至少输入一个问题');
         return;
       }
-      handleTesting(selectedDocumentIds, questionList);
+      handleTesting(selectedDocumentIds, undefined);
     } catch (error) { }
   };
 
