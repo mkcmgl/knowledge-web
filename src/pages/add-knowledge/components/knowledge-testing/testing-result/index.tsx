@@ -25,14 +25,14 @@ import {
 } from '@/hooks/knowledge-hooks';
 import { useGetPaginationWithRouter } from '@/hooks/logic-hooks';
 import { showImage } from '@/utils/chat';
-import { useCallback, useEffect, useState, useRef } from 'react';
+import { useCallback, useEffect, useState, useRef,useMemo } from 'react';
 import { fetchVideoChunks } from '@/services/knowledge-service';
 import styles from './index.less';
 import { api_rag_host } from '@/utils/api';
 import { formatTimeDisplay } from '@/utils/document-util';
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
-
+import useTestingStore from '../store';
 const similarityList: Array<{ field: keyof ITestingChunk; label: string }> = [
   { field: 'similarity', label: 'Hybrid Similarity' },
   { field: 'term_similarity', label: 'Term Similarity' },
@@ -74,7 +74,32 @@ const TestingResult = ({
   const { pagination, setPagination } = useGetPaginationWithRouter();
   const isSuccess = useAllTestingSuccess();
   const isLoadingAll = useAllTestingLoading();
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+   // 使用 Zustand store 管理状态
+   const {
+    savedQuestionList,
+    currentQuestionIndex,
+    hasInitialized,
+    initializeQuestionList,
+    updateQuestionStats,
+    setCurrentQuestionIndex,
+  } = useTestingStore();
+
+  // 初始化问题列表
+  useEffect(() => {
+    if (isSuccess && allResults && allResults.length > 0) {
+      initializeQuestionList(allResults);
+    }
+  }, [isSuccess, allResults, initializeQuestionList]);
+
+  // 更新问题列表的统计数据
+  useEffect(() => {
+    if (isSuccess && allResults && allResults.length > 0 && hasInitialized) {
+      updateQuestionStats(allResults);
+    }
+  }, [isSuccess, allResults, hasInitialized, updateQuestionStats]);
+
+  // 使用保存的问题列表或当前结果
+  const displayResults = savedQuestionList.length > 0 ? savedQuestionList : (allResults || []);
 
   // 获取当前问题的数据
   const currentQuestionData = allResults?.[currentQuestionIndex] || {
@@ -84,9 +109,11 @@ const TestingResult = ({
     query: ''
   };
 
-  const currentChunks = currentQuestionData.chunks || [];
-  const currentDocuments = currentQuestionData.documents || [];
-  const currentTotal = currentQuestionData.total || 0;
+ // 使用 useMemo 优化性能
+ const currentChunks = useMemo(() => currentQuestionData.chunks || [], [currentQuestionData.chunks]);
+ const currentDocuments = useMemo(() => currentQuestionData.documents || [], [currentQuestionData.documents]);
+ const currentTotal = useMemo(() => currentQuestionData.total || 0, [currentQuestionData.total]);
+
   // 获取当前问题对应的文档总数
   const currentDocumentsCount = currentDocuments?.length || 0;
   const onChange: PaginationProps['onChange'] = (pageNumber, pageSize) => {
@@ -624,23 +651,9 @@ const TestingResult = ({
   return (
     <section className={styles.testingResultWrapper}>
      <div style={{ position: 'relative',height:'100%' }}>
-        {isLoadingAll && (
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              background: 'rgba(255,255,255,0.6)',
-              zIndex: 1000,
-            }}
-          >
-            <Spin tip="加载中..." size="large" />
-          </div>
-        )}
+       
       {/* 新增：问题列表和结果显示的布局 */}
-      {isSuccess && allResults && allResults.length > 0 ? (
+      {/* {isSuccess && allResults && allResults.length > 0 ? ( */}
         <div style={{ display: 'flex', gap: '20px', height: '100%' }}>
           {/* 左边：问题列表 */}
           <div style={{
@@ -654,9 +667,9 @@ const TestingResult = ({
               margin: '0 0 16px 0', fontSize: '16px', fontWeight: 'bold',
               position: 'sticky', top: 0, backgroundColor: "#fff", overflow: 'hidden', zIndex: 99
             }}>
-              测试文本 ({allResults.length})
+             测试文本 ({displayResults?.length})
             </h3>
-            {allResults.map((result: any, index: number) => (
+            {displayResults?.map((result: any, index: number) => (
               <div
                 key={index}
                 style={{
@@ -697,7 +710,22 @@ const TestingResult = ({
           </div>
 
           {/* 右边：结果显示 */}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'auto',position: 'relative', height: '100%' }}>
+          {isLoadingAll && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'rgba(255,255,255,0.6)',
+                    zIndex: 1000,
+                  }}
+                >
+                  <Spin tip="加载中..." size="large" />
+                </div>
+              )}
             <div style={{ flex: 1, overflow: 'auto' }}>
               <h3 style={{
                 margin: '0 0 16px 0', fontSize: '16px',
@@ -853,9 +881,9 @@ const TestingResult = ({
             </div>
           </div>
         </div>
-      ) : isSuccess && (!allResults || allResults.length === 0) ? (
+      {/* ) : isSuccess && (!allResults || allResults.length === 0) ? (
         <Empty description="暂无测试结果"></Empty>
-      ) : null}
+      ) : null} */}
       {/* 视频弹窗 */}
       <Modal
         open={modalVisible}

@@ -2,6 +2,7 @@ import { useTestChunkAllRetrieval } from '@/hooks/knowledge-hooks';
 import { App, Form, Modal } from 'antd';
 import TestingControl from './testing-control';
 import TestingResult from './testing-result';
+import useTestingStore from './store';
 
 import { useState } from 'react';
 import styles from './index.less';
@@ -10,8 +11,10 @@ const KnowledgeTesting = () => {
   const [form] = Form.useForm();
   const { testChunkAll } = useTestChunkAllRetrieval();
   const [selectedDocumentIds, setSelectedDocumentIds] = useState<string[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const { message } = App.useApp();
+  
+  // 使用 store 管理弹窗状态
+  const { modalVisible, setModalVisible } = useTestingStore();
 
   const handleTesting = async (documentIds: string[] = [], idOfQuery?: number) => {
     try {
@@ -49,7 +52,7 @@ const KnowledgeTesting = () => {
       });
       const document_ids = Array.isArray(documentIds) ? documentIds : [];
       // 打开弹窗尽早显示 loading 覆盖层
-      setIsModalOpen(true);
+      setModalVisible(true);
 
       await testChunkAll({
         ...values,
@@ -69,7 +72,7 @@ const KnowledgeTesting = () => {
   };
 
   const handleModalClose = () => {
-    setIsModalOpen(false);
+    setModalVisible(false);
     setSelectedDocumentIds([]);
   };
 
@@ -84,7 +87,7 @@ const KnowledgeTesting = () => {
       </div>
       <Modal
         title="测试详情"
-        open={isModalOpen}
+        open={modalVisible}
         onCancel={handleModalClose}
         width="80%"
         footer={null}
